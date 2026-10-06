@@ -123,36 +123,37 @@ class _SignInPageState extends ConsumerState<SignInPage> {
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(24, 28, 24, 32),
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 430),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Container(
-                      width: 72,
-                      height: 72,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: colorScheme.primary,
-                        borderRadius: BorderRadius.circular(22),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorScheme.primary.withValues(alpha: 0.2),
-                            blurRadius: 24,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.shield_outlined,
-                        size: 38,
-                        color: colorScheme.onPrimary,
+                    Center(
+                      child: Container(
+                        width: 132,
+                        height: 132,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40),
+                          boxShadow: [
+                            BoxShadow(
+                              color: colorScheme.primary.withValues(alpha: 0.16),
+                              blurRadius: 30,
+                              offset: const Offset(0, 14),
+                            ),
+                          ],
+                        ),
+                        child: Image.asset(
+                          'assets/images/pomad_prima.webp',
+                          fit: BoxFit.contain,
+                          semanticLabel: 'Logo POMAD PRIMA',
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 18),
                     Text(
                       'SDIRBINGAKKUM',
+                      textAlign: TextAlign.center,
                       style: textTheme.labelLarge?.copyWith(
                         letterSpacing: 2.2,
                         fontWeight: FontWeight.w800,
@@ -162,6 +163,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                     const SizedBox(height: 6),
                     Text(
                       'Selamat datang kembali',
+                      textAlign: TextAlign.center,
                       style: textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w800,
                       ),
@@ -169,6 +171,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                     const SizedBox(height: 8),
                     Text(
                       'Masuk untuk mengakses Laporan Sdirbingakkum PUSPOMAD.',
+                      textAlign: TextAlign.center,
                       style: textTheme.bodyLarge?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                         height: 1.45,
