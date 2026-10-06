@@ -767,16 +767,11 @@ class _GlassStatCard extends StatelessWidget {
 class _K9Report extends StatelessWidget {
   const _K9Report();
 
-  static const _columns = <_StatColumn>[
-    _StatColumn(
-      label: 'AGUSTUS 2026',
-      cards: [
-        _StatCardData('NYATA', '27', _emerald),
-        _StatCardData('SESUAI ORGAS', '30', _gold),
-        _StatCardData('KEKURANGAN', '8', Color(0xFFF59E0B)),
-        _StatCardData('SATUAN', '2', Color(0xFF7DD3FC)),
-      ],
-    ),
+  static const _metrics = <_StatCardData>[
+    _StatCardData('NYATA', '27', _emerald),
+    _StatCardData('SESUAI ORGAS', '30', _gold),
+    _StatCardData('KEKURANGAN', '8', Color(0xFFF59E0B)),
+    _StatCardData('SATUAN', '2', Color(0xFF7DD3FC)),
   ];
 
   static const _units = <_K9UnitData>[
@@ -799,7 +794,56 @@ class _K9Report extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _StatsColumnView(column: _columns.single),
+        const Text(
+          'AGUSTUS 2026',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: _gold,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 2.0,
+          ),
+        ),
+        const SizedBox(height: 8),
+        const Row(
+          key: ValueKey('k9-summary-row-1'),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _AnimatedStatCard(
+                card: _metrics[0],
+                delay: Duration.zero,
+              ),
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              child: _AnimatedStatCard(
+                card: _metrics[1],
+                delay: Duration(milliseconds: 75),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        const Row(
+          key: ValueKey('k9-summary-row-2'),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _AnimatedStatCard(
+                card: _metrics[2],
+                delay: Duration(milliseconds: 150),
+              ),
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              child: _AnimatedStatCard(
+                card: _metrics[3],
+                delay: Duration(milliseconds: 225),
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 10),
         const Text(
           'TOTAL DATA TERSEDIA · BUKAN TOTAL NASIONAL',
