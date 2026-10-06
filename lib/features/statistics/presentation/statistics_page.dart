@@ -162,7 +162,7 @@ class StatisticsPage extends StatelessWidget {
       case StatisticsModule.simTni:
         return 'SIM TNI';
       case StatisticsModule.k9:
-        return 'K9';
+        return 'DATA K-9';
       case StatisticsModule.provos:
         return 'PROVOS TNI-AD';
     }
@@ -191,7 +191,7 @@ class StatisticsPage extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
             child: Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 760),
+                constraints: BoxConstraints(maxWidth: isK9 ? 560 : 760),
                 child: isK9
                     ? const _K9Report()
                     : _ContentBody(
