@@ -632,9 +632,7 @@ class _AnalysisButton extends StatelessWidget {
           backgroundColor: Colors.transparent,
           foregroundColor: accent,
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          side: BorderSide(
-            color: Colors.white.withValues(alpha: 0.055),
-          ),
+          side: BorderSide(color: Colors.white.withValues(alpha: 0.055)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6.4),
           ),
