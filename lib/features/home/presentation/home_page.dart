@@ -8,7 +8,6 @@ import '../../auth/data/auth_repository.dart';
 
 // Responsive geometry is derived from the available mobile/web viewport.
 
-
 const _bg = Color(0xFF03150F);
 const _surface = Color(0xFF09231A);
 const _surfaceSoft = Color(0xFF0D2C20);
