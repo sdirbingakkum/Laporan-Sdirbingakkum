@@ -801,18 +801,8 @@ class _GlassStatCard extends StatelessWidget {
 }
 
 const _k9Units = <_K9UnitData>[
-  _K9UnitData(
-    name: 'YONPOMAD PUSPOMAD',
-    actual: 17,
-    org: 12,
-    shortage: null,
-  ),
-  _K9UnitData(
-    name: 'POMDAM JAYA',
-    actual: 10,
-    org: 18,
-    shortage: 8,
-  ),
+  _K9UnitData(name: 'YONPOMAD PUSPOMAD', actual: 17, org: 12, shortage: null),
+  _K9UnitData(name: 'POMDAM JAYA', actual: 10, org: 18, shortage: 8),
 ];
 
 class _K9UnitData {
@@ -829,10 +819,7 @@ class _K9UnitData {
   final int? shortage;
 }
 
-Future<void> _showK9UnitSheet(
-  BuildContext context,
-  _K9UnitData unit,
-) async {
+Future<void> _showK9UnitSheet(BuildContext context, _K9UnitData unit) async {
   await showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
