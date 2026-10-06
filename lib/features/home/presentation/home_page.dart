@@ -274,21 +274,24 @@ class _PieMenuCenter extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          gradient: const RadialGradient(colors: [_surfaceSoft, _surface]),
+          gradient: const RadialGradient(
+            colors: [Color(0xFF173428), Color(0xFF0B2018), Color(0xFF06120D)],
+            stops: [0.0, 0.58, 1.0],
+          ),
           border: Border.all(
-            color: iconColor.withValues(alpha: 0.72),
-            width: 1.4,
+            color: iconColor.withValues(alpha: 0.48),
+            width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: iconColor.withValues(alpha: 0.12),
-              blurRadius: 28,
-              spreadRadius: 3,
+              color: iconColor.withValues(alpha: 0.07),
+              blurRadius: 20,
+              spreadRadius: 1,
             ),
             const BoxShadow(
-              color: Colors.black54,
-              blurRadius: 22,
-              offset: Offset(0, 10),
+              color: Colors.black45,
+              blurRadius: 18,
+              offset: Offset(0, 7),
             ),
           ],
         ),
@@ -307,7 +310,11 @@ class _PieMenuCenter extends StatelessWidget {
               key: ValueKey(centerKey),
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, color: iconColor, size: diameterForCenter(context)),
+                Icon(
+                  icon,
+                  color: iconColor.withValues(alpha: 0.94),
+                  size: diameterForCenter(context),
+                ),
                 const SizedBox(height: 6),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -319,8 +326,8 @@ class _PieMenuCenter extends StatelessWidget {
                     style: TextStyle(
                       color: item == null ? _text : iconColor,
                       fontSize: centerTextSize(context, centerKey),
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: centerKey.length > 18 ? 0.1 : 0.8,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: centerKey.length > 18 ? 0.05 : 0.55,
                       height: 1.02,
                     ),
                   ),
@@ -335,7 +342,7 @@ class _PieMenuCenter extends StatelessWidget {
 
   double diameterForCenter(BuildContext context) {
     final shortest = MediaQuery.sizeOf(context).shortestSide;
-    return shortest < 300 ? 23 : 29;
+    return shortest < 300 ? 21 : 26;
   }
 
   double centerTextSize(BuildContext context, String text) {
@@ -379,8 +386,8 @@ class _PieMenuLabel extends StatelessWidget {
     final angle = -math.pi / 2 + (2 * math.pi / itemCount) * (index + 0.5);
     final compact = diameter < 310;
     final labelWidth = (diameter * 0.30).clamp(72.0, 108.0).toDouble();
-    final iconSize = compact ? 31.0 : 37.0;
-    final labelFontSize = compact ? 8.2 : 9.3;
+    final iconSize = compact ? 28.0 : 34.0;
+    final labelFontSize = compact ? 8.0 : 8.8;
     final isLong = item.label.length > 20;
 
     return Transform.translate(
@@ -391,7 +398,7 @@ class _PieMenuLabel extends StatelessWidget {
       child: SizedBox(
         width: labelWidth,
         child: AnimatedScale(
-          scale: selected ? 1.05 : 1,
+          scale: selected ? 1.02 : 1,
           duration: const Duration(milliseconds: 180),
           curve: Curves.easeOutCubic,
           child: Column(
@@ -399,8 +406,8 @@ class _PieMenuLabel extends StatelessWidget {
             children: [
               AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
-                width: selected ? iconSize + 3 : iconSize,
-                height: selected ? iconSize + 3 : iconSize,
+                width: selected ? iconSize + 2 : iconSize,
+                height: selected ? iconSize + 2 : iconSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
@@ -408,34 +415,39 @@ class _PieMenuLabel extends StatelessWidget {
                     end: Alignment.bottomRight,
                     colors: selected
                         ? [
-                            item.lightColor.withValues(alpha: 0.26),
-                            _surface.withValues(alpha: 0.82),
+                            item.lightColor.withValues(alpha: 0.15),
+                            _surface.withValues(alpha: 0.92),
+                            const Color(0xFF071810),
                           ]
                         : [
-                            Colors.white.withValues(alpha: 0.07),
-                            _surface.withValues(alpha: 0.74),
-                            const Color(0xFF05130E),
+                            Colors.white.withValues(alpha: 0.035),
+                            _surface.withValues(alpha: 0.88),
+                            const Color(0xFF05120D),
                           ],
+                    stops: const [0.0, 0.48, 1.0],
                   ),
                   border: Border.all(
                     color: selected
-                        ? item.lightColor.withValues(alpha: 0.92)
-                        : Colors.white.withValues(alpha: 0.22),
-                    width: selected ? 1.4 : 1,
+                        ? item.lightColor.withValues(alpha: 0.62)
+                        : Colors.white.withValues(alpha: 0.12),
+                    width: selected ? 1.05 : 0.8,
                   ),
                   boxShadow: [
                     BoxShadow(
                       color: selected
-                          ? item.lightColor.withValues(alpha: 0.20)
-                          : Colors.black26,
-                      blurRadius: selected ? 16 : 8,
+                          ? item.lightColor.withValues(alpha: 0.10)
+                          : Colors.black.withValues(alpha: 0.22),
+                      blurRadius: selected ? 12 : 7,
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
                 child: Icon(
                   item.icon,
-                  color: selected ? item.lightColor : _text,
-                  size: compact ? 16 : 19,
+                  color: selected
+                      ? item.lightColor.withValues(alpha: 0.92)
+                      : Colors.white.withValues(alpha: 0.88),
+                  size: compact ? 15 : 18,
                 ),
               ),
               const SizedBox(height: 5),
@@ -449,8 +461,8 @@ class _PieMenuLabel extends StatelessWidget {
                   fontSize: isLong
                       ? math.max(labelFontSize - 0.5, 7.6).toDouble()
                       : labelFontSize,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.25,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.35,
                   height: 1.05,
                 ),
               ),
@@ -469,19 +481,19 @@ class _PieMenuPainter extends CustomPainter {
   final int selectedIndex;
 
   static const _lightPalette = <Color>[
-    Color(0xFFE1A361),
-    Color(0xFFD06F69),
-    Color(0xFF7198D2),
-    Color(0xFFD4B85F),
-    Color(0xFF6CAF88),
+    Color(0xFF8A6847),
+    Color(0xFF7E5055),
+    Color(0xFF526781),
+    Color(0xFF8B7946),
+    Color(0xFF52715F),
   ];
 
   static const _darkPalette = <Color>[
-    Color(0xFF744A26),
-    Color(0xFF642F35),
-    Color(0xFF2A456B),
-    Color(0xFF6C5823),
-    Color(0xFF28523D),
+    Color(0xFF4B3625),
+    Color(0xFF40282D),
+    Color(0xFF2C394A),
+    Color(0xFF4B4027),
+    Color(0xFF294334),
   ];
 
   @override
@@ -497,7 +509,7 @@ class _PieMenuPainter extends CustomPainter {
 
       // The base menu is a mathematically complete circle. Only the
       // selected sector is translated outward to create the "lift".
-      final lift = selected ? size.shortestSide * 0.026 : 0.0;
+      final lift = selected ? size.shortestSide * 0.014 : 0.0;
       final segmentCenterOffset = Offset(
         math.cos(segmentCenter) * lift,
         math.sin(segmentCenter) * lift,
@@ -531,16 +543,16 @@ class _PieMenuPainter extends CustomPainter {
               ],
             ).createShader(
               Rect.fromCircle(
-                center: segmentCenterPoint + const Offset(0, 6),
+                center: segmentCenterPoint + const Offset(0, 3),
                 radius: outerRadius,
               ),
             );
-      canvas.drawPath(path.shift(const Offset(0, 6)), depthPaint);
+      canvas.drawPath(path.shift(const Offset(0, 3)), depthPaint);
 
       final shadowPaint = Paint()
-        ..color = Colors.black.withValues(alpha: selected ? 0.34 : 0.20)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, selected ? 12 : 8);
-      canvas.drawPath(path.shift(Offset(0, selected ? 8 : 5)), shadowPaint);
+        ..color = Colors.black.withValues(alpha: selected ? 0.24 : 0.15)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, selected ? 9 : 6);
+      canvas.drawPath(path.shift(Offset(0, selected ? 5 : 3)), shadowPaint);
 
       final paint = Paint()
         ..shader =
@@ -548,9 +560,9 @@ class _PieMenuPainter extends CustomPainter {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                light.withValues(alpha: selected ? 0.96 : 0.88),
-                light.withValues(alpha: selected ? 0.72 : 0.62),
-                dark.withValues(alpha: 0.96),
+                light.withValues(alpha: selected ? 0.78 : 0.66),
+                light.withValues(alpha: selected ? 0.54 : 0.45),
+                dark.withValues(alpha: 0.90),
               ],
               stops: const [0.0, 0.42, 1.0],
             ).createShader(
@@ -560,8 +572,8 @@ class _PieMenuPainter extends CustomPainter {
 
       final bevelPaint = Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = selected ? 1.1 : 0.8
-        ..color = Colors.white.withValues(alpha: selected ? 0.15 : 0.075);
+        ..strokeWidth = selected ? 0.9 : 0.65
+        ..color = Colors.white.withValues(alpha: selected ? 0.13 : 0.055);
       canvas.drawPath(path, bevelPaint);
     }
 
@@ -569,9 +581,9 @@ class _PieMenuPainter extends CustomPainter {
     // neighbors and the outer silhouette remains a true circle.
     final seamPaint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2
+      ..strokeWidth = 0.9
       ..strokeCap = StrokeCap.butt
-      ..color = _surfaceSoft.withValues(alpha: 0.62);
+      ..color = Colors.white.withValues(alpha: 0.14);
 
     for (var i = 0; i < itemCount; i++) {
       final angle = -math.pi / 2 + i * sweep;
