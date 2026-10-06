@@ -22,6 +22,12 @@ class SignInPage extends ConsumerStatefulWidget {
 }
 
 class _SignInPageState extends ConsumerState<SignInPage> {
+  void _togglePasswordVisibility() {
+    setState(() {
+      _obscurePassword = !_obscurePassword;
+    });
+  }
+
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
@@ -333,11 +339,7 @@ class _SignInCard extends StatelessWidget {
               color: _muted,
               onPressed: parent._isLoading
                   ? null
-                  : () {
-                      parent.setState(() {
-                        parent._obscurePassword = !parent._obscurePassword;
-                      });
-                    },
+                  : parent._togglePasswordVisibility,
               icon: Icon(
                 parent._obscurePassword
                     ? Icons.visibility_outlined
