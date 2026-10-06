@@ -146,9 +146,6 @@ void main() {
 
     expect(find.byType(HomePage), findsOneWidget);
   });
-}
-
-
   testWidgets('K9 opens as an empty content page', (tester) async {
     await tester.binding.setSurfaceSize(const Size(390, 844));
     await tester.pumpWidget(
@@ -164,3 +161,4 @@ void main() {
     expect(find.byIcon(Icons.arrow_back_rounded), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+}
