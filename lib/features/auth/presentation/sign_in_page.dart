@@ -254,8 +254,6 @@ class _SignInCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
