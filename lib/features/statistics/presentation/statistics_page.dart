@@ -767,9 +767,31 @@ class _GlassStatCard extends StatelessWidget {
 class _K9Report extends StatelessWidget {
   const _K9Report();
 
+  static const _columns = <_StatColumn>[
+    _StatColumn(
+      label: 'AGUSTUS 2026',
+      cards: [
+        _StatCardData('NYATA', '27', _emerald),
+        _StatCardData('SESUAI ORGAS', '30', _gold),
+        _StatCardData('KEKURANGAN', '8', Color(0xFFF59E0B)),
+        _StatCardData('SATUAN', '2', Color(0xFF7DD3FC)),
+      ],
+    ),
+  ];
+
   static const _units = <_K9UnitData>[
-    _K9UnitData(name: 'YONPOMAD PUSPOMAD', actual: 17, org: 12, shortage: null),
-    _K9UnitData(name: 'POMDAM JAYA', actual: 10, org: 18, shortage: 8),
+    _K9UnitData(
+      name: 'YONPOMAD PUSPOMAD',
+      actual: 17,
+      org: 12,
+      shortage: null,
+    ),
+    _K9UnitData(
+      name: 'POMDAM JAYA',
+      actual: 10,
+      org: 18,
+      shortage: 8,
+    ),
   ];
 
   @override
@@ -777,49 +799,7 @@ class _K9Report extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const _K9HeaderCard(),
-        const SizedBox(height: 14),
-        const Row(
-          children: [
-            Expanded(
-              child: _K9MetricCard(
-                label: 'NYATA',
-                value: '27',
-                accent: _emerald,
-              ),
-            ),
-            SizedBox(width: 12),
-            Expanded(
-              child: _K9MetricCard(
-                label: 'SESUAI ORGAS',
-                value: '30',
-                accent: _gold,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        const Row(
-          children: [
-            Expanded(
-              child: _K9MetricCard(
-                label: 'KEKURANGAN',
-                value: '8',
-                accent: Color(0xFFF59E0B),
-                caption: 'TERDATA',
-              ),
-            ),
-            SizedBox(width: 12),
-            Expanded(
-              child: _K9MetricCard(
-                label: 'SATUAN',
-                value: '2',
-                accent: Color(0xFF7DD3FC),
-                caption: 'DATA TERSEDIA',
-              ),
-            ),
-          ],
-        ),
+        _StatsColumnView(column: _columns.single),
         const SizedBox(height: 10),
         const Text(
           'TOTAL DATA TERSEDIA · BUKAN TOTAL NASIONAL',
@@ -831,177 +811,13 @@ class _K9Report extends StatelessWidget {
             letterSpacing: 0.9,
           ),
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 16),
         _AnalysisButton(
           accent: _moduleAccent(StatisticsModule.k9),
           label: 'ANALISIS STATISTIK',
           onPressed: () => _showK9AnalysisSheet(context, _units),
         ),
       ],
-    );
-  }
-}
-
-class _K9HeaderCard extends StatelessWidget {
-  const _K9HeaderCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: BackdropFilter(
-        filter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0x241F4D3A), Color(0x160A2419), Color(0x240E160F)],
-            ),
-            border: Border.all(color: _gold.withValues(alpha: 0.20)),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 18,
-                offset: Offset(0, 7),
-              ),
-            ],
-          ),
-          child: const Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'DATA K-9',
-                      style: TextStyle(
-                        color: _goldLight,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1.3,
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      'DATA TERBARU',
-                      style: TextStyle(
-                        color: _muted,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Text(
-                'AGUSTUS 2026',
-                style: TextStyle(
-                  color: _gold,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.9,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _K9MetricCard extends StatelessWidget {
-  const _K9MetricCard({
-    required this.label,
-    required this.value,
-    required this.accent,
-    this.caption,
-  });
-
-  final String label;
-  final String value;
-  final Color accent;
-  final String? caption;
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: BackdropFilter(
-        filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 104),
-          padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white.withValues(alpha: 0.055),
-                accent.withValues(alpha: 0.075),
-                _surface.withValues(alpha: 0.78),
-              ],
-              stops: const [0.0, 0.38, 1.0],
-            ),
-            border: Border.all(color: accent.withValues(alpha: 0.20)),
-            boxShadow: [
-              BoxShadow(
-                color: accent.withValues(alpha: 0.035),
-                blurRadius: 18,
-                offset: const Offset(0, 6),
-              ),
-              const BoxShadow(
-                color: Colors.black26,
-                blurRadius: 16,
-                offset: Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: _muted,
-                  fontSize: 9.5,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.8,
-                ),
-              ),
-              const SizedBox(height: 7),
-              Text(
-                value,
-                style: TextStyle(
-                  color: accent,
-                  fontSize: 31,
-                  fontWeight: FontWeight.w900,
-                  height: 0.95,
-                ),
-              ),
-              if (caption != null) ...[
-                const SizedBox(height: 4),
-                Text(
-                  caption!,
-                  style: TextStyle(
-                    color: accent.withValues(alpha: 0.62),
-                    fontSize: 8,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.8,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
