@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../auth/data/auth_repository.dart';
+import '../../../shared/widgets/app_background.dart';
 import '../../../shared/widgets/app_header.dart';
 
 // Responsive geometry is derived from the available mobile/web viewport.
@@ -150,36 +151,33 @@ class _HomePageState extends ConsumerState<HomePage> {
     return Scaffold(
       backgroundColor: _bg,
       appBar: AppHeader(title: 'SDIRBINGAKKUM', onSignOut: _confirmSignOut),
-      body: Stack(
-        children: [
-          const Positioned.fill(child: _MenuBackdrop()),
-          SafeArea(
-            top: false,
-            child: Column(
-              children: [
-                const SizedBox(height: 16),
-                Expanded(
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: 560,
-                        maxHeight: 560,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(12, 0, 12, 14),
-                        child: _PieMenu(
-                          items: _items,
-                          selectedIndex: _selectedIndex,
-                          onSelected: _selectMenu,
-                        ),
+      body: AppBackground(
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              const SizedBox(height: 16),
+              Expanded(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: 560,
+                      maxHeight: 560,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 14),
+                      child: _PieMenu(
+                        items: _items,
+                        selectedIndex: _selectedIndex,
+                        onSelected: _selectMenu,
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -406,9 +404,20 @@ class _PieMenuLabel extends StatelessWidget {
                 height: selected ? iconSize + 3 : iconSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: selected
-                      ? item.lightColor.withValues(alpha: 0.22)
-                      : _surface.withValues(alpha: 0.72),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: selected
+                        ? [
+                            item.lightColor.withValues(alpha: 0.26),
+                            _surface.withValues(alpha: 0.82),
+                          ]
+                        : [
+                            Colors.white.withValues(alpha: 0.07),
+                            _surface.withValues(alpha: 0.74),
+                            const Color(0xFF05130E),
+                          ],
+                  ),
                   border: Border.all(
                     color: selected
                         ? item.lightColor.withValues(alpha: 0.92)
@@ -461,19 +470,19 @@ class _PieMenuPainter extends CustomPainter {
   final int selectedIndex;
 
   static const _lightPalette = <Color>[
-    Color(0xFFF09A4A),
-    Color(0xFFE15B5B),
-    Color(0xFF5D8FE0),
-    Color(0xFFE3BE4F),
-    Color(0xFF49A86B),
+    Color(0xFFE1A361),
+    Color(0xFFD06F69),
+    Color(0xFF7198D2),
+    Color(0xFFD4B85F),
+    Color(0xFF6CAF88),
   ];
 
   static const _darkPalette = <Color>[
-    Color(0xFF5A2B0D),
-    Color(0xFF461518),
-    Color(0xFF192A55),
-    Color(0xFF59410D),
-    Color(0xFF123827),
+    Color(0xFF744A26),
+    Color(0xFF642F35),
+    Color(0xFF2A456B),
+    Color(0xFF6C5823),
+    Color(0xFF28523D),
   ];
 
   @override
@@ -512,29 +521,53 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      if (selected) {
-        final shadowPaint = Paint()
-          ..color = Colors.black.withValues(alpha: 0.42)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 11);
-        canvas.drawPath(path.shift(const Offset(0, 7)), shadowPaint);
-      }
+      final depthPaint = Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            dark.withValues(alpha: 0.92),
+            const Color(0xFF020806).withValues(alpha: 0.88),
+          ],
+        ).createShader(
+          Rect.fromCircle(
+            center: segmentCenterPoint + const Offset(0, 6),
+            radius: outerRadius,
+          ),
+        );
+      canvas.drawPath(path.shift(const Offset(0, 6)), depthPaint);
+
+      final shadowPaint = Paint()
+        ..color = Colors.black.withValues(alpha: selected ? 0.34 : 0.20)
+        ..maskFilter = MaskFilter.blur(
+          BlurStyle.normal,
+          selected ? 12 : 8,
+        );
+      canvas.drawPath(
+        path.shift(Offset(0, selected ? 8 : 5)),
+        shadowPaint,
+      );
 
       final paint = Paint()
-        ..shader =
-            LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                light.withValues(alpha: selected ? 1.0 : 0.92),
-                light.withValues(alpha: selected ? 0.82 : 0.70),
-                dark,
-              ],
-              stops: const [0.0, 0.45, 1.0],
-            ).createShader(
-              Rect.fromCircle(center: segmentCenterPoint, radius: outerRadius),
-            );
-
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            light.withValues(alpha: selected ? 0.96 : 0.88),
+            light.withValues(alpha: selected ? 0.72 : 0.62),
+            dark.withValues(alpha: 0.96),
+          ],
+          stops: const [0.0, 0.42, 1.0],
+        ).createShader(
+          Rect.fromCircle(center: segmentCenterPoint, radius: outerRadius),
+        );
       canvas.drawPath(path, paint);
+
+      final bevelPaint = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = selected ? 1.1 : 0.8
+        ..color = Colors.white.withValues(alpha: selected ? 0.15 : 0.075);
+      canvas.drawPath(path, bevelPaint);
     }
 
     // Subtle separators, not black gaps: every sector still touches its
@@ -602,94 +635,4 @@ class _MenuItemData {
   final IconData icon;
   final Color lightColor;
   final String route;
-}
-
-class _MenuBackdrop extends StatefulWidget {
-  const _MenuBackdrop();
-
-  @override
-  State<_MenuBackdrop> createState() => _MenuBackdropState();
-}
-
-class _MenuBackdropState extends State<_MenuBackdrop>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1200),
-  )..forward();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) =>
-          CustomPaint(painter: _MenuBackdropPainter(_controller.value)),
-    );
-  }
-}
-
-class _MenuBackdropPainter extends CustomPainter {
-  const _MenuBackdropPainter(this.phase);
-
-  final double phase;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final pulse = 0.55 + (math.sin(phase * math.pi) + 1) * 0.10;
-    final glow = Paint()
-      ..shader =
-          RadialGradient(
-            colors: [
-              _gold.withValues(alpha: 0.14 * pulse),
-              _gold.withValues(alpha: 0.025),
-              Colors.transparent,
-            ],
-          ).createShader(
-            Rect.fromCircle(
-              center: Offset(
-                size.width * (0.18 + phase * 0.14),
-                size.height * 0.18,
-              ),
-              radius: size.width * 0.62,
-            ),
-          );
-    canvas.drawRect(Offset.zero & size, glow);
-
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 1
-      ..color = _gold.withValues(alpha: 0.10 * pulse);
-
-    final large = Rect.fromCircle(
-      center: Offset(size.width * 0.10, size.height * 0.88),
-      radius: size.width * 0.70,
-    );
-    canvas.drawArc(large, -0.8, 1.5, false, paint);
-
-    final second = Rect.fromCircle(
-      center: Offset(size.width * 0.94, size.height * 0.18),
-      radius: size.width * 0.58,
-    );
-    canvas.drawArc(second, 1.9, 1.0, false, paint);
-
-    paint
-      ..strokeWidth = 0.7
-      ..color = Colors.white.withValues(alpha: 0.035);
-
-    for (var i = 0; i < 7; i++) {
-      final y = size.height * 0.74 + i * 15;
-      canvas.drawLine(Offset(-20, y), Offset(size.width * 0.32, y - 50), paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _MenuBackdropPainter oldDelegate) =>
-      oldDelegate.phase != phase;
 }
