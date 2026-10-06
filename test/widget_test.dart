@@ -73,6 +73,7 @@ void main() {
     expect(find.text('EMAIL'), findsNothing);
     expect(find.text('MASUK'), findsOneWidget);
     expect(find.text('MASUK MENGGUNAKAN AKUN YANG TERDAFTAR.'), findsNothing);
+    expect(find.text('SISTEM LAPORAN BIDANG GAKKUM'), findsNothing);
     expect(
       find.text('PROFESIONAL • RESPONSIF • INTEGRITAS • MODERN • ADAPTIF'),
       findsNothing,
@@ -138,7 +139,7 @@ void main() {
     await _pumpHomeAtSize(tester, const Size(390, 844));
 
     expect(find.byType(HomePage), findsOneWidget);
-    expect(find.text('LAPORAN STATISTIK'), findsOneWidget);
+    expect(find.text('LAPORAN STATISTIK'), findsNothing);
     expect(find.text('SDIRBINGAKKUM'), findsOneWidget);
     expect(find.text('PELANGGARAN'), findsOneWidget);
     expect(find.text('LAKA-LALIN'), findsOneWidget);
