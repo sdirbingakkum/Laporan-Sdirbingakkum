@@ -276,17 +276,10 @@ class _PieMenuCenter extends StatelessWidget {
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF173428),
-              Color(0xFF0B2118),
-              Color(0xFF06120D),
-            ],
+            colors: [Color(0xFF173428), Color(0xFF0B2118), Color(0xFF06120D)],
             stops: [0.0, 0.52, 1.0],
           ),
-          border: Border.all(
-            color: Color(0x55F1D37A),
-            width: 1.0,
-          ),
+          border: Border.all(color: Color(0x55F1D37A), width: 1.0),
           boxShadow: [
             BoxShadow(
               color: Colors.black45,
