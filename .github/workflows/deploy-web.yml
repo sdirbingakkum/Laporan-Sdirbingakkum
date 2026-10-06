@@ -1,21 +1,25 @@
-name: Build Flutter Web Preview
+name: Flutter Web Preview
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-  group: flutter-web-build
+  group: flutter-web-preview
   cancel-in-progress: true
 
 env:
   FLUTTER_VERSION: "3.47.3"
 
 jobs:
-  build-web:
-    name: Build Web Preview Artifact
+  build:
+    name: Build Web Preview
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -47,10 +51,19 @@ jobs:
       - name: SPA fallback
         run: cp build/web/index.html build/web/404.html
 
-      - name: Upload Web artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: flutter-web-preview
           path: build/web
-          if-no-files-found: error
-          retention-days: 7
+
+  deploy:
+    name: Deploy Browser Preview
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
