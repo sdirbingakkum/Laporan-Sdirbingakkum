@@ -37,8 +37,11 @@ jobs:
       - name: Dependencies
         run: flutter pub get
 
-      - name: Format check
-        run: dart format --output=none --set-exit-if-changed lib test
+      - name: Format source
+        run: dart format lib test
+
+      - name: Show formatter diff
+        run: git diff -- lib test
 
       - name: Analyze
         run: flutter analyze
