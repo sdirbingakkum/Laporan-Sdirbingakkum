@@ -12,6 +12,10 @@ class AuthRepository {
   }) {
     return _client.auth.signInWithPassword(email: email, password: password);
   }
+
+  Future<void> signOut() {
+    return _client.auth.signOut();
+  }
 }
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
