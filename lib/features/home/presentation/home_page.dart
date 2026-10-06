@@ -26,29 +26,24 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   static const _items = <_MenuItemData>[
     _MenuItemData(
-      label: 'GAKKUM',
-      description: 'Laporan bidang penegakan hukum.',
-      icon: Icons.shield_outlined,
+      label: 'STATISTIK PELANGGARAN',
+      description: 'Ringkasan dan tren pelanggaran hukum.',
+      icon: Icons.gavel_rounded,
     ),
     _MenuItemData(
-      label: 'LAKA LALIN',
-      description: 'Data dan laporan kecelakaan lalu lintas.',
-      icon: Icons.directions_car_filled_outlined,
-    ),
-    _MenuItemData(
-      label: 'SIM TNI',
-      description: 'Informasi penyelenggaraan SIM TNI.',
+      label: 'STATISTIK SIM TNI',
+      description: 'Ringkasan penerbitan dan data SIM TNI.',
       icon: Icons.badge_outlined,
     ),
     _MenuItemData(
-      label: 'STATISTIK',
-      description: 'Ringkasan angka dan tren laporan.',
-      icon: Icons.insights_outlined,
+      label: 'STATISTIK PROVOS TNI-AD',
+      description: 'Ringkasan data dan kinerja Provos TNI-AD.',
+      icon: Icons.military_tech_rounded,
     ),
     _MenuItemData(
-      label: 'PENGATURAN',
-      description: 'Konfigurasi dan preferensi sistem.',
-      icon: Icons.tune_rounded,
+      label: 'STATISTIK LAKA-LALIN',
+      description: 'Ringkasan dan tren kecelakaan lalu lintas.',
+      icon: Icons.directions_car_filled_outlined,
     ),
   ];
 
