@@ -15,7 +15,7 @@ class StatisticsPage extends StatelessWidget {
 
   final StatisticsModule module;
 
-  List<_StatColumn> get columns {
+  List<_StatColumn> get _columns {
     switch (module) {
       case StatisticsModule.pelanggaran:
         return const [
@@ -102,7 +102,7 @@ class StatisticsPage extends StatelessWidget {
     }
   }
 
-  List<_RankData> get ranking {
+  List<_RankData> get _ranking {
     switch (module) {
       case StatisticsModule.pelanggaran:
         return const [
@@ -145,7 +145,7 @@ class StatisticsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasContent = module != StatisticsModule.k9;
     return Scaffold(
-      key: ValueKey('statistics-' + module.name),
+      key: ValueKey('statistics-${module.name}'),
       backgroundColor: _bg,
       body: Stack(
         children: [
@@ -176,7 +176,7 @@ class StatisticsPage extends StatelessWidget {
                               ),
                             ),
                             if (hasContent)
-                              _ContentBody(columns: columns, ranking: ranking),
+                              _ContentBody(columns: _columns, ranking: ranking),
                           ],
                         ),
                       ),
