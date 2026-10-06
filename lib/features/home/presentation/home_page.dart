@@ -158,16 +158,6 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: Column(
               children: [
                 const SizedBox(height: 16),
-                const Text(
-                  'LAPORAN STATISTIK',
-                  style: TextStyle(
-                    color: _goldLight,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 4.0,
-                  ),
-                ),
-                const SizedBox(height: 6),
                 Expanded(
                   child: Center(
                     child: ConstrainedBox(
