@@ -511,8 +511,8 @@ class _PieMenuPainter extends CustomPainter {
     final bottomCenter = center + extrusion;
 
     final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.42)
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 22);
+      ..color = Colors.black.withValues(alpha: 0.36)
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 20);
     canvas.drawOval(
       Rect.fromCenter(
         center: bottomCenter + const Offset(0, 9),
@@ -522,8 +522,8 @@ class _PieMenuPainter extends CustomPainter {
       shadowPaint,
     );
 
-    // Thick side wall: the lower-right extrusion is deliberately visible
-    // so the wheel reads as a solid, machined 3D object.
+    // Thick side wall: keep the extrusion substantial, but let the material
+    // shading—not a hard underside lip—define the depth.
     for (var i = 0; i < itemCount; i++) {
       final start = -math.pi / 2 + i * sweep;
       final end = start + sweep;
@@ -560,36 +560,23 @@ class _PieMenuPainter extends CustomPainter {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color.lerp(light, Colors.black, 0.18)!,
-            Color.lerp(light, Colors.black, 0.44)!,
-            Color.lerp(light, Colors.black, 0.72)!,
-            Color.lerp(light, Colors.black, 0.94)!,
+            Color.lerp(light, Colors.white, 0.06)!,
+            Color.lerp(light, Colors.black, 0.20)!,
+            Color.lerp(light, Colors.black, 0.42)!,
+            Color.lerp(light, Colors.black, 0.68)!,
+            Color.lerp(light, Colors.black, 0.86)!,
           ],
-          stops: const [0.0, 0.28, 0.62, 1.0],
+          stops: const [0.0, 0.12, 0.36, 0.68, 1.0],
         ).createShader(Rect.fromPoints(topStart, bottomEnd));
       canvas.drawPath(wallPath, wallPaint);
     }
 
-    // Strong lower edge: a dark lip makes the physical thickness easy to see.
-    final undersideEdge = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.8
-      ..strokeCap = StrokeCap.round
-      ..color = Colors.black.withValues(alpha: 0.64);
-    canvas.drawArc(
-      Rect.fromCircle(center: bottomCenter, radius: outerRadius - 0.4),
-      0.08,
-      math.pi - 0.16,
-      false,
-      undersideEdge,
-    );
-
     // Keep the five physical slices visually separated down the extrusion.
     final sideSeamPaint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.1
+      ..strokeWidth = 0.85
       ..strokeCap = StrokeCap.butt
-      ..color = Colors.black.withValues(alpha: 0.58);
+      ..color = Colors.black.withValues(alpha: 0.42);
     for (var i = 0; i < itemCount; i++) {
       final angle = -math.pi / 2 + i * sweep;
       canvas.drawLine(
@@ -624,21 +611,23 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      // Deeper metallic face: concentrated highlight, clean base color,
-      // then a longer shadow that gives the slice a rounded material feel.
+      // Polished metallic face: a crisp specular highlight, stable module
+      // color through the midtone, then a long controlled falloff into shadow.
       final paint = Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color.lerp(light, Colors.white, selected ? 0.22 : 0.16)!,
-            Color.lerp(light, Colors.white, selected ? 0.07 : 0.04)!,
+            Color.lerp(light, Colors.white, selected ? 0.30 : 0.24)!,
+            Color.lerp(light, Colors.white, selected ? 0.12 : 0.08)!,
             light,
-            Color.lerp(light, Colors.black, selected ? 0.18 : 0.24)!,
-            Color.lerp(light, Colors.black, selected ? 0.46 : 0.54)!,
-            Color.lerp(light, Colors.black, selected ? 0.76 : 0.84)!,
+            Color.lerp(light, Colors.black, selected ? 0.08 : 0.12)!,
+            Color.lerp(light, Colors.black, selected ? 0.28 : 0.34)!,
+            Color.lerp(light, Colors.black, selected ? 0.50 : 0.58)!,
+            Color.lerp(light, Colors.black, selected ? 0.70 : 0.76)!,
+            Color.lerp(light, Colors.black, selected ? 0.84 : 0.90)!,
           ],
-          stops: const [0.0, 0.08, 0.21, 0.43, 0.70, 1.0],
+          stops: const [0.0, 0.055, 0.14, 0.28, 0.46, 0.66, 0.84, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, paint);
 
@@ -669,6 +658,21 @@ class _PieMenuPainter extends CustomPainter {
         lowerFaceBevel,
       );
 
+      // Narrow specular reflection band: the bright hit stays inside the face
+      // so the metallic finish reads without creating a hard underside lip.
+      final specularPaint = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = selected ? 1.15 : 0.9
+        ..strokeCap = StrokeCap.round
+        ..color = Colors.white.withValues(alpha: selected ? 0.20 : 0.14);
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: outerRadius - 2.6),
+        start + 0.07,
+        sweep * 0.29,
+        false,
+        specularPaint,
+      );
+
       if (selected) {
         final selectedEdge = Paint()
           ..style = PaintingStyle.stroke
@@ -697,8 +701,7 @@ class _PieMenuPainter extends CustomPainter {
       );
     }
 
-    // Thin top rim plus contrasting bevels make the face read like a
-    // solid machined disc rather than a flat painted circle.
+    // Thin top rim and controlled bevels finish the polished machined face.
     final rimPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.1
@@ -734,17 +737,6 @@ class _PieMenuPainter extends CustomPainter {
       lowerBevel,
     );
 
-    final undersideRim = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0
-      ..color = Colors.black.withValues(alpha: 0.42);
-    canvas.drawArc(
-      Rect.fromCircle(center: center.translate(0, depth), radius: outerRadius),
-      0.18,
-      math.pi - 0.36,
-      false,
-      undersideRim,
-    );
   }
 
   static int? indexAt(Offset position, Size size, {required int itemCount}) {
