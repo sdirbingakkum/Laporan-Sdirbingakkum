@@ -55,7 +55,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Konfigurasi aplikasi belum lengkap'), findsOneWidget);
+    expect(find.text('KONFIGURASI APLIKASI BELUM LENGKAP'), findsOneWidget);
   });
 
   testWidgets('sign in page renders responsive form without extra footer', (
@@ -64,10 +64,10 @@ void main() {
     await _pumpSignInAtSize(tester, const Size(390, 844));
 
     expect(find.byType(SignInPage), findsOneWidget);
-    expect(find.text('Akses Sistem'), findsOneWidget);
-    expect(find.text('Email'), findsOneWidget);
-    expect(find.text('Password'), findsOneWidget);
-    expect(find.text('Masuk'), findsOneWidget);
+    expect(find.text('AKSES SISTEM'), findsOneWidget);
+    expect(find.text('EMAIL'), findsOneWidget);
+    expect(find.text('PASSWORD'), findsOneWidget);
+    expect(find.text('MASUK'), findsOneWidget);
     expect(find.text('Akun terdaftar di lingkungan PUSPOMAD'), findsNothing);
     expect(find.text('© 2026 PUSPOMAD'), findsNothing);
     expect(find.byType(Scrollable), findsNothing);
@@ -80,7 +80,7 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.byType(Scrollable), findsNothing);
-    expect(find.text('Masuk'), findsOneWidget);
+    expect(find.text('MASUK'), findsOneWidget);
   });
 
   testWidgets('sign in fits a narrow short viewport without overflow', (
@@ -90,18 +90,18 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.byType(Scrollable), findsNothing);
-    expect(find.text('Masuk'), findsOneWidget);
+    expect(find.text('MASUK'), findsOneWidget);
   });
 
   testWidgets('sign in form validates required fields', (tester) async {
     await _pumpSignInAtSize(tester, const Size(390, 844));
 
-    final signInButton = find.widgetWithText(FilledButton, 'Masuk');
+    final signInButton = find.widgetWithText(FilledButton, 'MASUK');
     await tester.tap(signInButton);
     await tester.pump();
 
-    expect(find.text('Email wajib diisi.'), findsOneWidget);
-    expect(find.text('Password wajib diisi.'), findsOneWidget);
+    expect(find.text('EMAIL wajib diisi.'), findsOneWidget);
+    expect(find.text('PASSWORD wajib diisi.'), findsOneWidget);
   });
 
   testWidgets('post-login header is fixed and unframed', (tester) async {
@@ -119,11 +119,11 @@ void main() {
     expect(find.byType(HomePage), findsOneWidget);
     expect(find.text('SEMUA STATISTIK'), findsOneWidget);
     expect(find.text('SDIRBINGAKKUM'), findsOneWidget);
-    expect(find.text('Statistik Pelanggaran'), findsOneWidget);
-    expect(find.text('Statistik Laka-lalin'), findsOneWidget);
-    expect(find.text('Statistik SIM TNI'), findsOneWidget);
-    expect(find.text('Statistik K9'), findsOneWidget);
-    expect(find.text('Statistik Provos TNI-AD'), findsOneWidget);
+    expect(find.text('STATISTIK PELANGGARAN'), findsOneWidget);
+    expect(find.text('STATISTIK LAKA-LALIN'), findsOneWidget);
+    expect(find.text('STATISTIK SIM TNI'), findsOneWidget);
+    expect(find.text('STATISTIK K9'), findsOneWidget);
+    expect(find.text('STATISTIK PROVOS TNI-AD'), findsOneWidget);
     expect(find.byIcon(Icons.gavel_rounded), findsOneWidget);
     expect(find.byType(Scrollable), findsNothing);
     expect(tester.takeException(), isNull);
@@ -227,7 +227,7 @@ void main() {
 
     expect(find.byType(StatisticsPage), findsOneWidget);
     expect(find.byType(SingleChildScrollView), findsNothing);
-    expect(find.text('Statistik K9'), findsNothing);
+    expect(find.text('STATISTIK K9'), findsNothing);
     expect(find.byIcon(Icons.arrow_back_rounded), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
