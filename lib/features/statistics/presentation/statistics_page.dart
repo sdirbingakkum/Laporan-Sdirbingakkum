@@ -775,18 +775,8 @@ class _K9Report extends StatelessWidget {
   ];
 
   static const _units = <_K9UnitData>[
-    _K9UnitData(
-      name: 'YONPOMAD PUSPOMAD',
-      actual: 17,
-      org: 12,
-      shortage: null,
-    ),
-    _K9UnitData(
-      name: 'POMDAM JAYA',
-      actual: 10,
-      org: 18,
-      shortage: 8,
-    ),
+    _K9UnitData(name: 'YONPOMAD PUSPOMAD', actual: 17, org: 12, shortage: null),
+    _K9UnitData(name: 'POMDAM JAYA', actual: 10, org: 18, shortage: 8),
   ];
 
   @override
@@ -810,10 +800,7 @@ class _K9Report extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: _AnimatedStatCard(
-                card: _metrics[0],
-                delay: Duration.zero,
-              ),
+              child: _AnimatedStatCard(card: _metrics[0], delay: Duration.zero),
             ),
             SizedBox(width: 16),
             Expanded(
