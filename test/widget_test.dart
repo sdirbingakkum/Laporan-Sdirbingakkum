@@ -22,7 +22,7 @@ void main() {
       const ProviderScope(child: MaterialApp(home: SignInPage())),
     );
 
-    expect(find.text('Selamat datang kembali'), findsOneWidget);
+    expect(find.text('Akses Sistem'), findsOneWidget);
     expect(find.text('Email'), findsOneWidget);
     expect(find.text('Password'), findsOneWidget);
     expect(find.text('Masuk'), findsOneWidget);
