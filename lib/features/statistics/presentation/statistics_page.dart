@@ -148,6 +148,7 @@ class StatisticsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasContent = module != StatisticsModule.k9;
     return Scaffold(
+      key: ValueKey('statistics-' + module.name),
       backgroundColor: _bg,
       body: Stack(
         children: [
@@ -163,12 +164,19 @@ class StatisticsPage extends StatelessWidget {
                         constraints: const BoxConstraints(maxWidth: 760),
                         child: Column(
                           children: [
-                            Image.asset(
-                              'assets/images/pomad_puspomad.webp',
-                              width: 150,
-                              height: 100,
-                              fit: BoxFit.contain,
-                              semanticLabel: 'Logo PUSPOMAD',
+                            SizedBox(
+                              width: 170,
+                              height: 112,
+                              child: ClipRect(
+                                child: Transform.scale(
+                                  scale: 1.48,
+                                  child: Image.asset(
+                                    'assets/images/pomad_puspomad.webp',
+                                    fit: BoxFit.contain,
+                                    semanticLabel: 'Logo PUSPOMAD',
+                                  ),
+                                ),
+                              ),
                             ),
                             if (hasContent)
                               _ContentBody(
