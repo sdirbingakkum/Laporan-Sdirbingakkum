@@ -4,6 +4,16 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/auth_repository.dart';
 
+const _bg = Color(0xFF03150F);
+const _surface = Color(0xFF09231A);
+const _surfaceSoft = Color(0xFF0D2C20);
+const _gold = Color(0xFFD7A93C);
+const _goldLight = Color(0xFFF1D37A);
+const _goldDark = Color(0xFF8D651E);
+const _text = Color(0xFFF8F5EC);
+const _muted = Color(0xFFB7C2BC);
+const _line = Color(0xFF6E7C73);
+
 class SignInPage extends ConsumerStatefulWidget {
   const SignInPage({super.key});
 
@@ -12,15 +22,6 @@ class SignInPage extends ConsumerStatefulWidget {
 }
 
 class _SignInPageState extends ConsumerState<SignInPage> {
-  static const _bg = Color(0xFF03150F);
-  static const _surface = Color(0xFF09231A);
-  static const _surfaceSoft = Color(0xFF0D2C20);
-  static const _gold = Color(0xFFD7A93C);
-  static const _goldLight = Color(0xFFF1D37A);
-  static const _goldDark = Color(0xFF8D651E);
-  static const _text = Color(0xFFF8F5EC);
-  static const _muted = Color(0xFFB7C2BC);
-  static const _line = Color(0xFF6E7C73);
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
