@@ -424,11 +424,11 @@ class _PieMenuLabel extends StatelessWidget {
                         end: Alignment.bottomRight,
                         colors: [
                           Colors.white.withValues(
-                            alpha: selected ? 0.070 : 0.040,
+                            alpha: selected ? 0.080 : 0.050,
                           ),
-                          selected
-                              ? item.lightColor.withValues(alpha: 0.085)
-                              : Colors.white.withValues(alpha: 0.014),
+                          item.lightColor.withValues(
+                            alpha: selected ? 0.105 : 0.055,
+                          ),
                           const Color(0xFF06120D).withValues(alpha: 0.62),
                         ],
                         stops: const [0.0, 0.42, 1.0],
@@ -452,8 +452,8 @@ class _PieMenuLabel extends StatelessWidget {
                     child: Icon(
                       item.icon,
                       color: selected
-                          ? item.lightColor.withValues(alpha: 0.88)
-                          : Colors.white.withValues(alpha: 0.80),
+                          ? item.lightColor.withValues(alpha: 0.92)
+                          : item.lightColor.withValues(alpha: 0.72),
                       size: compact ? 15 : 18,
                     ),
                   ),
@@ -489,20 +489,22 @@ class _PieMenuPainter extends CustomPainter {
   final int itemCount;
   final int selectedIndex;
 
+  // Distinct module colors are preserved, but used as translucent glass tints
+  // rather than opaque painted wedges.
   static const _lightPalette = <Color>[
-    Color(0xFFBA986A),
-    Color(0xFFAE777B),
-    Color(0xFF7890B1),
-    Color(0xFFB0A074),
-    Color(0xFF7DA28E),
+    Color(0xFFE3A15F), // orange
+    Color(0xFFD47C7B), // red
+    Color(0xFF7EA5D8), // blue
+    Color(0xFFD8B962), // gold
+    Color(0xFF76B18E), // green
   ];
 
   static const _darkPalette = <Color>[
-    Color(0xFF55412F),
-    Color(0xFF493136),
-    Color(0xFF344252),
-    Color(0xFF534A32),
-    Color(0xFF2F4A3B),
+    Color(0xFF6A4428),
+    Color(0xFF61383D),
+    Color(0xFF314B68),
+    Color(0xFF625329),
+    Color(0xFF2F5843),
   ];
 
   @override
@@ -551,29 +553,28 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      // Glass tint: near-neutral, with only a restrained trace of module color.
+      // Colored glass: vivid enough to distinguish each module, but still
+      // translucent so the shared background and blur remain visible.
       final paint = Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withValues(alpha: selected ? 0.060 : 0.038),
-            light.withValues(alpha: selected ? 0.075 : 0.032),
-            dark.withValues(alpha: selected ? 0.040 : 0.022),
+            Colors.white.withValues(alpha: selected ? 0.085 : 0.055),
+            light.withValues(alpha: selected ? 0.16 : 0.105),
+            dark.withValues(alpha: selected ? 0.115 : 0.075),
+            const Color(0xFF020A07).withValues(alpha: 0.26),
           ],
-          stops: const [0.0, 0.46, 1.0],
+          stops: const [0.0, 0.28, 0.70, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, paint);
 
-      // Selected wedge gets only a thin luminous edge, not a solid highlight.
-      if (selected) {
-        final selectedRing = Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.0
-          ..color = light.withValues(alpha: 0.26)
-          ..maskFilter = MaskFilter.blur(BlurStyle.normal, 1.5);
-        canvas.drawPath(path, selectedRing);
-      }
+      // Hairline color rim: enough polish to read as glass, never a hard block.
+      final rim = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = selected ? 1.05 : 0.75
+        ..color = light.withValues(alpha: selected ? 0.42 : 0.22);
+      canvas.drawPath(path, rim);
     }
 
     // Fine glass seams.
@@ -581,7 +582,7 @@ class _PieMenuPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.7
       ..strokeCap = StrokeCap.butt
-      ..color = Colors.white.withValues(alpha: 0.10);
+      ..color = Colors.white.withValues(alpha: 0.075);
 
     for (var i = 0; i < itemCount; i++) {
       final angle = -math.pi / 2 + i * sweep;
