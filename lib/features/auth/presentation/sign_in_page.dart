@@ -7,7 +7,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../data/auth_repository.dart';
 
 const _bg = Color(0xFF03150F);
-const _surface = Color(0xFF09231A);
 const _surfaceSoft = Color(0xFF0D2C20);
 const _gold = Color(0xFFD7A93C);
 const _goldLight = Color(0xFFF1D37A);
