@@ -763,23 +763,12 @@ class _GlassStatCard extends StatelessWidget {
   }
 }
 
-
 class _K9Report extends StatelessWidget {
   const _K9Report();
 
   static const _units = <_K9UnitData>[
-    _K9UnitData(
-      name: 'YONPOMAD PUSPOMAD',
-      actual: 17,
-      org: 12,
-      shortage: null,
-    ),
-    _K9UnitData(
-      name: 'POMDAM JAYA',
-      actual: 10,
-      org: 18,
-      shortage: 8,
-    ),
+    _K9UnitData(name: 'YONPOMAD PUSPOMAD', actual: 17, org: 12, shortage: null),
+    _K9UnitData(name: 'POMDAM JAYA', actual: 10, org: 18, shortage: 8),
   ];
 
   @override
@@ -867,11 +856,7 @@ class _K9HeaderCard extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Color(0x241F4D3A),
-                Color(0x160A2419),
-                Color(0x240E160F),
-              ],
+              colors: [Color(0x241F4D3A), Color(0x160A2419), Color(0x240E160F)],
             ),
             border: Border.all(color: _gold.withValues(alpha: 0.20)),
             boxShadow: const [
@@ -1066,10 +1051,7 @@ Future<void> _showK9AnalysisSheet(
                 ],
               ),
               border: Border(
-                top: BorderSide(
-                  color: _gold.withValues(alpha: 0.24),
-                  width: 1,
-                ),
+                top: BorderSide(color: _gold.withValues(alpha: 0.24), width: 1),
               ),
               boxShadow: const [
                 BoxShadow(
@@ -1124,8 +1106,9 @@ Future<void> _showK9AnalysisSheet(
                     separatorBuilder: (_, index) => const SizedBox(height: 20),
                     itemBuilder: (context, index) {
                       final unit = units[index];
-                      final width =
-                          maxValue == 0 ? 0.0 : unit.actual / maxValue;
+                      final width = maxValue == 0
+                          ? 0.0
+                          : unit.actual / maxValue;
 
                       return InkWell(
                         borderRadius: BorderRadius.circular(8),
@@ -1211,10 +1194,7 @@ Future<void> _showK9AnalysisSheet(
   );
 }
 
-Future<void> _showK9UnitSheet(
-  BuildContext context,
-  _K9UnitData unit,
-) async {
+Future<void> _showK9UnitSheet(BuildContext context, _K9UnitData unit) async {
   await showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
@@ -1238,10 +1218,7 @@ Future<void> _showK9UnitSheet(
                 ],
               ),
               border: Border(
-                top: BorderSide(
-                  color: _gold.withValues(alpha: 0.24),
-                  width: 1,
-                ),
+                top: BorderSide(color: _gold.withValues(alpha: 0.24), width: 1),
               ),
             ),
             child: Column(
