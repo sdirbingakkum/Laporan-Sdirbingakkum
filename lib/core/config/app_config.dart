@@ -8,7 +8,11 @@ class AppConfig {
       'SUPABASE_URL',
       defaultValue: 'https://ybepaqmrrgsaeqnqrsrf.supabase.co',
     );
-    const key = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
+    const key = String.fromEnvironment(
+      'SUPABASE_PUBLISHABLE_KEY',
+      defaultValue:
+          'sb_publishable_2G1L_dvjx5o99fTwcgvwYw_zDrzc0N-',
+    );
 
     return const AppConfig(supabaseUrl: url, publishableKey: key);
   }
