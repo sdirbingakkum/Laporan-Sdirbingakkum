@@ -33,7 +33,9 @@ void main() {
       const ProviderScope(child: MaterialApp(home: SignInPage())),
     );
 
-    await tester.tap(find.text('Masuk'));
+    final signInButton = find.widgetWithText(FilledButton, 'Masuk');
+    await tester.ensureVisible(signInButton);
+    await tester.tap(signInButton);
     await tester.pump();
 
     expect(find.text('Email wajib diisi.'), findsOneWidget);
