@@ -567,7 +567,7 @@ class _PieMenuLabel extends StatelessWidget {
                   boxShadow: selected
                       ? [
                           BoxShadow(
-                            color: _gold.withValues(alpha: 0.18),
+                            color: item.lightColor.withValues(alpha: 0.16),
                             blurRadius: 18,
                           ),
                         ]
