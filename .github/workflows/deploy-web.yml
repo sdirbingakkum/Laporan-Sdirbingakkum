@@ -1,9 +1,14 @@
-name: Build Flutter Web Artifact
+name: Build Flutter Web Preview
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
-  workflow_dispatch:
+    paths:
+      - "lib/**"
+      - "web/**"
+      - "pubspec.yaml"
+      - ".github/workflows/deploy-web.yml"
 
 permissions:
   contents: read
@@ -17,6 +22,7 @@ env:
 
 jobs:
   build-web:
+    name: Build Web Preview Artifact
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -36,23 +42,14 @@ jobs:
       - name: Dependencies
         run: flutter pub get
 
-      - name: Validate publishable key
-        env:
-          KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
-        run: |
-          if [ -z "$KEY" ]; then
-            echo "::error::Missing GitHub Actions secret SUPABASE_PUBLISHABLE_KEY"
-            exit 1
-          fi
-
       - name: Build Web
         env:
-          KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
         run: |
           flutter build web --release \
             --base-href "/Laporan-Sdirbingakkum/" \
             --dart-define=SUPABASE_URL=https://ybepaqmrrgsaeqnqrsrf.supabase.co \
-            --dart-define=SUPABASE_PUBLISHABLE_KEY="$KEY"
+            --dart-define=SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY"
 
       - name: SPA fallback
         run: cp build/web/index.html build/web/404.html
@@ -60,7 +57,7 @@ jobs:
       - name: Upload Web artifact
         uses: actions/upload-artifact@v4
         with:
-          name: flutter-web-release
+          name: flutter-web-preview
           path: build/web
           if-no-files-found: error
           retention-days: 7
