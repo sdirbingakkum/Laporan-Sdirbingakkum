@@ -121,7 +121,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
   }
 
-  void _selectMenu(int index) async {
+  Future<void> _selectMenu(int index) async {
     if (_navigationInProgress) {
       return;
     }
@@ -137,7 +137,13 @@ class _HomePageState extends ConsumerState<HomePage> {
       return;
     }
 
-    context.push(_items[index].route);
+    await context.push(_items[index].route);
+
+    if (mounted) {
+      setState(() {
+        _navigationInProgress = false;
+      });
+    }
   }
 
   @override
