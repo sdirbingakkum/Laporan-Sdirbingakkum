@@ -1,10 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AppConfig {
-  const AppConfig({
-    required this.supabaseUrl,
-    required this.publishableKey,
-  });
+  const AppConfig({required this.supabaseUrl, required this.publishableKey});
 
   static AppConfig fromEnvironment() {
     const url = String.fromEnvironment(
@@ -13,10 +10,7 @@ class AppConfig {
     );
     const key = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
 
-    return const AppConfig(
-      supabaseUrl: url,
-      publishableKey: key,
-    );
+    return const AppConfig(supabaseUrl: url, publishableKey: key);
   }
 
   final String supabaseUrl;
