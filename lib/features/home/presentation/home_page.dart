@@ -522,11 +522,7 @@ class _PieMenuPainter extends CustomPainter {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: selected
-              ? [
-                  light,
-                  middle,
-                  dark,
-                ]
+              ? [light, middle, dark]
               : [
                   light.withValues(alpha: 0.94),
                   middle.withValues(alpha: 0.94),
