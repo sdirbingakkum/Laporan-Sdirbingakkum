@@ -249,11 +249,7 @@ class _ContentBody extends StatelessWidget {
             children: [
               for (var index = 0; index < columns.length; index++) ...[
                 if (index > 0) const SizedBox(width: 16),
-                Expanded(
-                  child: _StatsColumnView(
-                    column: columns[index],
-                  ),
-                ),
+                Expanded(child: _StatsColumnView(column: columns[index])),
               ],
             ],
           ),
@@ -261,7 +257,8 @@ class _ContentBody extends StatelessWidget {
         if (ranking.isNotEmpty)
           _AnalysisButton(
             accent: accent,
-            onPressed: () => _showRankingSheet(context, module, ranking, accent),
+            onPressed: () =>
+                _showRankingSheet(context, module, ranking, accent),
           ),
       ],
     );
@@ -344,9 +341,7 @@ Future<void> _showRankingSheet(
       final title = _moduleTitleForSheet(module);
 
       return ClipRRect(
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(24),
-        ),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         child: BackdropFilter(
           filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
           child: Container(
@@ -431,10 +426,7 @@ Future<void> _showRankingSheet(
                           borderRadius: BorderRadius.circular(6.4),
                         ),
                       ),
-                      icon: const Icon(
-                        Icons.close_rounded,
-                        size: 18,
-                      ),
+                      icon: const Icon(Icons.close_rounded, size: 18),
                     ),
                   ],
                 ),
@@ -442,19 +434,15 @@ Future<void> _showRankingSheet(
                 Expanded(
                   child: ListView.separated(
                     itemCount: ranking.length,
-                    separatorBuilder: (_, index) =>
-                        const SizedBox(height: 20),
+                    separatorBuilder: (_, index) => const SizedBox(height: 20),
                     itemBuilder: (context, index) {
                       final item = ranking[index];
                       final fill = index == 0 ? accent : _emerald;
-                      final width =
-                          maxValue == 0 ? 0.0 : item.value / maxValue;
+                      final width = maxValue == 0 ? 0.0 : item.value / maxValue;
 
                       return TweenAnimationBuilder<double>(
                         tween: Tween(begin: 0, end: width),
-                        duration: Duration(
-                          milliseconds: 750 + index * 120,
-                        ),
+                        duration: Duration(milliseconds: 750 + index * 120),
                         curve: Curves.easeOutCubic,
                         builder: (context, progress, _) {
                           return Column(
@@ -492,9 +480,7 @@ Future<void> _showRankingSheet(
                                 child: Container(
                                   height: 12,
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withValues(
-                                      alpha: 0.22,
-                                    ),
+                                    color: Colors.black.withValues(alpha: 0.22),
                                     border: Border.all(
                                       color: Colors.white.withValues(
                                         alpha: 0.05,
@@ -681,9 +667,7 @@ class _GlassStatCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.03),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.08),
-            ),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
             boxShadow: const [
               BoxShadow(
                 color: Colors.black12,
@@ -718,10 +702,7 @@ class _GlassStatCard extends StatelessWidget {
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       border: Border(
-                        left: BorderSide(
-                          color: cardAccent,
-                          width: 3,
-                        ),
+                        left: BorderSide(color: cardAccent, width: 3),
                       ),
                     ),
                   ),
@@ -794,7 +775,6 @@ class _StatisticsBackdrop extends StatelessWidget {
     return CustomPaint(painter: _StatisticsBackdropPainter());
   }
 }
-
 
 class _StatisticsBackdropPainter extends CustomPainter {
   @override
