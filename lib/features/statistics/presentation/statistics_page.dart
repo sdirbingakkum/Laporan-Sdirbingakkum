@@ -11,10 +11,7 @@ const _muted = Color(0xFFB7C2BC);
 enum StatisticsModule { pelanggaran, lakaLalin, simTni, k9, provos }
 
 class StatisticsPage extends StatelessWidget {
-  const StatisticsPage({
-    required this.module,
-    super.key,
-  });
+  const StatisticsPage({required this.module, super.key});
 
   final StatisticsModule module;
 
@@ -179,10 +176,7 @@ class StatisticsPage extends StatelessWidget {
                               ),
                             ),
                             if (hasContent)
-                              _ContentBody(
-                                columns: columns,
-                                ranking: ranking,
-                              ),
+                              _ContentBody(columns: columns, ranking: ranking),
                           ],
                         ),
                       ),
@@ -219,10 +213,7 @@ class StatisticsPage extends StatelessWidget {
 }
 
 class _ContentBody extends StatelessWidget {
-  const _ContentBody({
-    required this.columns,
-    required this.ranking,
-  });
+  const _ContentBody({required this.columns, required this.ranking});
 
   final List<_StatColumn> columns;
   final List<_RankData> ranking;
@@ -256,9 +247,7 @@ class _ContentBody extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         if (ranking.isNotEmpty)
-          _AnalysisButton(
-            onPressed: () => _showRankingSheet(context, ranking),
-          ),
+          _AnalysisButton(onPressed: () => _showRankingSheet(context, ranking)),
       ],
     );
   }
@@ -284,9 +273,7 @@ Future<void> _showRankingSheet(
         decoration: const BoxDecoration(
           color: _surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-          border: Border(
-            top: BorderSide(color: _gold, width: 0.8),
-          ),
+          border: Border(top: BorderSide(color: _gold, width: 0.8)),
         ),
         child: Column(
           children: [
@@ -358,8 +345,9 @@ Future<void> _showRankingSheet(
                           minHeight: 9,
                           value: maxValue == 0 ? 0 : item.value / maxValue,
                           backgroundColor: Colors.black38,
-                          valueColor:
-                              const AlwaysStoppedAnimation<Color>(_goldLight),
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                            _goldLight,
+                          ),
                         ),
                       ),
                     ],
@@ -386,10 +374,7 @@ class _AnalysisButton extends StatelessWidget {
       icon: const Icon(Icons.bar_chart_rounded, size: 18),
       label: const Text(
         'ANALISIS STATISTIK',
-        style: TextStyle(
-          fontWeight: FontWeight.w900,
-          letterSpacing: 1.7,
-        ),
+        style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.7),
       ),
       style: FilledButton.styleFrom(
         backgroundColor: _surface.withValues(alpha: 0.88),
@@ -437,9 +422,7 @@ class _StatsColumnView extends StatelessWidget {
               decoration: BoxDecoration(
                 color: _surfaceSoft.withValues(alpha: 0.90),
                 borderRadius: BorderRadius.circular(15),
-                border: Border(
-                  left: BorderSide(color: card.color, width: 3),
-                ),
+                border: Border(left: BorderSide(color: card.color, width: 3)),
                 boxShadow: const [
                   BoxShadow(
                     color: Colors.black26,
@@ -484,10 +467,7 @@ class _StatsColumnView extends StatelessWidget {
 }
 
 class _StatColumn {
-  const _StatColumn({
-    required this.label,
-    required this.cards,
-  });
+  const _StatColumn({required this.label, required this.cards});
 
   final String label;
   final List<_StatCardData> cards;

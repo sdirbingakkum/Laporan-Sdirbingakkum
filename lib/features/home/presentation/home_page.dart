@@ -71,10 +71,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           backgroundColor: _surface,
           title: const Text(
             'Keluar dari sistem?',
-            style: TextStyle(
-              color: _text,
-              fontWeight: FontWeight.w800,
-            ),
+            style: TextStyle(color: _text, fontWeight: FontWeight.w800),
           ),
           content: const Text(
             'Sesi Anda akan diakhiri dan Anda akan kembali ke halaman Sign In.',
@@ -157,9 +154,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
-                  child: _MenuHeader(
-                    onSignOut: _confirmSignOut,
-                  ),
+                  child: _MenuHeader(onSignOut: _confirmSignOut),
                 ),
                 const SizedBox(height: 10),
                 const Text(
@@ -289,9 +284,7 @@ class _MenuHeader extends StatelessWidget {
               decoration: BoxDecoration(
                 color: _surface.withValues(alpha: 0.84),
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: _gold.withValues(alpha: 0.24),
-                ),
+                border: Border.all(color: _gold.withValues(alpha: 0.24)),
               ),
               child: PopupMenuButton<String>(
                 tooltip: 'Menu akun',
@@ -364,9 +357,7 @@ class _PieMenu extends StatelessWidget {
             behavior: HitTestBehavior.opaque,
             onTapUp: (details) {
               final box = context.findRenderObject() as RenderBox;
-              final localPosition = box.globalToLocal(
-                details.globalPosition,
-              );
+              final localPosition = box.globalToLocal(details.globalPosition);
               final index = _PieMenuPainter.indexAt(
                 localPosition,
                 box.size,
@@ -418,9 +409,7 @@ class _PieMenuCenter extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          gradient: const RadialGradient(
-            colors: [_surfaceSoft, _surface],
-          ),
+          gradient: const RadialGradient(colors: [_surfaceSoft, _surface]),
           border: Border.all(
             color: item.lightColor.withValues(alpha: 0.72),
             width: 1.4,
@@ -446,10 +435,7 @@ class _PieMenuCenter extends StatelessWidget {
             transitionBuilder: (child, animation) {
               return ScaleTransition(
                 scale: animation,
-                child: FadeTransition(
-                  opacity: animation,
-                  child: child,
-                ),
+                child: FadeTransition(opacity: animation, child: child),
               );
             },
             child: Column(
@@ -514,8 +500,7 @@ class _PieMenuLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     final outerRadius = diameter * 0.43;
     final labelRadius = outerRadius * 0.69;
-    final angle =
-        -math.pi / 2 + (2 * math.pi / itemCount) * (index + 0.5);
+    final angle = -math.pi / 2 + (2 * math.pi / itemCount) * (index + 0.5);
     final compact = diameter < 310;
     final labelWidth = (diameter * 0.30).clamp(72.0, 108.0).toDouble();
     final iconSize = compact ? 31.0 : 37.0;
@@ -591,10 +576,7 @@ class _PieMenuLabel extends StatelessWidget {
 }
 
 class _PieMenuPainter extends CustomPainter {
-  const _PieMenuPainter({
-    required this.itemCount,
-    required this.selectedIndex,
-  });
+  const _PieMenuPainter({required this.itemCount, required this.selectedIndex});
 
   final int itemCount;
   final int selectedIndex;
@@ -621,14 +603,10 @@ class _PieMenuPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
     final outerRadius = size.shortestSide * 0.43;
-    final sweep =
-        (2 * math.pi - (_segmentGap * itemCount)) / itemCount;
+    final sweep = (2 * math.pi - (_segmentGap * itemCount)) / itemCount;
 
     for (var i = 0; i < itemCount; i++) {
-      final start =
-          -math.pi / 2 +
-          i * (sweep + _segmentGap) +
-          _segmentGap / 2;
+      final start = -math.pi / 2 + i * (sweep + _segmentGap) + _segmentGap / 2;
       final selected = i == selectedIndex;
       final radius = outerRadius + (selected ? 4 : 0);
       final light = _lightPalette[i];
@@ -658,9 +636,7 @@ class _PieMenuPainter extends CustomPainter {
             dark,
           ],
           stops: const [0.0, 0.45, 1.0],
-        ).createShader(
-          Rect.fromCircle(center: center, radius: radius),
-        );
+        ).createShader(Rect.fromCircle(center: center, radius: radius));
 
       canvas.drawPath(path, paint);
 
@@ -673,11 +649,7 @@ class _PieMenuPainter extends CustomPainter {
     }
   }
 
-  static int? indexAt(
-    Offset position,
-    Size size, {
-    required int itemCount,
-  }) {
+  static int? indexAt(Offset position, Size size, {required int itemCount}) {
     final center = size.center(Offset.zero);
     final dx = position.dx - center.dx;
     final dy = position.dy - center.dy;
@@ -694,8 +666,7 @@ class _PieMenuPainter extends CustomPainter {
       angle += 2 * math.pi;
     }
 
-    final sweep =
-        (2 * math.pi - (_segmentGap * itemCount)) / itemCount;
+    final sweep = (2 * math.pi - (_segmentGap * itemCount)) / itemCount;
     final slot = angle / (sweep + _segmentGap);
     final index = slot.floor();
 
@@ -704,8 +675,7 @@ class _PieMenuPainter extends CustomPainter {
     }
 
     final within = angle - index * (sweep + _segmentGap);
-    if (within < _segmentGap / 2 ||
-        within > _segmentGap / 2 + sweep) {
+    if (within < _segmentGap / 2 || within > _segmentGap / 2 + sweep) {
       return null;
     }
 
@@ -772,11 +742,7 @@ class _MenuBackdropPainter extends CustomPainter {
 
     for (var i = 0; i < 7; i++) {
       final y = size.height * 0.74 + i * 15;
-      canvas.drawLine(
-        Offset(-20, y),
-        Offset(size.width * 0.32, y - 50),
-        paint,
-      );
+      canvas.drawLine(Offset(-20, y), Offset(size.width * 0.32, y - 50), paint);
     }
   }
 

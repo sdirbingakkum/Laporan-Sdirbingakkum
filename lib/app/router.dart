@@ -47,33 +47,28 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/', builder: (context, state) => const HomePage()),
       GoRoute(
         path: '/statistik/pelanggaran',
-        builder: (context, state) => const StatisticsPage(
-          module: StatisticsModule.pelanggaran,
-        ),
+        builder: (context, state) =>
+            const StatisticsPage(module: StatisticsModule.pelanggaran),
       ),
       GoRoute(
         path: '/statistik/laka-lalin',
-        builder: (context, state) => const StatisticsPage(
-          module: StatisticsModule.lakaLalin,
-        ),
+        builder: (context, state) =>
+            const StatisticsPage(module: StatisticsModule.lakaLalin),
       ),
       GoRoute(
         path: '/statistik/sim-tni',
-        builder: (context, state) => const StatisticsPage(
-          module: StatisticsModule.simTni,
-        ),
+        builder: (context, state) =>
+            const StatisticsPage(module: StatisticsModule.simTni),
       ),
       GoRoute(
         path: '/statistik/k9',
-        builder: (context, state) => const StatisticsPage(
-          module: StatisticsModule.k9,
-        ),
+        builder: (context, state) =>
+            const StatisticsPage(module: StatisticsModule.k9),
       ),
       GoRoute(
         path: '/statistik/provos',
-        builder: (context, state) => const StatisticsPage(
-          module: StatisticsModule.provos,
-        ),
+        builder: (context, state) =>
+            const StatisticsPage(module: StatisticsModule.provos),
       ),
     ],
   );

@@ -142,9 +142,7 @@ void main() {
 
     await tester.binding.setSurfaceSize(const Size(390, 844));
     await tester.pumpWidget(
-      ProviderScope(
-        child: MaterialApp.router(routerConfig: router),
-      ),
+      ProviderScope(child: MaterialApp.router(routerConfig: router)),
     );
     await tester.pumpAndSettle();
 
@@ -165,9 +163,7 @@ void main() {
 
       expect(find.byType(HomePage), findsNothing);
       expect(
-        find.byKey(
-          ValueKey('statistics-' + modules[index].name),
-        ),
+        find.byKey(ValueKey('statistics-' + modules[index].name)),
         findsOneWidget,
       );
 
@@ -189,36 +185,33 @@ void main() {
     }
   });
 
-  testWidgets(
-    'pie menu remains usable on compact mobile viewports',
-    (tester) async {
-      const sizes = <Size>[
-        Size(390, 844),
-        Size(360, 800),
-        Size(320, 568),
-        Size(280, 480),
-      ];
+  testWidgets('pie menu remains usable on compact mobile viewports', (
+    tester,
+  ) async {
+    const sizes = <Size>[
+      Size(390, 844),
+      Size(360, 800),
+      Size(320, 568),
+      Size(280, 480),
+    ];
 
-      for (final size in sizes) {
-        await _pumpHomeAtSize(tester, size);
-        expect(tester.takeException(), isNull);
-        expect(find.text('SEMUA STATISTIK'), findsOneWidget);
-        expect(find.byType(Scrollable), findsNothing);
+    for (final size in sizes) {
+      await _pumpHomeAtSize(tester, size);
+      expect(tester.takeException(), isNull);
+      expect(find.text('SEMUA STATISTIK'), findsOneWidget);
+      expect(find.byType(Scrollable), findsNothing);
 
-        final gesture = find.byType(GestureDetector).last;
-        final pieSize = tester.getSize(gesture);
-        expect(pieSize.width, lessThanOrEqualTo(size.width - 40));
-        expect(pieSize.height, lessThanOrEqualTo(size.height));
-      }
-    },
-  );
+      final gesture = find.byType(GestureDetector).last;
+      final pieSize = tester.getSize(gesture);
+      expect(pieSize.width, lessThanOrEqualTo(size.width - 40));
+      expect(pieSize.height, lessThanOrEqualTo(size.height));
+    }
+  });
 
   testWidgets('K9 opens as an empty content page', (tester) async {
     await tester.binding.setSurfaceSize(const Size(390, 844));
     await tester.pumpWidget(
-      MaterialApp(
-        home: const StatisticsPage(module: StatisticsModule.k9),
-      ),
+      MaterialApp(home: const StatisticsPage(module: StatisticsModule.k9)),
     );
     await tester.pumpAndSettle();
 
