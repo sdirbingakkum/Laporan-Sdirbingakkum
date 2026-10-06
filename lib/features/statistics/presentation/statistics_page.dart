@@ -438,7 +438,9 @@ Future<void> _showRankingSheet(
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            'TOP 5 POMDAM - $title',
+                            module == StatisticsModule.k9
+                                ? 'DATA K-9'
+                                : 'TOP 5 POMDAM - $title',
                             style: const TextStyle(
                               color: _muted,
                               fontSize: 11,
@@ -833,7 +835,7 @@ class _K9UnitData {
 
   final String name;
   final int actual;
-  final int org;
+  final int? org;
   final int? shortage;
 }
 
