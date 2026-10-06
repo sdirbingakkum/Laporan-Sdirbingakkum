@@ -259,7 +259,7 @@ class _ContentBody extends StatelessWidget {
           const SizedBox(height: 14),
         ],
         if (columns.length == 1)
-          _StatsColumnView(column: columns.first)
+          _StatsColumnView(column: columns.first, accent: accent)
         else
           Row(
             key: const ValueKey('report-period-columns'),
@@ -267,7 +267,12 @@ class _ContentBody extends StatelessWidget {
             children: [
               for (var index = 0; index < columns.length; index++) ...[
                 if (index > 0) const SizedBox(width: 16),
-                Expanded(child: _StatsColumnView(column: columns[index])),
+                Expanded(
+                  child: _StatsColumnView(
+                    column: columns[index],
+                    accent: accent,
+                  ),
+                ),
               ],
             ],
           ),
@@ -634,9 +639,10 @@ class _AnalysisButton extends StatelessWidget {
 }
 
 class _StatsColumnView extends StatelessWidget {
-  const _StatsColumnView({required this.column});
+  const _StatsColumnView({required this.column, required this.accent});
 
   final _StatColumn column;
+  final Color accent;
 
   @override
   Widget build(BuildContext context) {
@@ -657,6 +663,7 @@ class _StatsColumnView extends StatelessWidget {
         for (var index = 0; index < column.cards.length; index++) ...[
           _AnimatedStatCard(
             card: column.cards[index],
+            accent: accent,
             delay: Duration(milliseconds: index * 75),
           ),
           if (index != column.cards.length - 1) const SizedBox(height: 12),
@@ -667,9 +674,14 @@ class _StatsColumnView extends StatelessWidget {
 }
 
 class _AnimatedStatCard extends StatelessWidget {
-  const _AnimatedStatCard({required this.card, required this.delay});
+  const _AnimatedStatCard({
+    required this.card,
+    required this.accent,
+    required this.delay,
+  });
 
   final _StatCardData card;
+  final Color accent;
   final Duration delay;
 
   @override
@@ -678,7 +690,7 @@ class _AnimatedStatCard extends StatelessWidget {
       tween: Tween(begin: 0, end: 1),
       duration: const Duration(milliseconds: 720),
       curve: Curves.easeOutCubic,
-      child: _GlassStatCard(card: card),
+      child: _GlassStatCard(card: card, accent: accent),
       builder: (context, value, child) {
         final progress = ((value * 1.18) - delay.inMilliseconds / 820).clamp(
           0.0,
@@ -703,13 +715,15 @@ class _AnimatedStatCard extends StatelessWidget {
 }
 
 class _GlassStatCard extends StatelessWidget {
-  const _GlassStatCard({required this.card});
+  const _GlassStatCard({required this.card, this.accent});
 
   final _StatCardData card;
+  final Color? accent;
 
   @override
   Widget build(BuildContext context) {
     final cardAccent = card.color;
+    final lineAccent = accent ?? cardAccent;
     return ClipRRect(
       borderRadius: BorderRadius.circular(6.4),
       child: BackdropFilter(
@@ -735,7 +749,7 @@ class _GlassStatCard extends StatelessWidget {
               top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
               right: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
               bottom: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
-              left: BorderSide(color: cardAccent, width: 3),
+              left: BorderSide(color: lineAccent, width: 3),
             ),
             boxShadow: const [
               BoxShadow(
@@ -911,7 +925,9 @@ Future<void> _showK9UnitSheet(BuildContext context, _K9UnitData unit) async {
                   children: [
                     for (var i = 0; i < cards.length; i++) ...[
                       if (i > 0) const SizedBox(width: 10),
-                      Expanded(child: _GlassStatCard(card: cards[i])),
+                      Expanded(
+                        child: _GlassStatCard(card: cards[i], accent: accent),
+                      ),
                     ],
                   ],
                 ),
