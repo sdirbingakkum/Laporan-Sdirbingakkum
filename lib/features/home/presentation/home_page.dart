@@ -510,7 +510,11 @@ class _PieMenuPainter extends CustomPainter {
     final shadowPaint = Paint()
       ..color = Colors.black.withValues(alpha: 0.34)
       ..maskFilter = MaskFilter.blur(BlurStyle.normal, 19);
-    canvas.drawCircle(center + const Offset(0, 11), outerRadius + 1, shadowPaint);
+    canvas.drawCircle(
+      center + const Offset(0, 11),
+      outerRadius + 1,
+      shadowPaint,
+    );
 
     final depth = (size.shortestSide * 0.026).clamp(9.0, 13.0).toDouble();
 
@@ -540,18 +544,19 @@ class _PieMenuPainter extends CustomPainter {
           ..close();
 
         final sidePaint = Paint()
-          ..shader = LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color.lerp(light, Colors.black, 0.46)!,
-              Color.lerp(light, Colors.black, depthFactor)!,
-              Color.lerp(light, Colors.black, 0.90)!,
-            ],
-            stops: const [0.0, 0.55, 1.0],
-          ).createShader(
-            Rect.fromCircle(center: sideCenter, radius: outerRadius),
-          );
+          ..shader =
+              LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color.lerp(light, Colors.black, 0.46)!,
+                  Color.lerp(light, Colors.black, depthFactor)!,
+                  Color.lerp(light, Colors.black, 0.90)!,
+                ],
+                stops: const [0.0, 0.55, 1.0],
+              ).createShader(
+                Rect.fromCircle(center: sideCenter, radius: outerRadius),
+              );
         canvas.drawPath(path, sidePaint);
       }
     }
@@ -682,10 +687,7 @@ class _PieMenuPainter extends CustomPainter {
       ..strokeWidth = 1.0
       ..color = Colors.black.withValues(alpha: 0.42);
     canvas.drawArc(
-      Rect.fromCircle(
-        center: center.translate(0, depth),
-        radius: outerRadius,
-      ),
+      Rect.fromCircle(center: center.translate(0, depth), radius: outerRadius),
       0.18,
       math.pi - 0.36,
       false,
