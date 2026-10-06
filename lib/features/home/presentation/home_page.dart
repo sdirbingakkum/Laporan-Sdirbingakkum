@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../auth/data/auth_repository.dart';
+import '../../../shared/widgets/app_header.dart';
 
 // Responsive geometry is derived from the available mobile/web viewport.
 
@@ -148,17 +149,18 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bg,
+      appBar: AppHeader(
+        title: 'SDIRBINGAKKUM',
+        onSignOut: _confirmSignOut,
+      ),
       body: Stack(
         children: [
           const Positioned.fill(child: _MenuBackdrop()),
           SafeArea(
+            top: false,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
-                  child: _MenuHeader(onSignOut: _confirmSignOut),
-                ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 16),
                 const Text(
                   'SEMUA STATISTIK',
                   style: TextStyle(
@@ -168,7 +170,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     letterSpacing: 4.0,
                   ),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
                 Expanded(
                   child: Center(
                     child: ConstrainedBox(
@@ -192,136 +194,6 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _MenuHeader extends StatelessWidget {
-  const _MenuHeader({required this.onSignOut});
-
-  final VoidCallback onSignOut;
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final compact = constraints.maxWidth < 340;
-        final logoWidth = compact ? 76.0 : 92.0;
-        final logoHeight = compact ? 60.0 : 72.0;
-        final titleSize = compact ? 18.0 : 22.0;
-        final titleLetterSpacing = compact ? 0.8 : 1.1;
-
-        return Row(
-          children: [
-            Container(
-              width: logoWidth,
-              height: logoHeight,
-              decoration: BoxDecoration(
-                color: _surface.withValues(alpha: 0.72),
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(
-                  color: _gold.withValues(alpha: 0.50),
-                  width: 1.1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: _gold.withValues(alpha: 0.16),
-                    blurRadius: 24,
-                    offset: const Offset(0, 9),
-                  ),
-                ],
-              ),
-              child: ClipRect(
-                child: Transform.scale(
-                  scale: 1.48,
-                  child: Image.asset(
-                    'assets/images/pomad_puspomad.webp',
-                    fit: BoxFit.contain,
-                    semanticLabel: 'Logo PUSPOMAD',
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'SDIRBINGAKKUM',
-                    style: TextStyle(
-                      color: _goldLight,
-                      fontFamily: 'serif',
-                      fontSize: titleSize,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: titleLetterSpacing,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  const Text(
-                    'P U S P O M A D',
-                    style: TextStyle(
-                      color: _text,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2.5,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Sistem Laporan Bidang Gakkum',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: _muted,
-                      fontSize: 9.5,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              decoration: BoxDecoration(
-                color: _surface.withValues(alpha: 0.84),
-                shape: BoxShape.circle,
-                border: Border.all(color: _gold.withValues(alpha: 0.24)),
-              ),
-              child: PopupMenuButton<String>(
-                tooltip: 'Menu akun',
-                icon: Icon(
-                  Icons.more_horiz_rounded,
-                  color: _goldLight,
-                  size: compact ? 20 : 22,
-                ),
-                color: _surface,
-                onSelected: (value) {
-                  if (value == 'signout') {
-                    onSignOut();
-                  }
-                },
-                itemBuilder: (context) => const [
-                  PopupMenuItem<String>(
-                    value: 'signout',
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.logout_rounded, color: _goldLight),
-                        SizedBox(width: 10),
-                        Text(
-                          'Keluar / Sign Out',
-                          style: TextStyle(color: _text),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 }
