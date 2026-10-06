@@ -170,123 +170,28 @@ class _MenuContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selected = items[selectedIndex];
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       child: Column(
         children: [
           _MenuHeader(onSignOut: onSignOut),
-          const SizedBox(height: 22),
+          const SizedBox(height: 28),
           const Text(
-            'MENU UTAMA',
+            'SEMUA STATISTIK',
             style: TextStyle(
               color: _goldLight,
-              fontSize: 13,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 4,
+              fontSize: 14,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 4.2,
             ),
           ),
-          const SizedBox(height: 7),
-          const Text(
-            'Pilih layanan yang akan dibuka',
-            style: TextStyle(
-              color: _muted,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 28),
           Expanded(
             child: Center(
               child: _PieMenu(
                 items: items,
                 selectedIndex: selectedIndex,
                 onSelected: onSelected,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 240),
-            transitionBuilder: (child, animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 0.15),
-                    end: Offset.zero,
-                  ).animate(animation),
-                  child: child,
-                ),
-              );
-            },
-            child: Container(
-              key: ValueKey(selected.label),
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
-              decoration: BoxDecoration(
-                color: _surface.withValues(alpha: 0.86),
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: _gold.withValues(alpha: 0.20)),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black38,
-                    blurRadius: 20,
-                    offset: Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _gold.withValues(alpha: 0.13),
-                      border: Border.all(
-                        color: _gold.withValues(alpha: 0.34),
-                      ),
-                    ),
-                    child: Icon(selected.icon, color: _goldLight, size: 20),
-                  ),
-                  const SizedBox(width: 13),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          selected.label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: _text,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.7,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          selected.description,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: _muted,
-                            fontSize: 10.5,
-                            height: 1.25,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(
-                    Icons.arrow_forward_rounded,
-                    color: _goldLight,
-                    size: 18,
-                  ),
-                ],
               ),
             ),
           ),
@@ -316,7 +221,7 @@ class _MenuHeader extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: item.lightColor.withValues(alpha: 0.16),
+                color: _gold.withValues(alpha: 0.18),
                 blurRadius: 26,
                 offset: const Offset(0, 9),
               ),
@@ -474,16 +379,31 @@ class _PieMenu extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Column(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.apps_rounded,
-                      color: _goldLight,
-                      size: 28,
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 220),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      transitionBuilder: (child, animation) {
+                        return ScaleTransition(
+                          scale: animation,
+                          child: FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: Icon(
+                        items[selectedIndex].icon,
+                        key: ValueKey(items[selectedIndex].label),
+                        color: items[selectedIndex].lightColor,
+                        size: 30,
+                      ),
                     ),
-                    SizedBox(height: 6),
-                    Text(
+                    const SizedBox(height: 6),
+                    const Text(
                       'MENU',
                       style: TextStyle(
                         color: _text,
@@ -586,7 +506,7 @@ class _PieMenuLabel extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: selected ? _goldLight : _text,
+                  color: selected ? item.lightColor : _text,
                   fontSize: item.label == 'LAKA LALIN' ? 9.5 : 10.5,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.5,

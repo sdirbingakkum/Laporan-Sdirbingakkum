@@ -1,11 +1,11 @@
 {
-    "name": "laporan_sdirbingakkum",
-    "short_name": "laporan_sdirbingakkum",
+    "name": "SDIRBINGAKKUM — PUSPOMAD",
+    "short_name": "SDIRBINGAKKUM",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#03150F",
+    "theme_color": "#D7A93C",
+    "description": "Sistem Laporan Bidang Gakkum PUSPOMAD.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

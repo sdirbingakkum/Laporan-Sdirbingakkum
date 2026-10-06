@@ -51,6 +51,7 @@ void main() {
     expect(find.text('Akun terdaftar di lingkungan PUSPOMAD'), findsNothing);
     expect(find.text('© 2026 PUSPOMAD'), findsNothing);
     expect(find.byType(Scrollable), findsNothing);
+    expect(find.byIcon(Icons.gavel_rounded), findsNWidgets(2));
   });
 
   testWidgets('sign in fits a short phone viewport without overflow', (
@@ -88,7 +89,7 @@ void main() {
     await _pumpHomeAtSize(tester, const Size(390, 844));
 
     expect(find.byType(HomePage), findsOneWidget);
-    expect(find.text('MENU UTAMA'), findsOneWidget);
+    expect(find.text('SEMUA STATISTIK'), findsOneWidget);
     expect(find.text('SDIRBINGAKKUM'), findsOneWidget);
     expect(find.text('STATISTIK PELANGGARAN'), findsOneWidget);
     expect(find.text('STATISTIK SIM TNI'), findsOneWidget);

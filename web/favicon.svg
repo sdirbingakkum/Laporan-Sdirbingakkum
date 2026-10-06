@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 192 192">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="72%">
+      <stop offset="0%" stop-color="#0D2C20"/>
+      <stop offset="72%" stop-color="#03150F"/>
+      <stop offset="100%" stop-color="#020B08"/>
+    </radialGradient>
+  </defs>
+  <rect width="192" height="192" rx="42" fill="url(#bg)"/>
+  <circle cx="96" cy="96" r="76" fill="none" stroke="#D7A93C" stroke-opacity="0.72" stroke-width="2"/>
+  <circle cx="96" cy="96" r="70" fill="#09231A" fill-opacity="0.42" stroke="#F1D37A" stroke-opacity="0.16"/>
+  <image href="assets/images/pomad_prima.webp" x="18" y="18" width="156" height="156"
+         preserveAspectRatio="xMidYMid slice"/>
+</svg>
