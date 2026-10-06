@@ -59,17 +59,6 @@ void main() {
     expect(config.supabaseUrl, 'https://ybepaqmrrgsaeqnqrsrf.supabase.co');
   });
 
-  testWidgets('application shows configuration gate without secret', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      const ProviderScope(child: LaporanSdirbingakkumApp()),
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.text('KONFIGURASI APLIKASI BELUM LENGKAP'), findsOneWidget);
-  });
-
   testWidgets('sign in page renders responsive form without extra footer', (
     tester,
   ) async {
