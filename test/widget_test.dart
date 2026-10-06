@@ -84,17 +84,16 @@ void main() {
     expect(find.text('Password wajib diisi.'), findsOneWidget);
   });
 
-  testWidgets('main menu renders five pie menu sections', (tester) async {
+  testWidgets('main menu renders four pie menu sections', (tester) async {
     await _pumpHomeAtSize(tester, const Size(390, 844));
 
     expect(find.byType(HomePage), findsOneWidget);
     expect(find.text('MENU UTAMA'), findsOneWidget);
     expect(find.text('SDIRBINGAKKUM'), findsOneWidget);
-    expect(find.text('GAKKUM'), findsOneWidget);
-    expect(find.text('LAKA LALIN'), findsOneWidget);
-    expect(find.text('SIM TNI'), findsOneWidget);
-    expect(find.text('STATISTIK'), findsOneWidget);
-    expect(find.text('PENGATURAN'), findsOneWidget);
+    expect(find.text('STATISTIK PELANGGARAN'), findsOneWidget);
+    expect(find.text('STATISTIK SIM TNI'), findsOneWidget);
+    expect(find.text('STATISTIK PROVOS TNI-AD'), findsOneWidget);
+    expect(find.text('STATISTIK LAKA-LALIN'), findsOneWidget);
     expect(find.byType(Scrollable), findsNothing);
     expect(tester.takeException(), isNull);
   });
@@ -116,6 +115,6 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('GAKKUM'), findsWidgets);
+    expect(find.text('STATISTIK PELANGGARAN'), findsWidgets);
   });
 }
