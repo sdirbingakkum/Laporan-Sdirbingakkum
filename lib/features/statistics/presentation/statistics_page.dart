@@ -770,4 +770,3 @@ class _RankData {
   final String name;
   final int value;
 }
-
