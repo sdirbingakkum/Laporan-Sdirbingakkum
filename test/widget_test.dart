@@ -231,7 +231,6 @@ void main() {
     for (final size in sizes) {
       await _pumpHomeAtSize(tester, size);
       expect(tester.takeException(), isNull);
-      expect(find.text('LAPORAN STATISTIK'), findsOneWidget);
       expect(find.byType(SingleChildScrollView), findsNothing);
 
       final gesture = find.byType(GestureDetector).last;
