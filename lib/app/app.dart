@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/config/app_config.dart';
+import '../shared/widgets/app_background.dart';
 import '../core/theme/app_theme.dart';
 import 'router.dart';
 
@@ -36,8 +37,9 @@ class _ConfigurationGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
+      body: AppBackground(
+        child: Center(
+          child: Padding(
           padding: const EdgeInsets.all(24),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 560),
