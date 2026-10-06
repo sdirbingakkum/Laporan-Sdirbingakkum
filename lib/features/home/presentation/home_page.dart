@@ -52,7 +52,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     ),
     _MenuItemData(
       label: 'K9',
-      description: 'HALAMAN K9 DISIAPKAN UNTUK PENGISIAN DATA BERIKUTNYA.',
+      description: 'RINGKASAN DATA K-9 DAN SEBARAN SATUAN.',
       icon: Icons.pets_rounded,
       lightColor: Color(0xFFE3BE4F),
       route: '/statistik/k9',
@@ -574,6 +574,18 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
+      // Selected slices sit fractionally above the wheel. No visible
+      // underside is drawn; the depth cue comes from a restrained contact shadow.
+      if (selected) {
+        final liftShadow = Paint()
+          ..color = Colors.black.withValues(alpha: 0.18)
+          ..maskFilter = MaskFilter.blur(BlurStyle.normal, 7);
+        canvas.save();
+        canvas.translate(0, 2.0);
+        canvas.drawPath(path, liftShadow);
+        canvas.restore();
+      }
+
       // Polished metallic face: a crisp specular highlight, stable module
       // color through the midtone, then a long controlled falloff into shadow.
       final paint = Paint()
@@ -621,6 +633,19 @@ class _PieMenuPainter extends CustomPainter {
           stops: const [0.0, 0.34, 0.82],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, lowerDepth);
+
+      // A narrow specular sweep gives the slice a machined-metal highlight
+      // without introducing an outer ring or decorative contour.
+      final sweepHighlight = Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withValues(alpha: selected ? 0.065 : 0.045),
+            Colors.transparent,
+          ],
+        ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
+      canvas.drawPath(path, sweepHighlight);
     }
 
     // Keep only the radial module separators; the circular outer contour
