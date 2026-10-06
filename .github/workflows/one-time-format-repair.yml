@@ -1,0 +1,46 @@
+name: One-Time Dart Format Repair
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+env:
+  FLUTTER_VERSION: "3.47.3"
+
+jobs:
+  format:
+    name: Format Dart sources once
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+          pub-cache: true
+
+      - name: Dependencies
+        run: flutter pub get
+
+      - name: Format Dart sources
+        run: dart format lib test
+
+      - name: Commit formatted sources
+        run: |
+          if git diff --quiet -- lib test; then
+            echo "DART SOURCES ALREADY FORMATTED."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lib test
+          git commit -m "chore: format Dart sources"
+          git push
