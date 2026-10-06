@@ -13,6 +13,22 @@ const _muted = Color(0xFFB7C2BC);
 
 enum StatisticsModule { pelanggaran, lakaLalin, simTni, k9, provos }
 
+Color _moduleAccent(StatisticsModule module) {
+  switch (module) {
+    case StatisticsModule.pelanggaran:
+      return const Color(0xFFF09A4A);
+    case StatisticsModule.lakaLalin:
+      return const Color(0xFFE15B5B);
+    case StatisticsModule.simTni:
+      return const Color(0xFF5D8FE0);
+    case StatisticsModule.k9:
+      return const Color(0xFFE3BE4F);
+    case StatisticsModule.provos:
+      return const Color(0xFF49A86B);
+  }
+}
+
+
 class StatisticsPage extends StatelessWidget {
   const StatisticsPage({required this.module, super.key});
 
@@ -26,7 +42,7 @@ class StatisticsPage extends StatelessWidget {
             label: '2026',
             cards: [
               _StatCardData('TATIB', '25', Color(0xFFF09A4A)),
-              _StatCardData('LALIN', '70', Color(0xFF5D8FE0)),
+              _StatCardData('LALIN', '70', Color(0xFFF09A4A)),
             ],
           ),
           _StatColumn(
@@ -43,8 +59,8 @@ class StatisticsPage extends StatelessWidget {
             label: '2026',
             cards: [
               _StatCardData('JUMLAH KASUS', '200', Color(0xFFE15B5B)),
-              _StatCardData('LAKA GANDA', '100', Color(0xFFF09A4A)),
-              _StatCardData('TUNGGAL', '50', Color(0xFFE3BE4F)),
+              _StatCardData('LAKA GANDA', '100', Color(0xFFE15B5B)),
+              _StatCardData('TUNGGAL', '50', Color(0xFFE15B5B)),
               _StatCardData('TABRAK LARI', '50', Color(0xFFE15B5B)),
             ],
           ),
@@ -52,8 +68,8 @@ class StatisticsPage extends StatelessWidget {
             label: 'SEPT',
             cards: [
               _StatCardData('JUMLAH KASUS', '30', Color(0xFFE15B5B)),
-              _StatCardData('LAKA GANDA', '20', Color(0xFFF09A4A)),
-              _StatCardData('TUNGGAL', '5', Color(0xFFE3BE4F)),
+              _StatCardData('LAKA GANDA', '20', Color(0xFFE15B5B)),
+              _StatCardData('TUNGGAL', '5', Color(0xFFE15B5B)),
               _StatCardData('TABRAK LARI', '5', Color(0xFFE15B5B)),
             ],
           ),
@@ -64,9 +80,9 @@ class StatisticsPage extends StatelessWidget {
             label: '2026',
             cards: [
               _StatCardData('A', '200', Color(0xFF5D8FE0)),
-              _StatCardData('BI', '100', Color(0xFF49A86B)),
+              _StatCardData('BI', '100', Color(0xFF5D8FE0)),
               _StatCardData('BII', '50', Color(0xFF5D8FE0)),
-              _StatCardData('BII SUS', '25', Color(0xFFF09A4A)),
+              _StatCardData('BII SUS', '25', Color(0xFF5D8FE0)),
               _StatCardData('C', '25', Color(0xFF5D8FE0)),
             ],
           ),
@@ -74,9 +90,9 @@ class StatisticsPage extends StatelessWidget {
             label: 'SEPT',
             cards: [
               _StatCardData('A', '20', Color(0xFF5D8FE0)),
-              _StatCardData('BI', '10', Color(0xFF49A86B)),
+              _StatCardData('BI', '10', Color(0xFF5D8FE0)),
               _StatCardData('BII', '5', Color(0xFF5D8FE0)),
-              _StatCardData('BII SUS', '5', Color(0xFFF09A4A)),
+              _StatCardData('BII SUS', '5', Color(0xFF5D8FE0)),
               _StatCardData('C', '5', Color(0xFF5D8FE0)),
             ],
           ),
@@ -90,7 +106,7 @@ class StatisticsPage extends StatelessWidget {
             cards: [
               _StatCardData('JUMLAH', '2000', Color(0xFF49A86B)),
               _StatCardData('SUDAH DIK/TAR', '500', Color(0xFF49A86B)),
-              _StatCardData('BELUM DIK/TAR', '1500', Color(0xFFF09A4A)),
+              _StatCardData('BELUM DIK/TAR', '1500', Color(0xFF49A86B)),
             ],
           ),
         ];
@@ -410,7 +426,7 @@ class _AnalysisButton extends StatelessWidget {
       onPressed: onPressed,
       icon: const Icon(Icons.bar_chart_rounded, size: 18),
       label: const Text(
-        'ANALISIS STATISTIK',
+        'STATISTIK',
         style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.7),
       ),
       style: FilledButton.styleFrom(
