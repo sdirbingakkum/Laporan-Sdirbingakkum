@@ -128,28 +128,27 @@ class _SignInPageState extends ConsumerState<SignInPage> {
       body: AppBackground(
         child: SafeArea(
           child: LayoutBuilder(
-              builder: (context, constraints) {
-                final horizontalPadding = constraints.maxWidth >= 520
-                    ? 32.0
-                    : 16.0;
-                final contentWidth =
-                    (constraints.maxWidth - horizontalPadding * 2).clamp(
-                      0.0,
-                      460.0,
-                    );
+            builder: (context, constraints) {
+              final horizontalPadding = constraints.maxWidth >= 520
+                  ? 32.0
+                  : 16.0;
+              final contentWidth =
+                  (constraints.maxWidth - horizontalPadding * 2).clamp(
+                    0.0,
+                    460.0,
+                  );
 
-                return Center(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.center,
-                    child: SizedBox(
-                      width: contentWidth,
-                      child: const _SignInContent(),
-                    ),
+              return Center(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    width: contentWidth,
+                    child: const _SignInContent(),
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ),
       ),
