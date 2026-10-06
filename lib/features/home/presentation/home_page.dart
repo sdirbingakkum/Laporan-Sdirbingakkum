@@ -29,15 +29,15 @@ class _HomePageState extends ConsumerState<HomePage> {
       label: 'STATISTIK PELANGGARAN',
       description: 'Ringkasan dan tren pelanggaran hukum.',
       icon: Icons.gavel_rounded,
-      lightColor: Color(0xFFE15B5B),
-      darkColor: Color(0xFF461518),
+      lightColor: Color(0xFFF09A4A),
+      darkColor: Color(0xFF5A2B0D),
     ),
     _MenuItemData(
       label: 'STATISTIK SIM TNI',
       description: 'Ringkasan penerbitan dan data SIM TNI.',
       icon: Icons.badge_outlined,
-      lightColor: Color(0xFFE3BE4F),
-      darkColor: Color(0xFF59410D),
+      lightColor: Color(0xFF5D8FE0),
+      darkColor: Color(0xFF192A55),
     ),
     _MenuItemData(
       label: 'STATISTIK PROVOS TNI-AD',
@@ -50,15 +50,15 @@ class _HomePageState extends ConsumerState<HomePage> {
       label: 'STATISTIK LAKA-LALIN',
       description: 'Ringkasan dan tren kecelakaan lalu lintas.',
       icon: Icons.directions_car_filled_outlined,
-      lightColor: Color(0xFF5D8FE0),
-      darkColor: Color(0xFF192A55),
+      lightColor: Color(0xFFE15B5B),
+      darkColor: Color(0xFF461518),
     ),
     _MenuItemData(
       label: 'K9',
       description: 'Informasi dan statistik satuan K9.',
       icon: Icons.pets_rounded,
-      lightColor: Color(0xFFF3EFE3),
-      darkColor: Color(0xFF4A514B),
+      lightColor: Color(0xFFE3BE4F),
+      darkColor: Color(0xFF59410D),
     ),
   ];
 
@@ -533,19 +533,19 @@ class _PieMenuPainter extends CustomPainter {
   static const _segmentGap = 0.045;
 
   static const _lightPalette = <Color>[
-    Color(0xFFE15B5B), // red
-    Color(0xFFE3BE4F), // yellow
-    Color(0xFF49A86B), // green
-    Color(0xFF5D8FE0), // blue
-    Color(0xFFF3EFE3), // white
+    Color(0xFFF09A4A), // orange — Statistik Pelanggaran
+    Color(0xFF5D8FE0), // blue — Statistik SIM TNI
+    Color(0xFF49A86B), // green — Statistik Provos TNI-AD
+    Color(0xFFE15B5B), // red — Statistik Laka-lalin
+    Color(0xFFE3BE4F), // yellow — K9
   ];
 
   static const _darkPalette = <Color>[
-    Color(0xFF461518),
-    Color(0xFF59410D),
-    Color(0xFF123827),
-    Color(0xFF192A55),
-    Color(0xFF4A514B),
+    Color(0xFF5A2B0D), // orange
+    Color(0xFF192A55), // blue
+    Color(0xFF123827), // green
+    Color(0xFF461518), // red
+    Color(0xFF59410D), // yellow
   ];
 
   @override
