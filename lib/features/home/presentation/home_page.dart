@@ -574,16 +574,16 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      // Selected slices sit fractionally above the wheel. No visible
-      // underside is drawn; the depth cue comes from a restrained contact shadow.
+      // The wheel uses an embossed, emblem-like depth treatment rather
+      // than an extruded underside. A soft cast shadow around the selected
+      // segment makes the face feel raised without adding a visible lower lip.
       if (selected) {
-        final liftShadow = Paint()
-          ..color = Colors.black.withValues(alpha: 0.18)
-          ..maskFilter = MaskFilter.blur(BlurStyle.normal, 7);
-        canvas.save();
-        canvas.translate(0, 2.0);
-        canvas.drawPath(path, liftShadow);
-        canvas.restore();
+        canvas.drawShadow(
+          path,
+          Colors.black.withValues(alpha: 0.46),
+          8.0,
+          true,
+        );
       }
 
       // Polished metallic face: a crisp specular highlight, stable module
@@ -638,38 +638,71 @@ class _PieMenuPainter extends CustomPainter {
       // without introducing an outer ring or decorative contour.
       final sweepHighlight = Paint()
         ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: Alignment(-0.92, -0.88),
+          end: Alignment(0.72, 0.70),
           colors: [
-            Colors.white.withValues(alpha: selected ? 0.065 : 0.045),
+            Colors.white.withValues(alpha: selected ? 0.16 : 0.105),
+            Colors.white.withValues(alpha: selected ? 0.045 : 0.028),
             Colors.transparent,
           ],
+          stops: const [0.0, 0.12, 0.42],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, sweepHighlight);
+
+      // A dark reciprocal field creates the soft lower-right bevel seen on
+      // embossed insignia, while the outside contour remains uninterrupted.
+      final bevelShadow = Paint()
+        ..shader = RadialGradient(
+          center: const Alignment(0.82, 0.80),
+          radius: 1.0,
+          colors: [
+            Colors.black.withValues(alpha: selected ? 0.30 : 0.24),
+            Colors.black.withValues(alpha: selected ? 0.075 : 0.055),
+            Colors.transparent,
+          ],
+          stops: const [0.0, 0.30, 0.72],
+        ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
+      canvas.drawPath(path, bevelShadow);
     }
 
     // Keep only the radial module separators; the circular outer contour
-    // stays completely free of decorative lines.
-    final seamPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.8
-      ..strokeCap = StrokeCap.butt
-      ..color = const Color(0xFF09231A).withValues(alpha: 0.80);
-
+    // stays completely free of decorative lines. Each separator is treated
+    // like a shallow embossed joint: dark groove + hairline highlight.
     for (var i = 0; i < itemCount; i++) {
       final angle = -math.pi / 2 + i * sweep;
+      final unit = Offset(math.cos(angle), math.sin(angle));
+      final normal = Offset(-unit.dy, unit.dx);
+      final startPoint = center;
+      final endPoint = Offset(
+        center.dx + unit.dx * outerRadius,
+        center.dy + unit.dy * outerRadius,
+      );
+
+      final groove = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.8
+        ..strokeCap = StrokeCap.butt
+        ..color = Colors.black.withValues(alpha: 0.26);
       canvas.drawLine(
-        center,
-        Offset(
-          center.dx + math.cos(angle) * outerRadius,
-          center.dy + math.sin(angle) * outerRadius,
-        ),
-        seamPaint,
+        startPoint + normal * 0.7,
+        endPoint + normal * 0.7,
+        groove,
+      );
+
+      final bevelLight = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.55
+        ..strokeCap = StrokeCap.butt
+        ..color = Colors.white.withValues(alpha: 0.22);
+      canvas.drawLine(
+        startPoint - normal * 0.8,
+        endPoint - normal * 0.8,
+        bevelLight,
       );
     }
 
-    // No separate circular outer-lip lines. The metallic volume is carried
-    // by the face gradient and the subtle per-slice bevel/specular treatment.
+    // No separate circular outer-lip lines. The 3D read comes from
+    // directional light, embossed seams, and controlled specular response.
   }
 
   static int? indexAt(Offset position, Size size, {required int itemCount}) {
