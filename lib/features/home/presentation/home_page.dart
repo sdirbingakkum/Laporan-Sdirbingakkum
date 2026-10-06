@@ -327,10 +327,7 @@ class _PieMenuCenter extends StatelessWidget {
                     transitionBuilder: (child, animation) {
                       return ScaleTransition(
                         scale: animation,
-                        child: FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        ),
+                        child: FadeTransition(opacity: animation, child: child),
                       );
                     },
                     child: Column(
@@ -354,14 +351,13 @@ class _PieMenuCenter extends StatelessWidget {
                               color: item == null ? _text : iconColor,
                               fontSize: centerTextSize(context, centerKey),
                               fontWeight: FontWeight.w700,
-                              letterSpacing:
-                                  centerKey.length > 18 ? 0.05 : 0.55,
+                              letterSpacing: centerKey.length > 18
+                                  ? 0.05
+                                  : 0.55,
                               height: 1.02,
                               shadows: [
                                 Shadow(
-                                  color: Colors.black.withValues(
-                                    alpha: 0.48,
-                                  ),
+                                  color: Colors.black.withValues(alpha: 0.48),
                                   offset: const Offset(0.8, 1.2),
                                   blurRadius: 0,
                                 ),
