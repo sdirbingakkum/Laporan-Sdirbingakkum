@@ -227,17 +227,6 @@ class _SignInContentState extends ConsumerState<_SignInContent> {
               letterSpacing: 1.8,
             ),
           ),
-          const SizedBox(height: 9),
-          Text(
-            'SISTEM LAPORAN BIDANG GAKKUM',
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            style: textTheme.bodyMedium?.copyWith(
-              color: _text,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
           const SizedBox(height: 20),
           _SignInCard(parent: parent),
           const SizedBox(height: 8),
