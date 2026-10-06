@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="laporan_sdirbingakkum"
+        android:label="SDIRBINGAKKUM"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@drawable/pomad_prima">
         <activity
             android:name=".MainActivity"
             android:exported="true"
