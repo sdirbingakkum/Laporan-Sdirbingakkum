@@ -199,6 +199,7 @@ class StatisticsPage extends StatelessWidget {
                         child: _ContentBody(
                           columns: _columns,
                           ranking: _ranking,
+                          accent: _moduleAccent(module),
                           totalSim: module == StatisticsModule.simTni
                               ? _columns.first.cards.fold<int>(
                                   0,
@@ -222,11 +223,13 @@ class _ContentBody extends StatelessWidget {
   const _ContentBody({
     required this.columns,
     required this.ranking,
+    required this.accent,
     this.totalSim,
   });
 
   final List<_StatColumn> columns;
   final List<_RankData> ranking;
+  final Color accent;
   final int? totalSim;
 
   @override
@@ -235,11 +238,11 @@ class _ContentBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (totalSim != null) ...[
-          _TotalSimCard(total: totalSim!),
+          _TotalSimCard(total: totalSim!, accent: accent),
           const SizedBox(height: 14),
         ],
         if (columns.length == 1)
-          _StatsColumnView(column: columns.first)
+          _StatsColumnView(column: columns.first, accent: accent)
         else
           Row(
             key: const ValueKey('report-period-columns'),
@@ -247,22 +250,26 @@ class _ContentBody extends StatelessWidget {
             children: [
               for (var index = 0; index < columns.length; index++) ...[
                 if (index > 0) const SizedBox(width: 10),
-                Expanded(child: _StatsColumnView(column: columns[index])),
+                Expanded(child: _StatsColumnView(column: columns[index], accent: accent)),
               ],
             ],
           ),
         const SizedBox(height: 16),
         if (ranking.isNotEmpty)
-          _AnalysisButton(onPressed: () => _showRankingSheet(context, ranking)),
+          _AnalysisButton(
+            accent: accent,
+            onPressed: () => _showRankingSheet(context, ranking, accent),
+          ),
       ],
     );
   }
 }
 
 class _TotalSimCard extends StatelessWidget {
-  const _TotalSimCard({required this.total});
+  const _TotalSimCard({required this.total, required this.accent});
 
   final int total;
+  final Color accent;
 
   @override
   Widget build(BuildContext context) {
@@ -271,9 +278,17 @@ class _TotalSimCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       decoration: BoxDecoration(
-        color: _surface.withValues(alpha: 0.82),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            accent.withValues(alpha: 0.22),
+            _surface.withValues(alpha: 0.64),
+            Colors.white.withValues(alpha: 0.04),
+          ],
+        ),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: _gold.withValues(alpha: 0.24)),
+        border: Border.all(color: accent.withValues(alpha: 0.34)),
         boxShadow: const [
           BoxShadow(
             color: Colors.black26,
@@ -297,7 +312,7 @@ class _TotalSimCard extends StatelessWidget {
           Text(
             total.toString(),
             style: const TextStyle(
-              color: _goldLight,
+              color: accent,
               fontSize: 30,
               fontWeight: FontWeight.w900,
             ),
@@ -311,6 +326,7 @@ class _TotalSimCard extends StatelessWidget {
 Future<void> _showRankingSheet(
   BuildContext context,
   List<_RankData> ranking,
+  Color accent,
 ) async {
   await showModalBottomSheet<void>(
     context: context,
@@ -328,7 +344,7 @@ Future<void> _showRankingSheet(
         decoration: const BoxDecoration(
           color: _surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-          border: Border(top: BorderSide(color: _gold, width: 0.8)),
+          border: Border(top: BorderSide(color: accent, width: 0.9)),
         ),
         child: Column(
           children: [
@@ -400,9 +416,7 @@ Future<void> _showRankingSheet(
                           minHeight: 9,
                           value: maxValue == 0 ? 0 : item.value / maxValue,
                           backgroundColor: Colors.black38,
-                          valueColor: const AlwaysStoppedAnimation<Color>(
-                            _goldLight,
-                          ),
+                          valueColor: AlwaysStoppedAnimation<Color>(accent),
                         ),
                       ),
                     ],
