@@ -30,36 +30,36 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   static const _items = <_MenuItemData>[
     _MenuItemData(
-      label: 'Statistik Pelanggaran',
-      description: 'Ringkasan dan tren pelanggaran hukum.',
+      label: 'STATISTIK PELANGGARAN',
+      description: 'RINGKASAN DAN TREN PELANGGARAN HUKUM.',
       icon: Icons.gavel_rounded,
       lightColor: Color(0xFFF09A4A),
       route: '/statistik/pelanggaran',
     ),
     _MenuItemData(
-      label: 'Statistik Laka-lalin',
-      description: 'Ringkasan dan tren kecelakaan lalu lintas.',
+      label: 'STATISTIK LAKA-LALIN',
+      description: 'RINGKASAN DAN TREN KECELAKAAN LALU LINTAS.',
       icon: Icons.directions_car_filled_outlined,
       lightColor: Color(0xFFE15B5B),
       route: '/statistik/laka-lalin',
     ),
     _MenuItemData(
-      label: 'Statistik SIM TNI',
-      description: 'Ringkasan penerbitan dan data SIM TNI.',
+      label: 'STATISTIK SIM TNI',
+      description: 'RINGKASAN PENERBITAN DAN DATA SIM TNI.',
       icon: Icons.badge_outlined,
       lightColor: Color(0xFF5D8FE0),
       route: '/statistik/sim-tni',
     ),
     _MenuItemData(
-      label: 'Statistik K9',
-      description: 'Halaman K9 disiapkan untuk pengisian data berikutnya.',
+      label: 'STATISTIK K9',
+      description: 'HALAMAN K9 DISIAPKAN UNTUK PENGISIAN DATA BERIKUTNYA.',
       icon: Icons.pets_rounded,
       lightColor: Color(0xFFE3BE4F),
       route: '/statistik/k9',
     ),
     _MenuItemData(
-      label: 'Statistik Provos TNI-AD',
-      description: 'Ringkasan data dan kinerja Provos TNI-AD.',
+      label: 'STATISTIK PROVOS TNI-AD',
+      description: 'RINGKASAN DATA DAN KINERJA PROVOS TNI-AD.',
       icon: Icons.military_tech_rounded,
       lightColor: Color(0xFF49A86B),
       route: '/statistik/provos',
@@ -73,17 +73,17 @@ class _HomePageState extends ConsumerState<HomePage> {
         return AlertDialog(
           backgroundColor: _surface,
           title: const Text(
-            'Keluar dari sistem?',
+            'KELUAR DARI SISTEM?',
             style: TextStyle(color: _text, fontWeight: FontWeight.w800),
           ),
           content: const Text(
-            'Sesi Anda akan diakhiri dan Anda akan kembali ke halaman Sign In.',
+            'SESI ANDA AKAN DIAKHIRI DAN ANDA AKAN KEMBALI KE HALAMAN SIGN IN.',
             style: TextStyle(color: _muted),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Batal'),
+              child: const Text('BATAL'),
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
@@ -91,7 +91,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 backgroundColor: _goldLight,
                 foregroundColor: const Color(0xFF10140F),
               ),
-              child: const Text('Keluar'),
+              child: const Text('KELUAR'),
             ),
           ],
         );
@@ -111,7 +111,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Tidak dapat mengakhiri sesi. Coba lagi.'),
+          content: Text('TIDAK DAPAT MENGAKHIRI SESI. COBA LAGI.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
