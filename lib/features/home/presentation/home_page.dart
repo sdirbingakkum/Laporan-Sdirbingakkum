@@ -569,14 +569,7 @@ class _PieMenuPainter extends CustomPainter {
             Color.lerp(light, Colors.black, 0.84)!,
           ],
           stops: const [0.0, 0.46, 1.0],
-        ).createShader(
-          Rect.fromLTWH(
-            0,
-            center.dy,
-            size.width,
-            depth,
-          ),
-        );
+        ).createShader(Rect.fromLTWH(0, center.dy, size.width, depth));
       canvas.drawPath(wallPath, wallPaint);
     }
 
@@ -644,9 +637,7 @@ class _PieMenuPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = selected ? 1.15 : 0.9
         ..strokeCap = StrokeCap.round
-        ..color = Colors.white.withValues(
-          alpha: selected ? 0.16 : 0.10,
-        );
+        ..color = Colors.white.withValues(alpha: selected ? 0.16 : 0.10);
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: outerRadius - 1.2),
         start + 0.035,
