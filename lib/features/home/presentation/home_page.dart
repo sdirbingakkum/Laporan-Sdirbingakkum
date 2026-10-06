@@ -625,42 +625,8 @@ class _PieMenuPainter extends CustomPainter {
       );
     }
 
-    // Thin top rim and controlled bevels finish the polished machined face.
-    final rimPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.1
-      ..color = Colors.white.withValues(alpha: 0.11);
-    canvas.drawCircle(center, outerRadius, rimPaint);
-
-    final topBevel = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.15
-      ..strokeCap = StrokeCap.round
-      ..color = Colors.white.withValues(alpha: 0.13);
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: outerRadius - 0.8),
-      -2.55,
-      1.55,
-      false,
-      topBevel,
-    );
-
-    final lowerBevel = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.35
-      ..strokeCap = StrokeCap.round
-      ..color = Colors.black.withValues(alpha: 0.34);
-    canvas.drawArc(
-      Rect.fromCircle(
-        center: center.translate(0, 1.3),
-        radius: outerRadius - 0.3,
-      ),
-      0.25,
-      2.05,
-      false,
-      lowerBevel,
-    );
-
+    // No separate circular outer-lip lines. The metallic volume is carried
+    // by the face gradient and the subtle per-slice bevel/specular treatment.
   }
 
   static int? indexAt(Offset position, Size size, {required int itemCount}) {
