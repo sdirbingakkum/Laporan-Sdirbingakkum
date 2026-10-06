@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../auth/data/auth_repository.dart';
 
@@ -31,6 +32,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       icon: Icons.gavel_rounded,
       lightColor: Color(0xFFF09A4A),
       darkColor: Color(0xFF5A2B0D),
+      route: '/statistik/pelanggaran',
     ),
     _MenuItemData(
       label: 'Statistik Laka-lalin',
@@ -38,6 +40,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       icon: Icons.directions_car_filled_outlined,
       lightColor: Color(0xFFE15B5B),
       darkColor: Color(0xFF461518),
+      route: '/statistik/laka-lalin',
     ),
     _MenuItemData(
       label: 'Statistik SIM TNI',
@@ -45,6 +48,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       icon: Icons.badge_outlined,
       lightColor: Color(0xFF5D8FE0),
       darkColor: Color(0xFF192A55),
+      route: '/statistik/sim-tni',
     ),
     _MenuItemData(
       label: 'Statistik K9',
@@ -52,6 +56,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       icon: Icons.pets_rounded,
       lightColor: Color(0xFFE3BE4F),
       darkColor: Color(0xFF59410D),
+      route: '/statistik/k9',
     ),
     _MenuItemData(
       label: 'Statistik Provos TNI-AD',
@@ -59,6 +64,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       icon: Icons.military_tech_rounded,
       lightColor: Color(0xFF49A86B),
       darkColor: Color(0xFF123827),
+      route: '/statistik/provos',
     ),
   ];
 
@@ -118,114 +124,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     setState(() {
       _selectedIndex = index;
     });
-  }
-
-  Widget _selectedContent() {
-    switch (_selectedIndex) {
-      case 0:
-        return const _StatisticsContent(
-          title: 'Statistik Pelanggaran',
-          yearCards: [
-            _StatCardData('TATIB', '25', Color(0xFFF09A4A)),
-            _StatCardData('LALIN', '70', Color(0xFF5D8FE0)),
-          ],
-          monthCards: [
-            _StatCardData('TATIB', '5', Color(0xFFF09A4A)),
-            _StatCardData('LALIN', '10', Color(0xFF5D8FE0)),
-          ],
-          ranking: [
-            _RankData('POMDAM V/BRW', 130),
-            _RankData('POMDAM III/SLW', 85),
-            _RankData('POMDAM I/BB', 64),
-            _RankData('POMDAM JAYA', 42),
-            _RankData('POMDAM IV/DIP', 30),
-          ],
-        );
-      case 1:
-        return const _StatisticsContent(
-          title: 'Statistik Laka-lalin',
-          yearCards: [
-            _StatCardData('JUMLAH KASUS', '200', Color(0xFFE15B5B)),
-            _StatCardData('LAKA GANDA', '100', Color(0xFFF09A4A)),
-            _StatCardData('TUNGGAL', '50', Color(0xFFE3BE4F)),
-            _StatCardData('TABRAK LARI', '50', Color(0xFFE15B5B)),
-          ],
-          monthCards: [
-            _StatCardData('JUMLAH KASUS', '30', Color(0xFFE15B5B)),
-            _StatCardData('LAKA GANDA', '20', Color(0xFFF09A4A)),
-            _StatCardData('TUNGGAL', '5', Color(0xFFE3BE4F)),
-            _StatCardData('TABRAK LARI', '5', Color(0xFFE15B5B)),
-          ],
-          ranking: [
-            _RankData('POMDAM V/BRW', 45),
-            _RankData('POMDAM JAYA', 38),
-            _RankData('POMDAM I/BB', 30),
-            _RankData('POMDAM XII/TPR', 25),
-            _RankData('POMDAM III/SLW', 18),
-          ],
-        );
-      case 2:
-        return const _StatisticsContent(
-          title: 'Statistik SIM TNI',
-          yearCards: [
-            _StatCardData('A', '200', Color(0xFF5D8FE0)),
-            _StatCardData('BI', '100', Color(0xFF49A86B)),
-            _StatCardData('BII', '50', Color(0xFF5D8FE0)),
-            _StatCardData('BII SUS', '25', Color(0xFFF09A4A)),
-            _StatCardData('C', '25', Color(0xFF5D8FE0)),
-          ],
-          monthCards: [
-            _StatCardData('A', '20', Color(0xFF5D8FE0)),
-            _StatCardData('BI', '10', Color(0xFF49A86B)),
-            _StatCardData('BII', '5', Color(0xFF5D8FE0)),
-            _StatCardData('BII SUS', '5', Color(0xFFF09A4A)),
-            _StatCardData('C', '5', Color(0xFF5D8FE0)),
-          ],
-          ranking: [
-            _RankData('POMDAM JAYA', 450),
-            _RankData('POMDAM II/SWJ', 320),
-            _RankData('POMDAM V/BRW', 210),
-            _RankData('POMDAM I/BB', 190),
-            _RankData('POMDAM IM', 110),
-          ],
-        );
-      case 3:
-        return const _StatisticsContent(
-          title: 'Statistik K9',
-          yearCards: [
-            _StatCardData('TOTAL', '—', Color(0xFFE3BE4F)),
-          ],
-          monthCards: [
-            _StatCardData('BULAN BERJALAN', '—', Color(0xFFE3BE4F)),
-          ],
-          ranking: [],
-          emptyMessage:
-              'Prototype tidak menyediakan modul K9. Struktur halaman sudah disiapkan untuk data K9.',
-        );
-      case 4:
-        return const _StatisticsContent(
-          title: 'Statistik Provos TNI-AD',
-          yearCards: [
-            _StatCardData('JUMLAH', '2000', Color(0xFF49A86B)),
-            _StatCardData('SUDAH DIK/TAR', '500', Color(0xFF49A86B)),
-            _StatCardData('BELUM DIK/TAR', '1500', Color(0xFFF09A4A)),
-          ],
-          monthCards: [
-            _StatCardData('JUMLAH', '250', Color(0xFF49A86B)),
-            _StatCardData('SUDAH DIK/TAR', '50', Color(0xFF49A86B)),
-            _StatCardData('BELUM DIK/TAR', '200', Color(0xFFF09A4A)),
-          ],
-          ranking: [
-            _RankData('POMDAM III/SLW', 624),
-            _RankData('POMDAM V/BRW', 617),
-            _RankData('POMDAM I/BB', 535),
-            _RankData('POMDAM JAYA', 511),
-            _RankData('POMDAM IV/DIP', 463),
-          ],
-        );
-      default:
-        return const SizedBox.shrink();
-    }
+    context.push(_items[index].route);
   }
 
   @override
@@ -247,12 +146,28 @@ class _HomePageState extends ConsumerState<HomePage> {
                           padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
                           child: _MenuHeader(onSignOut: _confirmSignOut),
                         ),
+                        const SizedBox(height: 18),
+                        const Text(
+                          'SEMUA STATISTIK',
+                          style: TextStyle(
+                            color: _goldLight,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 4.2,
+                          ),
+                        ),
+                        const SizedBox(height: 28),
                         Expanded(
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
-                            child: KeyedSubtree(
-                              key: ValueKey(_selectedIndex),
-                              child: _selectedContent(),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              child: _PieMenu(
+                                items: _items,
+                                selectedIndex: _selectedIndex,
+                                onSelected: _selectMenu,
+                              ),
                             ),
                           ),
                         ),
@@ -267,6 +182,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
     );
   }
+
 }
 
 class _MenuHeader extends StatelessWidget {
@@ -999,6 +915,7 @@ class _MenuItemData {
     required this.icon,
     required this.lightColor,
     required this.darkColor,
+    required this.route,
   });
 
   final String label;
@@ -1006,6 +923,7 @@ class _MenuItemData {
   final IconData icon;
   final Color lightColor;
   final Color darkColor;
+  final String route;
 }
 
 class _MenuBackdrop extends StatelessWidget {
