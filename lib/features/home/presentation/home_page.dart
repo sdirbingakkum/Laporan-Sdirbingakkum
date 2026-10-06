@@ -225,6 +225,7 @@ class _PieMenu extends StatelessWidget {
         return SizedBox.square(
           dimension: diameter,
           child: GestureDetector(
+            key: const ValueKey('main-pie-menu'),
             behavior: HitTestBehavior.opaque,
             onTapUp: (details) {
               final box = context.findRenderObject() as RenderBox;

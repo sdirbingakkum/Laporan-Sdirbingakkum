@@ -180,20 +180,17 @@ class StatisticsPage extends StatelessWidget {
           const Positioned.fill(child: _StatisticsBackdrop()),
           SafeArea(
             top: false,
-            child: hasContent
-                ? SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 30),
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 760),
-                        child: _ContentBody(
-                          columns: _columns,
-                          ranking: _ranking,
-                        ),
-                      ),
-                    ),
-                  )
-                : const SizedBox.expand(),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 30),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 760),
+                  child: hasContent
+                      ? _ContentBody(columns: _columns, ranking: _ranking)
+                      : const SizedBox.shrink(),
+                ),
+              ),
+            ),
           ),
         ],
       ),

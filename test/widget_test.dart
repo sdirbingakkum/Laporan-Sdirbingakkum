@@ -160,7 +160,8 @@ void main() {
     await tester.pumpAndSettle();
 
     for (var index = 0; index < modules.length; index++) {
-      final gesture = find.byType(GestureDetector).last;
+      final gesture = find.byKey(const ValueKey('main-pie-menu'));
+      expect(gesture, findsOneWidget);
       final center = tester.getCenter(gesture);
       final size = tester.getSize(gesture);
       final angle =
