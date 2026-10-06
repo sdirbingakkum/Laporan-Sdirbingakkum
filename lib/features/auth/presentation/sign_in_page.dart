@@ -85,7 +85,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Terjadi kesalahan. Silakan coba lagi.'),
+          content: Text('TERJADI KESALAHAN. SILAKAN COBA LAGI.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -104,16 +104,16 @@ class _SignInPageState extends ConsumerState<SignInPage> {
 
     if (code == 'invalid_credentials' ||
         message.contains('invalid login credentials')) {
-      return 'Email atau password salah.';
+      return 'EMAIL ATAU PASSWORD SALAH.';
     }
 
     if (code == 'email_not_confirmed' ||
         message.contains('email not confirmed')) {
-      return 'Email Anda belum dikonfirmasi.';
+      return 'EMAIL ANDA BELUM DIKONFIRMASI.';
     }
 
     if (code == 'over_request_rate_limit' || message.contains('rate limit')) {
-      return 'Terlalu banyak percobaan. Coba lagi beberapa saat.';
+      return 'TERLALU BANYAK PERCOBAAN. COBA LAGI BEBERAPA SAAT.';
     }
 
     return error.message;
@@ -198,7 +198,7 @@ class _SignInContentState extends ConsumerState<_SignInContent> {
               child: Image.asset(
                 'assets/images/pomad_prima.webp',
                 fit: BoxFit.cover,
-                semanticLabel: 'Logo POMAD PRIMA',
+                semanticLabel: 'LOGO POMAD PRIMA',
               ),
             ),
           ),
@@ -229,7 +229,7 @@ class _SignInContentState extends ConsumerState<_SignInContent> {
           ),
           const SizedBox(height: 9),
           Text(
-            'Sistem Laporan Bidang Gakkum',
+            'SISTEM LAPORAN BIDANG GAKKUM',
             textAlign: TextAlign.center,
             maxLines: 1,
             style: textTheme.bodyMedium?.copyWith(
@@ -240,7 +240,7 @@ class _SignInContentState extends ConsumerState<_SignInContent> {
           ),
           const SizedBox(height: 3),
           Text(
-            'Profesional • Responsif • Integritas • Modern • Adaptif',
+            'PROFESIONAL • RESPONSIF • INTEGRITAS • MODERN • ADAPTIF',
             textAlign: TextAlign.center,
             maxLines: 1,
             style: textTheme.bodySmall?.copyWith(color: _muted, fontSize: 10),
@@ -283,7 +283,7 @@ class _SignInCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Akses Sistem',
+            'AKSES SISTEM',
             style: textTheme.titleLarge?.copyWith(
               color: _text,
               fontSize: 20,
@@ -292,14 +292,14 @@ class _SignInCard extends StatelessWidget {
           ),
           const SizedBox(height: 3),
           Text(
-            'Masuk menggunakan akun yang terdaftar.',
+            'MASUK MENGGUNAKAN AKUN YANG TERDAFTAR.',
             style: textTheme.bodySmall?.copyWith(color: _muted, fontSize: 11),
           ),
           const SizedBox(height: 15),
           _DarkField(
             controller: parent._emailController,
             label: 'Email',
-            hint: 'Masukkan email Anda',
+            hint: 'MASUKKAN EMAIL ANDA',
             icon: Icons.mail_outline_rounded,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
@@ -309,12 +309,12 @@ class _SignInCard extends StatelessWidget {
             validator: (value) {
               final email = value?.trim() ?? '';
               if (email.isEmpty) {
-                return 'Email wajib diisi.';
+                return 'EMAIL WAJIB DIISI.';
               }
 
               final emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
               if (!emailPattern.hasMatch(email)) {
-                return 'Masukkan alamat email yang valid.';
+                return 'MASUKKAN ALAMAT EMAIL YANG VALID.';
               }
 
               return null;
@@ -324,7 +324,7 @@ class _SignInCard extends StatelessWidget {
           _DarkField(
             controller: parent._passwordController,
             label: 'Password',
-            hint: 'Masukkan password Anda',
+            hint: 'MASUKKAN PASSWORD ANDA',
             icon: Icons.lock_outline_rounded,
             obscureText: parent._obscurePassword,
             textInputAction: TextInputAction.done,
@@ -334,8 +334,8 @@ class _SignInCard extends StatelessWidget {
             onFieldSubmitted: (_) => parent._signIn(),
             suffix: IconButton(
               tooltip: parent._obscurePassword
-                  ? 'Tampilkan password'
-                  : 'Sembunyikan password',
+                  ? 'TAMPILKAN PASSWORD'
+                  : 'SEMBUNYIKAN PASSWORD',
               color: _muted,
               onPressed: parent._isLoading
                   ? null
@@ -348,7 +348,7 @@ class _SignInCard extends StatelessWidget {
             ),
             validator: (value) {
               if ((value ?? '').isEmpty) {
-                return 'Password wajib diisi.';
+                return 'PASSWORD WAJIB DIISI.';
               }
 
               return null;
@@ -383,7 +383,7 @@ class _SignInCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Masuk',
+                            'MASUK',
                             style: TextStyle(fontWeight: FontWeight.w800),
                           ),
                           SizedBox(width: 8),
