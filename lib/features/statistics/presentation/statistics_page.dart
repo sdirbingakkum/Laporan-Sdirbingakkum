@@ -49,7 +49,7 @@ class StatisticsPage extends StatelessWidget {
             label: 'SEPT',
             cards: [
               _StatCardData('TATIB', '5', Color(0xFFF09A4A)),
-              _StatCardData('LALIN', '10', Color(0xFF5D8FE0)),
+              _StatCardData('LALIN', '10', Color(0xFFF09A4A)),
             ],
           ),
         ];
@@ -456,20 +456,38 @@ class _AnalysisButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FilledButton.tonalIcon(
-      onPressed: onPressed,
-      icon: const Icon(Icons.bar_chart_rounded, size: 18),
-      label: const Text(
-        'STATISTIK',
-        style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.7),
-      ),
-      style: FilledButton.styleFrom(
-        backgroundColor: accent.withValues(alpha: 0.15),
-        foregroundColor: accent,
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 18),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-          side: BorderSide(color: accent.withValues(alpha: 0.34)),
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: Colors.white.withValues(alpha: 0.03),
+          foregroundColor: accent,
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+          side: BorderSide(color: accent.withValues(alpha: 0.32)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(6.4),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.bar_chart_rounded, size: 17, color: accent),
+            const SizedBox(width: 10),
+            const Text(
+              'STATISTIK',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.6,
+              ),
+            ),
+            const Spacer(),
+            Icon(
+              Icons.chevron_right_rounded,
+              size: 18,
+              color: accent.withValues(alpha: 0.52),
+            ),
+          ],
         ),
       ),
     );
