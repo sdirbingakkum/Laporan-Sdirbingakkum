@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:laporan_sdirbingakkum/app/app.dart';
 import 'package:laporan_sdirbingakkum/features/auth/presentation/sign_in_page.dart';
 import 'package:laporan_sdirbingakkum/features/home/presentation/home_page.dart';
+import 'package:laporan_sdirbingakkum/shared/widgets/app_header.dart';
 import 'package:laporan_sdirbingakkum/features/statistics/presentation/statistics_page.dart';
 
 Future<void> _pumpSignInAtSize(WidgetTester tester, Size size) async {
@@ -101,6 +102,15 @@ void main() {
 
     expect(find.text('Email wajib diisi.'), findsOneWidget);
     expect(find.text('Password wajib diisi.'), findsOneWidget);
+  });
+
+  testWidgets('post-login header is fixed and unframed', (tester) async {
+    await _pumpHomeAtSize(tester, const Size(390, 844));
+
+    expect(find.byType(AppHeader), findsOneWidget);
+    expect(find.byType(AppBar), findsOneWidget);
+    expect(find.byType(PopupMenuButton<String>), findsOneWidget);
+    expect(find.text('SDIRBINGAKKUM'), findsOneWidget);
   });
 
   testWidgets('main menu renders five pie menu sections', (tester) async {
