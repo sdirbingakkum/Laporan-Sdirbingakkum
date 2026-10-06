@@ -1,3 +1,4 @@
+# Trigger formatter after verified source changes
 name: Format Fix Once
 
 on:
