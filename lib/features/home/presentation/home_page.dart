@@ -33,20 +33,6 @@ class _HomePageState extends ConsumerState<HomePage> {
       darkColor: Color(0xFF5A2B0D),
     ),
     _MenuItemData(
-      label: 'STATISTIK SIM TNI',
-      description: 'Ringkasan penerbitan dan data SIM TNI.',
-      icon: Icons.badge_outlined,
-      lightColor: Color(0xFF5D8FE0),
-      darkColor: Color(0xFF192A55),
-    ),
-    _MenuItemData(
-      label: 'STATISTIK PROVOS TNI-AD',
-      description: 'Ringkasan data dan kinerja Provos TNI-AD.',
-      icon: Icons.military_tech_rounded,
-      lightColor: Color(0xFF49A86B),
-      darkColor: Color(0xFF123827),
-    ),
-    _MenuItemData(
       label: 'STATISTIK LAKA-LALIN',
       description: 'Ringkasan dan tren kecelakaan lalu lintas.',
       icon: Icons.directions_car_filled_outlined,
@@ -54,11 +40,25 @@ class _HomePageState extends ConsumerState<HomePage> {
       darkColor: Color(0xFF461518),
     ),
     _MenuItemData(
-      label: 'K9',
+      label: 'STATISTIK SIM TNI',
+      description: 'Ringkasan penerbitan dan data SIM TNI.',
+      icon: Icons.badge_outlined,
+      lightColor: Color(0xFF5D8FE0),
+      darkColor: Color(0xFF192A55),
+    ),
+    _MenuItemData(
+      label: 'STATISTIK K9',
       description: 'Informasi dan statistik satuan K9.',
       icon: Icons.pets_rounded,
       lightColor: Color(0xFFE3BE4F),
       darkColor: Color(0xFF59410D),
+    ),
+    _MenuItemData(
+      label: 'STATISTIK PROVOS TNI-AD',
+      description: 'Ringkasan data dan kinerja Provos TNI-AD.',
+      icon: Icons.military_tech_rounded,
+      lightColor: Color(0xFF49A86B),
+      darkColor: Color(0xFF123827),
     ),
   ];
 
