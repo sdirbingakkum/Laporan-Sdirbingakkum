@@ -322,14 +322,14 @@ class _TotalSimCard extends StatelessWidget {
         border: Border.all(color: accent.withValues(alpha: 0.22)),
         boxShadow: [
           BoxShadow(
-            color: accent.withValues(alpha: 0.055),
-            blurRadius: 24,
-            offset: const Offset(0, 7),
+            color: accent.withValues(alpha: 0.045),
+            blurRadius: 18,
+            offset: const Offset(0, 5),
           ),
           const BoxShadow(
-            color: Colors.black38,
-            blurRadius: 18,
-            offset: Offset(0, 8),
+            color: Colors.black26,
+            blurRadius: 14,
+            offset: Offset(0, 7),
           ),
         ],
       ),
@@ -599,40 +599,15 @@ class _AnalysisButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6.4),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withValues(alpha: 0.05),
-            accent.withValues(alpha: 0.025),
-            Colors.black.withValues(alpha: 0.12),
-          ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: accent.withValues(alpha: 0.045),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-          const BoxShadow(
-            color: Colors.black38,
-            blurRadius: 14,
-            offset: Offset(0, 7),
-          ),
-        ],
-        border: Border.all(color: accent.withValues(alpha: 0.24)),
-      ),
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white.withValues(alpha: 0.03),
           foregroundColor: accent,
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          side: BorderSide(color: Colors.white.withValues(alpha: 0.055)),
+          side: BorderSide(color: accent.withValues(alpha: 0.32)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6.4),
           ),
@@ -770,43 +745,21 @@ class _GlassStatCard extends StatelessWidget {
             // The accent remains the actual left edge of the card. It is not
             // a floating/translated overlay, so it cannot drift from position.
             border: Border(
-              top: BorderSide(color: Colors.white24),
-              right: BorderSide(color: Colors.black26),
-              bottom: BorderSide(color: Colors.black38),
+              top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+              right: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+              bottom: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
               left: BorderSide(color: lineAccent, width: 3),
             ),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
-                color: lineAccent.withValues(alpha: 0.045),
-                blurRadius: 22,
-                offset: const Offset(0, 6),
-              ),
-              const BoxShadow(
-                color: Colors.black38,
-                blurRadius: 18,
-                offset: Offset(0, 7),
+                color: Colors.black12,
+                blurRadius: 30,
+                offset: Offset(0, 4),
               ),
             ],
           ),
           child: Stack(
             children: [
-              Positioned(
-                left: 3,
-                right: 1,
-                top: 1,
-                child: Container(
-                  height: 1,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.white.withValues(alpha: 0.16),
-                        Colors.white.withValues(alpha: 0.035),
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
-                ),
-              ),
               Positioned(
                 right: -14,
                 bottom: -14,
@@ -824,23 +777,6 @@ class _GlassStatCard extends StatelessWidget {
                         Colors.transparent,
                       ],
                       stops: const [0.0, 0.58, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                right: 0,
-                bottom: 0,
-                width: 54,
-                height: 1,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.transparent,
-                        cardAccent.withValues(alpha: 0.05),
-                        Colors.white.withValues(alpha: 0.02),
-                      ],
                     ),
                   ),
                 ),
