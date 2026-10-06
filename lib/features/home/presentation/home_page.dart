@@ -149,10 +149,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bg,
-      appBar: AppHeader(
-        title: 'SDIRBINGAKKUM',
-        onSignOut: _confirmSignOut,
-      ),
+      appBar: AppHeader(title: 'SDIRBINGAKKUM', onSignOut: _confirmSignOut),
       body: Stack(
         children: [
           const Positioned.fill(child: _MenuBackdrop()),
@@ -322,11 +319,7 @@ class _PieMenuCenter extends StatelessWidget {
               key: ValueKey(centerKey),
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  icon,
-                  color: iconColor,
-                  size: diameterForCenter(context),
-                ),
+                Icon(icon, color: iconColor, size: diameterForCenter(context)),
                 const SizedBox(height: 6),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -471,10 +464,7 @@ class _PieMenuLabel extends StatelessWidget {
 }
 
 class _PieMenuPainter extends CustomPainter {
-  const _PieMenuPainter({
-    required this.itemCount,
-    required this.selectedIndex,
-  });
+  const _PieMenuPainter({required this.itemCount, required this.selectedIndex});
 
   final int itemCount;
   final int selectedIndex;
@@ -524,10 +514,7 @@ class _PieMenuPainter extends CustomPainter {
           segmentCenterPoint.dy + math.sin(start) * outerRadius,
         )
         ..arcTo(
-          Rect.fromCircle(
-            center: segmentCenterPoint,
-            radius: outerRadius,
-          ),
+          Rect.fromCircle(center: segmentCenterPoint, radius: outerRadius),
           start,
           sweep,
           false,
@@ -538,28 +525,23 @@ class _PieMenuPainter extends CustomPainter {
         final shadowPaint = Paint()
           ..color = Colors.black.withValues(alpha: 0.42)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 11);
-        canvas.drawPath(
-          path.shift(const Offset(0, 7)),
-          shadowPaint,
-        );
+        canvas.drawPath(path.shift(const Offset(0, 7)), shadowPaint);
       }
 
       final paint = Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            light.withValues(alpha: selected ? 1.0 : 0.92),
-            light.withValues(alpha: selected ? 0.82 : 0.70),
-            dark,
-          ],
-          stops: const [0.0, 0.45, 1.0],
-        ).createShader(
-          Rect.fromCircle(
-            center: segmentCenterPoint,
-            radius: outerRadius,
-          ),
-        );
+        ..shader =
+            LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                light.withValues(alpha: selected ? 1.0 : 0.92),
+                light.withValues(alpha: selected ? 0.82 : 0.70),
+                dark,
+              ],
+              stops: const [0.0, 0.45, 1.0],
+            ).createShader(
+              Rect.fromCircle(center: segmentCenterPoint, radius: outerRadius),
+            );
 
       canvas.drawPath(path, paint);
     }

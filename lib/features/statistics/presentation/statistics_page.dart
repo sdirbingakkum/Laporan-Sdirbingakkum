@@ -186,10 +186,7 @@ class StatisticsPage extends StatelessWidget {
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 760),
                   child: hasContent
-                      ? _ContentBody(
-                          columns: _columns,
-                          ranking: _ranking,
-                        )
+                      ? _ContentBody(columns: _columns, ranking: _ranking)
                       : const SizedBox.shrink(),
                 ),
               ),

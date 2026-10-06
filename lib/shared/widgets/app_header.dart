@@ -37,10 +37,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       surfaceTintColor: Colors.transparent,
       toolbarHeight: 68,
       shape: Border(
-        bottom: BorderSide(
-          color: _gold.withValues(alpha: 0.16),
-          width: 1,
-        ),
+        bottom: BorderSide(color: _gold.withValues(alpha: 0.16), width: 1),
       ),
       leadingWidth: onBack == null ? (compact ? 52 : 60) : 52,
       leading: onBack == null
@@ -128,10 +125,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   Icon(Icons.logout_rounded, color: _goldLight),
                   SizedBox(width: 10),
-                  Text(
-                    'KELUAR / SIGN OUT',
-                    style: TextStyle(color: _text),
-                  ),
+                  Text('KELUAR / SIGN OUT', style: TextStyle(color: _text)),
                 ],
               ),
             ),
