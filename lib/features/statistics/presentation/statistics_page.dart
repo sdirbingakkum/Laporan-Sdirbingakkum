@@ -7,7 +7,6 @@ import '../../../shared/widgets/app_header.dart';
 
 const _bg = Color(0xFF03150F);
 const _surface = Color(0xFF09231A);
-const _surfaceSoft = Color(0xFF0D2C20);
 const _gold = Color(0xFFD7A93C);
 const _emerald = Color(0xFF34D399);
 const _text = Color(0xFFF8F5EC);
@@ -197,6 +196,7 @@ class StatisticsPage extends StatelessWidget {
                         constraints: const BoxConstraints(maxWidth: 760),
                         child: _ContentBody(
                           columns: _columns,
+                          module: module,
                           ranking: _ranking,
                           accent: _moduleAccent(module),
                           totalSim: module == StatisticsModule.simTni
@@ -221,12 +221,14 @@ class StatisticsPage extends StatelessWidget {
 class _ContentBody extends StatelessWidget {
   const _ContentBody({
     required this.columns,
+    required this.module,
     required this.ranking,
     required this.accent,
     this.totalSim,
   });
 
   final List<_StatColumn> columns;
+  final StatisticsModule module;
   final List<_RankData> ranking;
   final Color accent;
   final int? totalSim;
