@@ -14,7 +14,7 @@ class LaporanSdirbingakkumApp extends ConsumerWidget {
 
     if (!config.isConfigured) {
       return MaterialApp(
-        title: 'Laporan Sdirbingakkum',
+        title: 'SDIRBINGAKKUM',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light(),
         home: const _ConfigurationGate(),
@@ -22,7 +22,7 @@ class LaporanSdirbingakkumApp extends ConsumerWidget {
     }
 
     return MaterialApp.router(
-      title: 'Laporan Sdirbingakkum',
+      title: 'SDIRBINGAKKUM',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       routerConfig: ref.watch(appRouterProvider),
@@ -54,13 +54,13 @@ class _ConfigurationGate extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Konfigurasi aplikasi belum lengkap',
+                      'KONFIGURASI APLIKASI BELUM LENGKAP',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'SUPABASE_PUBLISHABLE_KEY harus diberikan melalui dart-define pada environment cloud.',
+                      'SUPABASE_PUBLISHABLE_KEY HARUS DIBERIKAN MELALUI DART-DEFINE PADA ENVIRONMENT CLOUD.',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
