@@ -90,13 +90,11 @@ void main() {
     expect(find.byType(HomePage), findsOneWidget);
     expect(find.text('SEMUA STATISTIK'), findsOneWidget);
     expect(find.text('SDIRBINGAKKUM'), findsOneWidget);
-    expect(find.text('STATISTIK PELANGGARAN'), findsOneWidget);
-    expect(find.text('STATISTIK LAKA-LALIN'), findsOneWidget);
-    expect(find.text('STATISTIK SIM TNI'), findsOneWidget);
-    expect(find.text('STATISTIK K9'), findsOneWidget);
-    expect(find.text('STATISTIK PROVOS TNI-AD'), findsOneWidget);
-    expect(find.text('STATISTIK LAKA-LALIN'), findsOneWidget);
-    expect(find.text('STATISTIK K9'), findsOneWidget);
+    expect(find.text('Statistik Pelanggaran'), findsOneWidget);
+    expect(find.text('Statistik Laka-lalin'), findsOneWidget);
+    expect(find.text('Statistik SIM TNI'), findsOneWidget);
+    expect(find.text('Statistik K9'), findsOneWidget);
+    expect(find.text('Statistik Provos TNI-AD'), findsOneWidget);
     expect(find.byIcon(Icons.gavel_rounded), findsNWidgets(2));
     expect(find.byType(Scrollable), findsNothing);
     expect(tester.takeException(), isNull);
@@ -119,6 +117,6 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('STATISTIK PELANGGARAN'), findsWidgets);
+    expect(find.text('Statistik Pelanggaran'), findsWidgets);
   });
 }
