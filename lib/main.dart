@@ -20,15 +20,8 @@ Future<void> main() async {
   const publishableKey = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
 
   if (publishableKey.isNotEmpty) {
-    await Supabase.initialize(
-      url: supabaseUrl,
-      publishableKey: publishableKey,
-    );
+    await Supabase.initialize(url: supabaseUrl, publishableKey: publishableKey);
   }
 
-  runApp(
-    const ProviderScope(
-      child: LaporanSdirbingakkumApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: LaporanSdirbingakkumApp()));
 }
