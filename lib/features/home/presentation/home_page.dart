@@ -403,25 +403,35 @@ class _PieMenuLabel extends StatelessWidget {
                 height: selected ? iconSize + 2 : iconSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  // Keep the module color dominant, then let it fall gently
-                  // toward black for a restrained dimensional shadow effect.
+                  // Metallic-style shading: a restrained highlight, the
+                  // original module color, then a deep shadow toward black.
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      item.lightColor.withValues(alpha: selected ? 0.96 : 0.88),
+                      Color.lerp(
+                        item.lightColor,
+                        Colors.white,
+                        selected ? 0.12 : 0.08,
+                      )!,
+                      Color.lerp(
+                        item.lightColor,
+                        Colors.white,
+                        selected ? 0.03 : 0.02,
+                      )!,
+                      item.lightColor,
                       Color.lerp(
                         item.lightColor,
                         Colors.black,
-                        selected ? 0.14 : 0.18,
+                        selected ? 0.18 : 0.22,
                       )!,
                       Color.lerp(
                         item.lightColor,
                         Colors.black,
-                        selected ? 0.34 : 0.40,
+                        selected ? 0.48 : 0.54,
                       )!,
                     ],
-                    stops: const [0.0, 0.72, 1.0],
+                    stops: const [0.0, 0.12, 0.28, 0.62, 1.0],
                   ),
                   border: Border.all(
                     color: Colors.white.withValues(
@@ -515,18 +525,20 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      // The base color remains clear; only the lower end receives a
-      // controlled black falloff so the wheel reads dimensional, not glossy.
+      // Metallic-style shading: a restrained highlight, the base color,
+      // then progressively deeper shadow toward black. The module color stays dominant.
       final paint = Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            selected ? light : light.withValues(alpha: 0.94),
-            Color.lerp(light, Colors.black, selected ? 0.12 : 0.16)!,
-            Color.lerp(light, Colors.black, selected ? 0.36 : 0.42)!,
+            Color.lerp(light, Colors.white, selected ? 0.12 : 0.08)!,
+            Color.lerp(light, Colors.white, selected ? 0.03 : 0.02)!,
+            light,
+            Color.lerp(light, Colors.black, selected ? 0.18 : 0.22)!,
+            Color.lerp(light, Colors.black, selected ? 0.48 : 0.54)!,
           ],
-          stops: const [0.0, 0.72, 1.0],
+          stops: const [0.0, 0.12, 0.28, 0.62, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, paint);
 
