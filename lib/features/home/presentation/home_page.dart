@@ -403,8 +403,8 @@ class _PieMenuLabel extends StatelessWidget {
                 height: selected ? iconSize + 2 : iconSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  // Metallic-style shading: a restrained highlight, the
-                  // original module color, then a deep shadow toward black.
+                  // Broader metallic shading: the highlight stays restrained,
+                  // while the color-to-black transition is intentionally more visible.
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -412,26 +412,31 @@ class _PieMenuLabel extends StatelessWidget {
                       Color.lerp(
                         item.lightColor,
                         Colors.white,
-                        selected ? 0.12 : 0.08,
+                        selected ? 0.15 : 0.10,
                       )!,
                       Color.lerp(
                         item.lightColor,
                         Colors.white,
-                        selected ? 0.03 : 0.02,
+                        selected ? 0.05 : 0.03,
                       )!,
                       item.lightColor,
                       Color.lerp(
                         item.lightColor,
                         Colors.black,
-                        selected ? 0.18 : 0.22,
+                        selected ? 0.16 : 0.20,
                       )!,
                       Color.lerp(
                         item.lightColor,
                         Colors.black,
-                        selected ? 0.48 : 0.54,
+                        selected ? 0.40 : 0.46,
+                      )!,
+                      Color.lerp(
+                        item.lightColor,
+                        Colors.black,
+                        selected ? 0.60 : 0.66,
                       )!,
                     ],
-                    stops: const [0.0, 0.12, 0.28, 0.62, 1.0],
+                    stops: const [0.0, 0.10, 0.26, 0.48, 0.72, 1.0],
                   ),
                   border: Border.all(
                     color: Colors.white.withValues(
@@ -525,20 +530,21 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      // Metallic-style shading: a restrained highlight, the base color,
-      // then progressively deeper shadow toward black. The module color stays dominant.
+      // Broader metallic shading: the highlight stays restrained, while
+      // the color-to-black transition is intentionally more visible.
       final paint = Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color.lerp(light, Colors.white, selected ? 0.12 : 0.08)!,
-            Color.lerp(light, Colors.white, selected ? 0.03 : 0.02)!,
+            Color.lerp(light, Colors.white, selected ? 0.15 : 0.10)!,
+            Color.lerp(light, Colors.white, selected ? 0.05 : 0.03)!,
             light,
-            Color.lerp(light, Colors.black, selected ? 0.18 : 0.22)!,
-            Color.lerp(light, Colors.black, selected ? 0.48 : 0.54)!,
+            Color.lerp(light, Colors.black, selected ? 0.16 : 0.20)!,
+            Color.lerp(light, Colors.black, selected ? 0.40 : 0.46)!,
+            Color.lerp(light, Colors.black, selected ? 0.60 : 0.66)!,
           ],
-          stops: const [0.0, 0.12, 0.28, 0.62, 1.0],
+          stops: const [0.0, 0.10, 0.26, 0.48, 0.72, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, paint);
 
