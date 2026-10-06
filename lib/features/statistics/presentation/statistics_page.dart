@@ -155,21 +155,32 @@ class StatisticsPage extends StatelessWidget {
           SafeArea(
             child: Stack(
               children: [
-                if (hasContent)
-                  Positioned.fill(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(20, 62, 20, 30),
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 760),
-                          child: _ContentBody(
-                            columns: columns,
-                            ranking: ranking,
-                          ),
+                Positioned.fill(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 30),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 760),
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              'assets/images/pomad_puspomad.webp',
+                              width: 150,
+                              height: 100,
+                              fit: BoxFit.contain,
+                              semanticLabel: 'Logo PUSPOMAD',
+                            ),
+                            if (hasContent)
+                              _ContentBody(
+                                columns: columns,
+                                ranking: ranking,
+                              ),
+                          ],
                         ),
                       ),
                     ),
                   ),
+                ),
                 Positioned(
                   top: 10,
                   left: 12,
