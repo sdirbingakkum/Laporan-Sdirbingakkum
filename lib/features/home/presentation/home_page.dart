@@ -423,7 +423,9 @@ class _PieMenuLabel extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Colors.white.withValues(alpha: selected ? 0.070 : 0.040),
+                          Colors.white.withValues(
+                            alpha: selected ? 0.070 : 0.040,
+                          ),
                           selected
                               ? item.lightColor.withValues(alpha: 0.085)
                               : Colors.white.withValues(alpha: 0.014),
