@@ -693,38 +693,3 @@ class _MenuBackdropPainter extends CustomPainter {
   bool shouldRepaint(covariant _MenuBackdropPainter oldDelegate) =>
       oldDelegate.phase != phase;
 }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 1;
-
-    paint.color = _gold.withValues(alpha: 0.10);
-
-    final large = Rect.fromCircle(
-      center: Offset(size.width * 0.10, size.height * 0.88),
-      radius: size.width * 0.70,
-    );
-    canvas.drawArc(large, -0.8, 1.5, false, paint);
-
-    final second = Rect.fromCircle(
-      center: Offset(size.width * 0.94, size.height * 0.18),
-      radius: size.width * 0.58,
-    );
-    canvas.drawArc(second, 1.9, 1.0, false, paint);
-
-    paint
-      ..strokeWidth = 0.7
-      ..color = Colors.white.withValues(alpha: 0.035);
-
-    for (var i = 0; i < 7; i++) {
-      final y = size.height * 0.74 + i * 15;
-      canvas.drawLine(Offset(-20, y), Offset(size.width * 0.32, y - 50), paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
