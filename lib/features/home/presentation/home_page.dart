@@ -574,8 +574,9 @@ class _PieMenuLabel extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: selected ? item.lightColor : _text,
-                  fontSize:
-                      isLong ? math.max(labelFontSize - 0.5, 7.6) : labelFontSize,
+                  fontSize: isLong
+                      ? math.max(labelFontSize - 0.5, 7.6).toDouble()
+                      : labelFontSize,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.25,
                   height: 1.05,
