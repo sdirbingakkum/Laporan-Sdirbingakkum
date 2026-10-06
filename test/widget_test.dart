@@ -91,10 +91,12 @@ void main() {
     expect(find.text('SEMUA STATISTIK'), findsOneWidget);
     expect(find.text('SDIRBINGAKKUM'), findsOneWidget);
     expect(find.text('STATISTIK PELANGGARAN'), findsOneWidget);
+    expect(find.text('STATISTIK LAKA-LALIN'), findsOneWidget);
     expect(find.text('STATISTIK SIM TNI'), findsOneWidget);
+    expect(find.text('STATISTIK K9'), findsOneWidget);
     expect(find.text('STATISTIK PROVOS TNI-AD'), findsOneWidget);
     expect(find.text('STATISTIK LAKA-LALIN'), findsOneWidget);
-    expect(find.text('K9'), findsOneWidget);
+    expect(find.text('STATISTIK K9'), findsOneWidget);
     expect(find.byIcon(Icons.gavel_rounded), findsNWidgets(2));
     expect(find.byType(Scrollable), findsNothing);
     expect(tester.takeException(), isNull);
