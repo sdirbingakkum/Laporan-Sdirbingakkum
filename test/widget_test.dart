@@ -124,7 +124,7 @@ void main() {
     expect(find.text('STATISTIK SIM TNI'), findsOneWidget);
     expect(find.text('STATISTIK K9'), findsOneWidget);
     expect(find.text('STATISTIK PROVOS TNI-AD'), findsOneWidget);
-    expect(find.byIcon(Icons.gavel_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.apps_rounded), findsOneWidget);
     expect(find.byType(Scrollable), findsNothing);
     expect(tester.takeException(), isNull);
   });
