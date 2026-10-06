@@ -120,6 +120,114 @@ class _HomePageState extends ConsumerState<HomePage> {
     });
   }
 
+  Widget _selectedContent() {
+    switch (_selectedIndex) {
+      case 0:
+        return const _StatisticsContent(
+          title: 'Statistik Pelanggaran',
+          yearCards: [
+            _StatCardData('TATIB', '25', Color(0xFFF09A4A)),
+            _StatCardData('LALIN', '70', Color(0xFF5D8FE0)),
+          ],
+          monthCards: [
+            _StatCardData('TATIB', '5', Color(0xFFF09A4A)),
+            _StatCardData('LALIN', '10', Color(0xFF5D8FE0)),
+          ],
+          ranking: [
+            _RankData('POMDAM V/BRW', 130),
+            _RankData('POMDAM III/SLW', 85),
+            _RankData('POMDAM I/BB', 64),
+            _RankData('POMDAM JAYA', 42),
+            _RankData('POMDAM IV/DIP', 30),
+          ],
+        );
+      case 1:
+        return const _StatisticsContent(
+          title: 'Statistik Laka-lalin',
+          yearCards: [
+            _StatCardData('JUMLAH KASUS', '200', Color(0xFFE15B5B)),
+            _StatCardData('LAKA GANDA', '100', Color(0xFFF09A4A)),
+            _StatCardData('TUNGGAL', '50', Color(0xFFE3BE4F)),
+            _StatCardData('TABRAK LARI', '50', Color(0xFFE15B5B)),
+          ],
+          monthCards: [
+            _StatCardData('JUMLAH KASUS', '30', Color(0xFFE15B5B)),
+            _StatCardData('LAKA GANDA', '20', Color(0xFFF09A4A)),
+            _StatCardData('TUNGGAL', '5', Color(0xFFE3BE4F)),
+            _StatCardData('TABRAK LARI', '5', Color(0xFFE15B5B)),
+          ],
+          ranking: [
+            _RankData('POMDAM V/BRW', 45),
+            _RankData('POMDAM JAYA', 38),
+            _RankData('POMDAM I/BB', 30),
+            _RankData('POMDAM XII/TPR', 25),
+            _RankData('POMDAM III/SLW', 18),
+          ],
+        );
+      case 2:
+        return const _StatisticsContent(
+          title: 'Statistik SIM TNI',
+          yearCards: [
+            _StatCardData('A', '200', Color(0xFF5D8FE0)),
+            _StatCardData('BI', '100', Color(0xFF49A86B)),
+            _StatCardData('BII', '50', Color(0xFF5D8FE0)),
+            _StatCardData('BII SUS', '25', Color(0xFFF09A4A)),
+            _StatCardData('C', '25', Color(0xFF5D8FE0)),
+          ],
+          monthCards: [
+            _StatCardData('A', '20', Color(0xFF5D8FE0)),
+            _StatCardData('BI', '10', Color(0xFF49A86B)),
+            _StatCardData('BII', '5', Color(0xFF5D8FE0)),
+            _StatCardData('BII SUS', '5', Color(0xFFF09A4A)),
+            _StatCardData('C', '5', Color(0xFF5D8FE0)),
+          ],
+          ranking: [
+            _RankData('POMDAM JAYA', 450),
+            _RankData('POMDAM II/SWJ', 320),
+            _RankData('POMDAM V/BRW', 210),
+            _RankData('POMDAM I/BB', 190),
+            _RankData('POMDAM IM', 110),
+          ],
+        );
+      case 3:
+        return const _StatisticsContent(
+          title: 'Statistik K9',
+          yearCards: [
+            _StatCardData('TOTAL', '—', Color(0xFFE3BE4F)),
+          ],
+          monthCards: [
+            _StatCardData('BULAN BERJALAN', '—', Color(0xFFE3BE4F)),
+          ],
+          ranking: [],
+          emptyMessage:
+              'Prototype tidak menyediakan modul K9. Struktur halaman sudah disiapkan untuk data K9.',
+        );
+      case 4:
+        return const _StatisticsContent(
+          title: 'Statistik Provos TNI-AD',
+          yearCards: [
+            _StatCardData('JUMLAH', '2000', Color(0xFF49A86B)),
+            _StatCardData('SUDAH DIK/TAR', '500', Color(0xFF49A86B)),
+            _StatCardData('BELUM DIK/TAR', '1500', Color(0xFFF09A4A)),
+          ],
+          monthCards: [
+            _StatCardData('JUMLAH', '250', Color(0xFF49A86B)),
+            _StatCardData('SUDAH DIK/TAR', '50', Color(0xFF49A86B)),
+            _StatCardData('BELUM DIK/TAR', '200', Color(0xFFF09A4A)),
+          ],
+          ranking: [
+            _RankData('POMDAM III/SLW', 624),
+            _RankData('POMDAM V/BRW', 617),
+            _RankData('POMDAM I/BB', 535),
+            _RankData('POMDAM JAYA', 511),
+            _RankData('POMDAM IV/DIP', 463),
+          ],
+        );
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,68 +239,28 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return Center(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.center,
-                    child: SizedBox(
-                      width: 520,
-                      height: 760,
-                      child: _MenuContent(
-                        items: _items,
-                        selectedIndex: _selectedIndex,
-                        onSelected: _selectMenu,
-                        onSignOut: _confirmSignOut,
-                      ),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 720),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
+                          child: _MenuHeader(onSignOut: _confirmSignOut),
+                        ),
+                        Expanded(
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            child: KeyedSubtree(
+                              key: ValueKey(_selectedIndex),
+                              child: _selectedContent(),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );
               },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MenuContent extends StatelessWidget {
-  const _MenuContent({
-    required this.items,
-    required this.selectedIndex,
-    required this.onSelected,
-    required this.onSignOut,
-  });
-
-  final List<_MenuItemData> items;
-  final int selectedIndex;
-  final ValueChanged<int> onSelected;
-  final VoidCallback onSignOut;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-      child: Column(
-        children: [
-          _MenuHeader(onSignOut: onSignOut),
-          const SizedBox(height: 28),
-          const Text(
-            'SEMUA STATISTIK',
-            style: TextStyle(
-              color: _goldLight,
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 4.2,
-            ),
-          ),
-          const SizedBox(height: 28),
-          Expanded(
-            child: Center(
-              child: _PieMenu(
-                items: items,
-                selectedIndex: selectedIndex,
-                onSelected: onSelected,
-              ),
             ),
           ),
         ],
@@ -313,6 +381,265 @@ class _MenuHeader extends StatelessWidget {
       ],
     );
   }
+}
+
+class _StatisticsContent extends StatelessWidget {
+  const _StatisticsContent({
+    required this.title,
+    required this.yearCards,
+    required this.monthCards,
+    required this.ranking,
+    this.emptyMessage,
+  });
+
+  final String title;
+  final List<_StatCardData> yearCards;
+  final List<_StatCardData> monthCards;
+  final List<_RankData> ranking;
+  final String? emptyMessage;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: _goldLight,
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.6,
+            ),
+          ),
+          const SizedBox(height: 18),
+          _StatsColumn(title: '2026', cards: yearCards),
+          const SizedBox(height: 16),
+          _StatsColumn(title: 'SEPT', cards: monthCards),
+          if (emptyMessage != null) ...[
+            const SizedBox(height: 16),
+            _GlassMessage(message: emptyMessage!),
+          ],
+          if (ranking.isNotEmpty) ...[
+            const SizedBox(height: 18),
+            _RankingCard(title: 'Top 5 POMDAM', ranking: ranking),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _StatsColumn extends StatelessWidget {
+  const _StatsColumn({required this.title, required this.cards});
+
+  final String title;
+  final List<_StatCardData> cards;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+      decoration: BoxDecoration(
+        color: _surface.withValues(alpha: 0.64),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: _gold.withValues(alpha: 0.14)),
+      ),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              color: _goldLight,
+              fontSize: 11,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 3.2,
+            ),
+          ),
+          const SizedBox(height: 10),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: cards.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 1.55,
+            ),
+            itemBuilder: (context, index) {
+              final card = cards[index];
+              return Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: _surfaceSoft.withValues(alpha: 0.88),
+                  borderRadius: BorderRadius.circular(17),
+                  border: Border(
+                    left: BorderSide(color: card.color, width: 3),
+                  ),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 14,
+                      offset: Offset(0, 7),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      card.label,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: _muted,
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      card.value,
+                      style: TextStyle(
+                        color: card.color,
+                        fontSize: 25,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RankingCard extends StatelessWidget {
+  const _RankingCard({required this.title, required this.ranking});
+
+  final String title;
+  final List<_RankData> ranking;
+
+  @override
+  Widget build(BuildContext context) {
+    final maxValue = ranking.fold<int>(
+      0,
+      (max, item) => item.value > max ? item.value : max,
+    );
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 15, 16, 17),
+      decoration: BoxDecoration(
+        color: _surface.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: _gold.withValues(alpha: 0.16)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              color: _goldLight,
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 2.2,
+            ),
+          ),
+          const SizedBox(height: 14),
+          for (final item in ranking) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    item.name,
+                    style: const TextStyle(
+                      color: _text,
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                Text(
+                  item.value.toString(),
+                  style: const TextStyle(
+                    color: _goldLight,
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: LinearProgressIndicator(
+                minHeight: 7,
+                value: maxValue == 0 ? 0 : item.value / maxValue,
+                backgroundColor: Colors.black26,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  _goldLight.withValues(alpha: 0.82),
+                ),
+              ),
+            ),
+            const SizedBox(height: 11),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _GlassMessage extends StatelessWidget {
+  const _GlassMessage({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _surface.withValues(alpha: 0.74),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: _gold.withValues(alpha: 0.18)),
+      ),
+      child: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          color: _muted,
+          fontSize: 11,
+          height: 1.4,
+        ),
+      ),
+    );
+  }
+}
+
+class _StatCardData {
+  const _StatCardData(this.label, this.value, this.color);
+
+  final String label;
+  final String value;
+  final Color color;
+}
+
+class _RankData {
+  const _RankData(this.name, this.value);
+
+  final String name;
+  final int value;
 }
 
 class _PieMenu extends StatelessWidget {
