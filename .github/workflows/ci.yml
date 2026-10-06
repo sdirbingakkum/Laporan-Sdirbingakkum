@@ -16,8 +16,8 @@ env:
   FLUTTER_VERSION: "3.47.3"
 
 jobs:
-  analyze-test-web:
-    name: Analyze, test, and Web build
+  quality:
+    name: Analyze and test
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -31,9 +31,6 @@ jobs:
           cache: true
           pub-cache: true
 
-      - name: Ensure Web runner
-        run: flutter create . --platforms=web
-
       - name: Dependencies
         run: flutter pub get
 
@@ -46,16 +43,8 @@ jobs:
       - name: Test
         run: flutter test
 
-      - name: Build Web
-        env:
-          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
-        run: |
-          flutter build web --release \
-            --dart-define=SUPABASE_URL=https://ybepaqmrrgsaeqnqrsrf.supabase.co \
-            --dart-define=SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY"
-
   android:
-    name: Android release build
+    name: Android release APK
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -75,7 +64,7 @@ jobs:
       - name: Dependencies
         run: flutter pub get
 
-      - name: Build APK
+      - name: Build release APK
         env:
           SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
         run: |
@@ -83,26 +72,15 @@ jobs:
             --dart-define=SUPABASE_URL=https://ybepaqmrrgsaeqnqrsrf.supabase.co \
             --dart-define=SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY"
 
-  windows:
-    name: Windows desktop release build
-    runs-on: windows-2025
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Generate APK checksum
+        run: sha256sum build/app/outputs/flutter-apk/app-release.apk > build/app/outputs/flutter-apk/app-release.apk.sha256
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
-          pub-cache: true
-
-      - name: Ensure Windows runner
-        run: flutter create . --platforms=windows
-
-      - name: Dependencies
-        run: flutter pub get
-
-      - name: Build Windows
-        run: flutter build windows --release
+          name: android-release-apk
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/flutter-apk/app-release.apk.sha256
+          if-no-files-found: error
+          retention-days: 14
