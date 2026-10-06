@@ -410,44 +410,51 @@ class _PieMenuLabel extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                width: selected ? iconSize + 2 : iconSize,
-                height: selected ? iconSize + 2 : iconSize,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white.withValues(alpha: selected ? 0.075 : 0.045),
-                      selected
-                          ? item.lightColor.withValues(alpha: 0.10)
-                          : Colors.white.withValues(alpha: 0.018),
-                      const Color(0xFF06120D).withValues(alpha: 0.68),
-                    ],
-                    stops: const [0.0, 0.42, 1.0],
-                  ),
-                  border: Border.all(
-                    color: selected
-                        ? item.lightColor.withValues(alpha: 0.42)
-                        : Colors.white.withValues(alpha: 0.14),
-                    width: selected ? 1.0 : 0.8,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: selected ? 0.20 : 0.15),
-                      blurRadius: selected ? 10 : 7,
-                      offset: const Offset(0, 3),
+              ClipOval(
+                child: BackdropFilter(
+                  filter: ui.ImageFilter.blur(sigmaX: 7, sigmaY: 7),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    width: selected ? iconSize + 2 : iconSize,
+                    height: selected ? iconSize + 2 : iconSize,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white.withValues(alpha: selected ? 0.070 : 0.040),
+                          selected
+                              ? item.lightColor.withValues(alpha: 0.085)
+                              : Colors.white.withValues(alpha: 0.014),
+                          const Color(0xFF06120D).withValues(alpha: 0.62),
+                        ],
+                        stops: const [0.0, 0.42, 1.0],
+                      ),
+                      border: Border.all(
+                        color: selected
+                            ? item.lightColor.withValues(alpha: 0.38)
+                            : Colors.white.withValues(alpha: 0.13),
+                        width: selected ? 0.95 : 0.8,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(
+                            alpha: selected ? 0.16 : 0.12,
+                          ),
+                          blurRadius: selected ? 9 : 6,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Icon(
-                  item.icon,
-                  color: selected
-                      ? item.lightColor.withValues(alpha: 0.90)
-                      : Colors.white.withValues(alpha: 0.82),
-                  size: compact ? 15 : 18,
+                    child: Icon(
+                      item.icon,
+                      color: selected
+                          ? item.lightColor.withValues(alpha: 0.88)
+                          : Colors.white.withValues(alpha: 0.80),
+                      size: compact ? 15 : 18,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 5),
@@ -526,7 +533,6 @@ class _PieMenuPainter extends CustomPainter {
 
     for (var i = 0; i < itemCount; i++) {
       final start = -math.pi / 2 + i * sweep;
-      final segmentCenter = start + sweep / 2;
       final selected = i == selectedIndex;
       final light = _lightPalette[i];
       final dark = _darkPalette[i];
