@@ -504,93 +504,16 @@ class _PieMenuPainter extends CustomPainter {
     final outerRadius = size.shortestSide * 0.43;
     final sweep = 2 * math.pi / itemCount;
 
-    // Deep 3D construction: a substantial extrusion sits below the
-    // colored face, with a soft cast shadow to separate it from the background.
-    final depth = (size.shortestSide * 0.050).clamp(18.0, 26.0).toDouble();
-    final extrusion = Offset(depth * 0.22, depth);
-    final bottomCenter = center + extrusion;
-
-    final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.36)
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 20);
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: bottomCenter + const Offset(0, 9),
-        width: outerRadius * 2.14,
-        height: outerRadius * 0.70,
-      ),
-      shadowPaint,
+    // No physical layer is drawn beneath the wheel. Metallic depth is
+    // carried by the face lighting and restrained edge treatment.
+    final faceShadow = Paint()
+      ..color = Colors.black.withValues(alpha: 0.20)
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 12);
+    canvas.drawCircle(
+      center.translate(0, 2.5),
+      outerRadius + 1,
+      faceShadow,
     );
-
-    // Thick side wall: keep the extrusion substantial, but let the material
-    // shading—not a hard underside lip—define the depth.
-    for (var i = 0; i < itemCount; i++) {
-      final start = -math.pi / 2 + i * sweep;
-      final end = start + sweep;
-      final light = _lightPalette[i];
-
-      final topStart = Offset(
-        center.dx + math.cos(start) * outerRadius,
-        center.dy + math.sin(start) * outerRadius,
-      );
-      final bottomEnd = Offset(
-        bottomCenter.dx + math.cos(end) * outerRadius,
-        bottomCenter.dy + math.sin(end) * outerRadius,
-      );
-
-      final wallPath = Path()
-        ..moveTo(topStart.dx, topStart.dy)
-        ..arcTo(
-          Rect.fromCircle(center: center, radius: outerRadius),
-          start,
-          sweep,
-          false,
-        )
-        ..lineTo(bottomEnd.dx, bottomEnd.dy)
-        ..arcTo(
-          Rect.fromCircle(center: bottomCenter, radius: outerRadius),
-          end,
-          -sweep,
-          false,
-        )
-        ..close();
-
-      final wallPaint = Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color.lerp(light, Colors.white, 0.06)!,
-            Color.lerp(light, Colors.black, 0.20)!,
-            Color.lerp(light, Colors.black, 0.42)!,
-            Color.lerp(light, Colors.black, 0.68)!,
-            Color.lerp(light, Colors.black, 0.86)!,
-          ],
-          stops: const [0.0, 0.12, 0.36, 0.68, 1.0],
-        ).createShader(Rect.fromPoints(topStart, bottomEnd));
-      canvas.drawPath(wallPath, wallPaint);
-    }
-
-    // Keep the five physical slices visually separated down the extrusion.
-    final sideSeamPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.85
-      ..strokeCap = StrokeCap.butt
-      ..color = Colors.black.withValues(alpha: 0.42);
-    for (var i = 0; i < itemCount; i++) {
-      final angle = -math.pi / 2 + i * sweep;
-      canvas.drawLine(
-        Offset(
-          center.dx + math.cos(angle) * outerRadius,
-          center.dy + math.sin(angle) * outerRadius,
-        ),
-        Offset(
-          bottomCenter.dx + math.cos(angle) * outerRadius,
-          bottomCenter.dy + math.sin(angle) * outerRadius,
-        ),
-        sideSeamPaint,
-      );
-    }
 
     for (var i = 0; i < itemCount; i++) {
       final start = -math.pi / 2 + i * sweep;
@@ -682,7 +605,8 @@ class _PieMenuPainter extends CustomPainter {
       }
     }
 
-    // Fine separators and a restrained outer edge preserve the clean
+    // Fine separators keep the five modules crisp while the wheel remains
+    // a single face with metallic depth.
     final seamPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.8
