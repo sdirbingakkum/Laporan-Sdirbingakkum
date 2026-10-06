@@ -287,7 +287,7 @@ class _TotalSimCard extends StatelessWidget {
             Colors.white.withValues(alpha: 0.04),
           ],
         ),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(17.6),
         border: Border.all(color: accent.withValues(alpha: 0.34)),
         boxShadow: const [
           BoxShadow(
@@ -368,10 +368,10 @@ Future<void> _showRankingSheet(
               ),
             ),
             const SizedBox(height: 18),
-            const Text(
+            Text(
               'ANALISIS VISUAL',
               style: TextStyle(
-                color: _goldLight,
+                color: accent,
                 fontSize: 18,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 0.8,
