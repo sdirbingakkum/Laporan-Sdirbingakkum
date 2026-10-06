@@ -327,24 +327,21 @@ class _PieMenuCenter extends StatelessWidget {
                   color: iconColor,
                   size: diameterForCenter(context),
                 ),
-                const SizedBox(height: 4),
-                const Text(
-                  'MENU',
-                  style: TextStyle(
-                    color: _text,
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2.5,
-                  ),
-                ),
-                const SizedBox(height: 1),
-                const Text(
-                  'UTAMA',
-                  style: TextStyle(
-                    color: _muted,
-                    fontSize: 7.5,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 2.2,
+                const SizedBox(height: 6),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Text(
+                    centerKey,
+                    textAlign: TextAlign.center,
+                    maxLines: centerKey == 'MENU UTAMA' ? 2 : 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: item == null ? _text : iconColor,
+                      fontSize: centerTextSize(context, centerKey),
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: centerKey.length > 18 ? 0.1 : 0.8,
+                      height: 1.02,
+                    ),
                   ),
                 ),
               ],
@@ -358,6 +355,24 @@ class _PieMenuCenter extends StatelessWidget {
   double diameterForCenter(BuildContext context) {
     final shortest = MediaQuery.sizeOf(context).shortestSide;
     return shortest < 300 ? 23 : 29;
+  }
+
+  double centerTextSize(BuildContext context, String text) {
+    final shortest = MediaQuery.sizeOf(context).shortestSide;
+
+    if (text == 'MENU UTAMA') {
+      return shortest < 300 ? 8.0 : 9.2;
+    }
+
+    if (text.length >= 22) {
+      return shortest < 300 ? 6.5 : 7.5;
+    }
+
+    if (text.length >= 18) {
+      return shortest < 300 ? 7.0 : 8.0;
+    }
+
+    return shortest < 300 ? 7.6 : 8.6;
   }
 }
 
