@@ -408,7 +408,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        'v1.0.0',
+                        'v0.1.0',
                         textAlign: TextAlign.center,
                         style: textTheme.labelSmall?.copyWith(
                           color: _gold,
