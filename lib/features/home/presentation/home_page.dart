@@ -232,10 +232,15 @@ class _MenuHeader extends StatelessWidget {
               ),
             ],
           ),
-          child: Image.asset(
-            'assets/images/pomad_puspomad.webp',
-            fit: BoxFit.contain,
-            semanticLabel: 'Logo PUSPOMAD',
+          child: ClipRect(
+            child: Transform.scale(
+              scale: 1.48,
+              child: Image.asset(
+                'assets/images/pomad_puspomad.webp',
+                fit: BoxFit.contain,
+                semanticLabel: 'Logo PUSPOMAD',
+              ),
+            ),
           ),
         ),
         const SizedBox(width: 14),
@@ -316,265 +321,6 @@ class _MenuHeader extends StatelessWidget {
       ],
     );
   }
-}
-
-class _StatisticsContent extends StatelessWidget {
-  const _StatisticsContent({
-    required this.title,
-    required this.yearCards,
-    required this.monthCards,
-    required this.ranking,
-    this.emptyMessage,
-  });
-
-  final String title;
-  final List<_StatCardData> yearCards;
-  final List<_StatCardData> monthCards;
-  final List<_RankData> ranking;
-  final String? emptyMessage;
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: _goldLight,
-              fontSize: 20,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 0.6,
-            ),
-          ),
-          const SizedBox(height: 18),
-          _StatsColumn(title: '2026', cards: yearCards),
-          const SizedBox(height: 16),
-          _StatsColumn(title: 'SEPT', cards: monthCards),
-          if (emptyMessage != null) ...[
-            const SizedBox(height: 16),
-            _GlassMessage(message: emptyMessage!),
-          ],
-          if (ranking.isNotEmpty) ...[
-            const SizedBox(height: 18),
-            _RankingCard(title: 'Top 5 POMDAM', ranking: ranking),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _StatsColumn extends StatelessWidget {
-  const _StatsColumn({required this.title, required this.cards});
-
-  final String title;
-  final List<_StatCardData> cards;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
-      decoration: BoxDecoration(
-        color: _surface.withValues(alpha: 0.64),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: _gold.withValues(alpha: 0.14)),
-      ),
-      child: Column(
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              color: _goldLight,
-              fontSize: 11,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 3.2,
-            ),
-          ),
-          const SizedBox(height: 10),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: cards.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              childAspectRatio: 1.55,
-            ),
-            itemBuilder: (context, index) {
-              final card = cards[index];
-              return Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: _surfaceSoft.withValues(alpha: 0.88),
-                  borderRadius: BorderRadius.circular(17),
-                  border: Border(
-                    left: BorderSide(color: card.color, width: 3),
-                  ),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 14,
-                      offset: Offset(0, 7),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      card.label,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: _muted,
-                        fontSize: 9.5,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      card.value,
-                      style: TextStyle(
-                        color: card.color,
-                        fontSize: 25,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RankingCard extends StatelessWidget {
-  const _RankingCard({required this.title, required this.ranking});
-
-  final String title;
-  final List<_RankData> ranking;
-
-  @override
-  Widget build(BuildContext context) {
-    final maxValue = ranking.fold<int>(
-      0,
-      (max, item) => item.value > max ? item.value : max,
-    );
-
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 15, 16, 17),
-      decoration: BoxDecoration(
-        color: _surface.withValues(alpha: 0.72),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: _gold.withValues(alpha: 0.16)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              color: _goldLight,
-              fontSize: 12,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 2.2,
-            ),
-          ),
-          const SizedBox(height: 14),
-          for (final item in ranking) ...[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    item.name,
-                    style: const TextStyle(
-                      color: _text,
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                Text(
-                  item.value.toString(),
-                  style: const TextStyle(
-                    color: _goldLight,
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: LinearProgressIndicator(
-                minHeight: 7,
-                value: maxValue == 0 ? 0 : item.value / maxValue,
-                backgroundColor: Colors.black26,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  _goldLight.withValues(alpha: 0.82),
-                ),
-              ),
-            ),
-            const SizedBox(height: 11),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _GlassMessage extends StatelessWidget {
-  const _GlassMessage({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: _surface.withValues(alpha: 0.74),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: _gold.withValues(alpha: 0.18)),
-      ),
-      child: Text(
-        message,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          color: _muted,
-          fontSize: 11,
-          height: 1.4,
-        ),
-      ),
-    );
-  }
-}
-
-class _StatCardData {
-  const _StatCardData(this.label, this.value, this.color);
-
-  final String label;
-  final String value;
-  final Color color;
-}
-
-class _RankData {
-  const _RankData(this.name, this.value);
-
-  final String name;
-  final int value;
 }
 
 class _PieMenu extends StatelessWidget {
@@ -987,4 +733,391 @@ class _MenuBackdropPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+class _PieMenu extends StatelessWidget {
+  const _PieMenu({
+    required this.items,
+    required this.selectedIndex,
+    required this.onSelected,
+  });
+
+  final List<_MenuItemData> items;
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final diameter = math.min(
+          constraints.maxWidth,
+          constraints.maxHeight,
+        );
+
+        if (diameter <= 0) {
+          return const SizedBox.shrink();
+        }
+
+        return SizedBox.square(
+          dimension: diameter,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapUp: (details) {
+              final box = context.findRenderObject() as RenderBox;
+              final localPosition = box.globalToLocal(details.globalPosition);
+              final index = _PieMenuPainter.indexAt(
+                localPosition,
+                box.size,
+                itemCount: items.length,
+              );
+
+              if (index != null) {
+                onSelected(index);
+              }
+            },
+            child: CustomPaint(
+              painter: _PieMenuPainter(
+                itemCount: items.length,
+                selectedIndex: selectedIndex,
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                clipBehavior: Clip.none,
+                children: [
+                  _PieMenuCenter(
+                    item: items[selectedIndex],
+                  ),
+                  for (var i = 0; i < items.length; i++)
+                    _PieMenuLabel(
+                      index: i,
+                      item: items[i],
+                      itemCount: items.length,
+                      selected: i == selectedIndex,
+                      diameter: diameter,
+                    ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _PieMenuCenter extends StatelessWidget {
+  const _PieMenuCenter({required this.item});
+
+  final _MenuItemData item;
+
+  @override
+  Widget build(BuildContext context) {
+    return FractionallySizedBox(
+      widthFactor: 0.34,
+      heightFactor: 0.34,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: const RadialGradient(
+            colors: [_surfaceSoft, _surface],
+          ),
+          border: Border.all(
+            color: item.lightColor.withValues(alpha: 0.72),
+            width: 1.4,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: item.lightColor.withValues(alpha: 0.12),
+              blurRadius: 28,
+              spreadRadius: 3,
+            ),
+            const BoxShadow(
+              color: Colors.black54,
+              blurRadius: 22,
+              offset: Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Center(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 220),
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            transitionBuilder: (child, animation) {
+              return ScaleTransition(
+                scale: animation,
+                child: FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
+              );
+            },
+            child: Column(
+              key: ValueKey(item.label),
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  item.icon,
+                  color: item.lightColor,
+                  size: 29,
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'MENU',
+                  style: TextStyle(
+                    color: _text,
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2.5,
+                  ),
+                ),
+                const SizedBox(height: 1),
+                const Text(
+                  'UTAMA',
+                  style: TextStyle(
+                    color: _muted,
+                    fontSize: 7.5,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 2.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PieMenuLabel extends StatelessWidget {
+  const _PieMenuLabel({
+    required this.index,
+    required this.item,
+    required this.itemCount,
+    required this.selected,
+    required this.diameter,
+  });
+
+  final int index;
+  final _MenuItemData item;
+  final int itemCount;
+  final bool selected;
+  final double diameter;
+
+  @override
+  Widget build(BuildContext context) {
+    final outerRadius = diameter * 0.43;
+    final labelRadius = outerRadius * 0.69;
+    final angle =
+        -math.pi / 2 + (2 * math.pi / itemCount) * (index + 0.5);
+    final compact = diameter < 310;
+    final labelWidth = (diameter * 0.29).clamp(72.0, 104.0);
+    final iconSize = compact ? 32.0 : 38.0;
+    final fontSize = compact ? 8.2 : 9.3;
+
+    return Transform.translate(
+      offset: Offset(
+        math.cos(angle) * labelRadius,
+        math.sin(angle) * labelRadius,
+      ),
+      child: SizedBox(
+        width: labelWidth,
+        child: AnimatedScale(
+          scale: selected ? 1.05 : 1,
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                width: selected ? iconSize + 3 : iconSize,
+                height: selected ? iconSize + 3 : iconSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: selected
+                      ? item.lightColor.withValues(alpha: 0.22)
+                      : _surface.withValues(alpha: 0.72),
+                  border: Border.all(
+                    color: selected
+                        ? item.lightColor.withValues(alpha: 0.92)
+                        : Colors.white.withValues(alpha: 0.22),
+                    width: selected ? 1.4 : 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: selected
+                          ? item.lightColor.withValues(alpha: 0.20)
+                          : Colors.black26,
+                      blurRadius: selected ? 16 : 8,
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  item.icon,
+                  color: selected ? item.lightColor : _text.withValues(alpha: 0.90),
+                  size: compact ? 16 : 19,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                item.label,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: selected ? item.lightColor : _text,
+                  fontSize: item.label == 'Statistik Provos TNI-AD'
+                      ? math.max(fontSize - 0.5, 7.6)
+                      : fontSize,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.25,
+                  height: 1.05,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PieMenuPainter extends CustomPainter {
+  const _PieMenuPainter({
+    required this.itemCount,
+    required this.selectedIndex,
+  });
+
+  final int itemCount;
+  final int selectedIndex;
+
+  static const _segmentGap = 0.055;
+  static const _lightPalette = <Color>[
+    Color(0xFFF09A4A),
+    Color(0xFFE15B5B),
+    Color(0xFF5D8FE0),
+    Color(0xFFE3BE4F),
+    Color(0xFF49A86B),
+  ];
+  static const _darkPalette = <Color>[
+    Color(0xFF5A2B0D),
+    Color(0xFF461518),
+    Color(0xFF192A55),
+    Color(0xFF59410D),
+    Color(0xFF123827),
+  ];
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final outerRadius = size.shortestSide * 0.43;
+    final hubRadius = size.shortestSide * 0.17;
+    final sweep =
+        (2 * math.pi - _segmentGap * itemCount) / itemCount;
+
+    for (var i = 0; i < itemCount; i++) {
+      final start =
+          -math.pi / 2 +
+          i * (sweep + _segmentGap) +
+          _segmentGap / 2;
+      final isSelected = i == selectedIndex;
+      final radius = outerRadius + (isSelected ? 4.0 : 0.0);
+
+      final path = Path()
+        ..moveTo(center.dx, center.dy)
+        ..lineTo(
+          center.dx + math.cos(start) * radius,
+          center.dy + math.sin(start) * radius,
+        )
+        ..arcTo(
+          Rect.fromCircle(center: center, radius: radius),
+          start,
+          sweep,
+          false,
+        )
+        ..close();
+
+      final light = _lightPalette[i];
+      final dark = _darkPalette[i];
+      final paint = Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            light.withValues(alpha: isSelected ? 1.0 : 0.88),
+            light.withValues(alpha: isSelected ? 0.82 : 0.66),
+            dark,
+          ],
+          stops: const [0.0, 0.45, 1.0],
+        ).createShader(
+          Rect.fromCircle(center: center, radius: radius),
+        );
+
+      canvas.drawPath(path, paint);
+
+      final stroke = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = isSelected ? 1.8 : 1
+        ..color = light.withValues(alpha: isSelected ? 0.96 : 0.34);
+      canvas.drawPath(path, stroke);
+    }
+
+    final hubGlow = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          Colors.white.withValues(alpha: 0.045),
+          Colors.transparent,
+        ],
+      ).createShader(
+        Rect.fromCircle(center: center, radius: hubRadius),
+      );
+    canvas.drawCircle(center, hubRadius, hubGlow);
+  }
+
+  static int? indexAt(
+    Offset position,
+    Size size, {
+    required int itemCount,
+  }) {
+    final center = size.center(Offset.zero);
+    final dx = position.dx - center.dx;
+    final dy = position.dy - center.dy;
+    final distance = math.sqrt(dx * dx + dy * dy);
+    final outerRadius = size.shortestSide * 0.47;
+    final innerRadius = size.shortestSide * 0.19;
+
+    if (distance > outerRadius || distance < innerRadius) {
+      return null;
+    }
+
+    var angle = math.atan2(dy, dx) + math.pi / 2;
+    if (angle < 0) {
+      angle += 2 * math.pi;
+    }
+
+    final sweep =
+        (2 * math.pi - _segmentGap * itemCount) / itemCount;
+    final slot = angle / (sweep + _segmentGap);
+    final index = slot.floor();
+
+    if (index < 0 || index >= itemCount) {
+      return null;
+    }
+
+    final within = angle - index * (sweep + _segmentGap);
+    if (within < _segmentGap / 2 ||
+        within > _segmentGap / 2 + sweep) {
+      return null;
+    }
+
+    return index;
+  }
+
+  @override
+  bool shouldRepaint(covariant _PieMenuPainter oldDelegate) {
+    return oldDelegate.itemCount != itemCount ||
+        oldDelegate.selectedIndex != selectedIndex;
+  }
 }
