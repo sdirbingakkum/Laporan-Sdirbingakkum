@@ -829,6 +829,7 @@ class _GlassStatCard extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
               Positioned(
                 right: 0,
                 bottom: 0,
