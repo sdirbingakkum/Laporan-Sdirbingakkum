@@ -263,11 +263,7 @@ class _SignInCard extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Color(0xCC102F24),
-                Color(0xB309231A),
-                Color(0x9903150F),
-              ],
+              colors: [Color(0xCC102F24), Color(0xB309231A), Color(0x9903150F)],
             ),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: _gold.withValues(alpha: 0.30)),
@@ -393,7 +389,6 @@ class _SignInCard extends StatelessWidget {
     );
   }
 }
-
 
 class _DarkField extends StatelessWidget {
   const _DarkField({
