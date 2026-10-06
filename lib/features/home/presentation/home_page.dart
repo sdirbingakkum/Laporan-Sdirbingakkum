@@ -615,8 +615,8 @@ class _MenuBackdropState extends State<_MenuBackdrop>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: const Duration(seconds: 9),
-  )..repeat(reverse: true);
+    duration: const Duration(milliseconds: 1200),
+  )..forward();
 
   @override
   void dispose() {
