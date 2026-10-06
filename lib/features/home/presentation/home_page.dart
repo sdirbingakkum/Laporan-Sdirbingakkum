@@ -26,7 +26,7 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   bool _navigationInProgress = false;
-  int _selectedIndex = 0;
+  int _selectedIndex = -1;
 
   static const _items = <_MenuItemData>[
     _MenuItemData(
@@ -259,7 +259,9 @@ class _PieMenu extends StatelessWidget {
                       selected: i == selectedIndex,
                       diameter: diameter,
                     ),
-                  _PieMenuCenter(item: items[selectedIndex]),
+                  _PieMenuCenter(
+                    item: selectedIndex >= 0 ? items[selectedIndex] : null,
+                  ),
                 ],
               ),
             ),
@@ -271,12 +273,16 @@ class _PieMenu extends StatelessWidget {
 }
 
 class _PieMenuCenter extends StatelessWidget {
-  const _PieMenuCenter({required this.item});
+  const _PieMenuCenter({this.item});
 
-  final _MenuItemData item;
+  final _MenuItemData? item;
 
   @override
   Widget build(BuildContext context) {
+    final icon = item?.icon ?? Icons.apps_rounded;
+    final iconColor = item?.lightColor ?? _goldLight;
+    final centerKey = item?.label ?? 'MENU UTAMA';
+
     return FractionallySizedBox(
       widthFactor: 0.34,
       heightFactor: 0.34,
@@ -285,12 +291,12 @@ class _PieMenuCenter extends StatelessWidget {
           shape: BoxShape.circle,
           gradient: const RadialGradient(colors: [_surfaceSoft, _surface]),
           border: Border.all(
-            color: item.lightColor.withValues(alpha: 0.72),
+            color: iconColor.withValues(alpha: 0.72),
             width: 1.4,
           ),
           boxShadow: [
             BoxShadow(
-              color: item.lightColor.withValues(alpha: 0.12),
+              color: iconColor.withValues(alpha: 0.12),
               blurRadius: 28,
               spreadRadius: 3,
             ),
@@ -313,12 +319,12 @@ class _PieMenuCenter extends StatelessWidget {
               );
             },
             child: Column(
-              key: ValueKey(item.label),
+              key: ValueKey(centerKey),
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  item.icon,
-                  color: item.lightColor,
+                  icon,
+                  color: iconColor,
                   size: diameterForCenter(context),
                 ),
                 const SizedBox(height: 4),
@@ -450,12 +456,13 @@ class _PieMenuLabel extends StatelessWidget {
 }
 
 class _PieMenuPainter extends CustomPainter {
-  const _PieMenuPainter({required this.itemCount, required this.selectedIndex});
+  const _PieMenuPainter({
+    required this.itemCount,
+    required this.selectedIndex,
+  });
 
   final int itemCount;
   final int selectedIndex;
-
-  static const _segmentGap = 0.055;
 
   static const _lightPalette = <Color>[
     Color(0xFFF09A4A),
@@ -477,49 +484,89 @@ class _PieMenuPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
     final outerRadius = size.shortestSide * 0.43;
-    final sweep = (2 * math.pi - (_segmentGap * itemCount)) / itemCount;
+    final sweep = 2 * math.pi / itemCount;
 
     for (var i = 0; i < itemCount; i++) {
-      final start = -math.pi / 2 + i * (sweep + _segmentGap) + _segmentGap / 2;
+      final start = -math.pi / 2 + i * sweep;
+      final segmentCenter = start + sweep / 2;
       final selected = i == selectedIndex;
-      final radius = outerRadius + (selected ? 4 : 0);
+
+      // The base menu is a mathematically complete circle. Only the
+      // selected sector is translated outward to create the "lift".
+      final lift = selected ? size.shortestSide * 0.026 : 0.0;
+      final segmentCenterOffset = Offset(
+        math.cos(segmentCenter) * lift,
+        math.sin(segmentCenter) * lift,
+      );
+      final segmentCenterPoint = center + segmentCenterOffset;
       final light = _lightPalette[i];
       final dark = _darkPalette[i];
 
       final path = Path()
-        ..moveTo(center.dx, center.dy)
+        ..moveTo(segmentCenterPoint.dx, segmentCenterPoint.dy)
         ..lineTo(
-          center.dx + math.cos(start) * radius,
-          center.dy + math.sin(start) * radius,
+          segmentCenterPoint.dx + math.cos(start) * outerRadius,
+          segmentCenterPoint.dy + math.sin(start) * outerRadius,
         )
         ..arcTo(
-          Rect.fromCircle(center: center, radius: radius),
+          Rect.fromCircle(
+            center: segmentCenterPoint,
+            radius: outerRadius,
+          ),
           start,
           sweep,
           false,
         )
         ..close();
 
+      if (selected) {
+        final shadowPaint = Paint()
+          ..color = Colors.black.withValues(alpha: 0.42)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 11);
+        canvas.drawPath(
+          path.shift(const Offset(0, 7)),
+          shadowPaint,
+        );
+      }
+
       final paint = Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            light.withValues(alpha: selected ? 1.0 : 0.88),
-            light.withValues(alpha: selected ? 0.82 : 0.66),
+            light.withValues(alpha: selected ? 1.0 : 0.92),
+            light.withValues(alpha: selected ? 0.82 : 0.70),
             dark,
           ],
           stops: const [0.0, 0.45, 1.0],
-        ).createShader(Rect.fromCircle(center: center, radius: radius));
+        ).createShader(
+          Rect.fromCircle(
+            center: segmentCenterPoint,
+            radius: outerRadius,
+          ),
+        );
 
       canvas.drawPath(path, paint);
+    }
 
-      final stroke = Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = selected ? 1.8 : 1
-        ..color = light.withValues(alpha: selected ? 0.96 : 0.34);
+    // Subtle separators, not black gaps: every sector still touches its
+    // neighbors and the outer silhouette remains a true circle.
+    final seamPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2
+      ..strokeCap = StrokeCap.butt
+      ..color = Colors.black.withValues(alpha: 0.16);
 
-      canvas.drawPath(path, stroke);
+    for (var i = 0; i < itemCount; i++) {
+      final angle = -math.pi / 2 + i * sweep;
+      canvas.drawLine(
+        center,
+        Offset(
+          center.dx + math.cos(angle) * outerRadius,
+          center.dy + math.sin(angle) * outerRadius,
+        ),
+        seamPaint,
+      );
     }
   }
 
@@ -528,7 +575,7 @@ class _PieMenuPainter extends CustomPainter {
     final dx = position.dx - center.dx;
     final dy = position.dy - center.dy;
     final distance = math.sqrt(dx * dx + dy * dy);
-    final outerRadius = size.shortestSide * 0.47;
+    final outerRadius = size.shortestSide * 0.46;
     final innerRadius = size.shortestSide * 0.19;
 
     if (distance > outerRadius || distance < innerRadius) {
@@ -540,18 +587,8 @@ class _PieMenuPainter extends CustomPainter {
       angle += 2 * math.pi;
     }
 
-    final sweep = (2 * math.pi - (_segmentGap * itemCount)) / itemCount;
-    final slot = angle / (sweep + _segmentGap);
-    final index = slot.floor();
-
-    if (index < 0 || index >= itemCount) {
-      return null;
-    }
-
-    final within = angle - index * (sweep + _segmentGap);
-    if (within < _segmentGap / 2 || within > _segmentGap / 2 + sweep) {
-      return null;
-    }
+    final sweep = 2 * math.pi / itemCount;
+    final index = math.min((angle / sweep).floor(), itemCount - 1);
 
     return index;
   }
