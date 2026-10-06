@@ -555,7 +555,7 @@ class _PieMenuPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.2
       ..strokeCap = StrokeCap.butt
-      ..color = Colors.black.withValues(alpha: 0.16);
+      ..color = _surfaceSoft.withValues(alpha: 0.62);
 
     for (var i = 0; i < itemCount; i++) {
       final angle = -math.pi / 2 + i * sweep;
