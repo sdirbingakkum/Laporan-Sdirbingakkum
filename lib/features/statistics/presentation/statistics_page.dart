@@ -190,11 +190,7 @@ class StatisticsPage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0A1F0E),
-              Color(0xFF1A2A10),
-              Color(0xFF1C1208),
-            ],
+            colors: [Color(0xFF0A1F0E), Color(0xFF1A2A10), Color(0xFF1C1208)],
           ),
         ),
         child: SafeArea(
