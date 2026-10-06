@@ -147,15 +147,15 @@ class StatisticsPage extends StatelessWidget {
   String get _title {
     switch (module) {
       case StatisticsModule.pelanggaran:
-        return 'Statistik Pelanggaran';
+        return 'STATISTIK PELANGGARAN';
       case StatisticsModule.lakaLalin:
-        return 'Statistik Laka-lalin';
+        return 'STATISTIK LAKA-LALIN';
       case StatisticsModule.simTni:
-        return 'Statistik SIM TNI';
+        return 'STATISTIK SIM TNI';
       case StatisticsModule.k9:
-        return 'Statistik K9';
+        return 'STATISTIK K9';
       case StatisticsModule.provos:
-        return 'Statistik Provos TNI-AD';
+        return 'STATISTIK PROVOS TNI-AD';
     }
   }
 
@@ -276,7 +276,7 @@ Future<void> _showRankingSheet(
             ),
             const SizedBox(height: 18),
             const Text(
-              'Analisis Visual',
+              'ANALISIS VISUAL',
               style: TextStyle(
                 color: _goldLight,
                 fontSize: 18,
@@ -286,7 +286,7 @@ Future<void> _showRankingSheet(
             ),
             const SizedBox(height: 4),
             const Text(
-              'Top 5 POMDAM',
+              'TOP 5 POMDAM',
               style: TextStyle(
                 color: _muted,
                 fontSize: 10,
