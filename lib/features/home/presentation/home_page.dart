@@ -45,6 +45,11 @@ class _HomePageState extends ConsumerState<HomePage> {
       description: 'Ringkasan dan tren kecelakaan lalu lintas.',
       icon: Icons.directions_car_filled_outlined,
     ),
+    _MenuItemData(
+      label: 'K9',
+      description: 'Informasi dan statistik satuan K9.',
+      icon: Icons.pets_rounded,
+    ),
   ];
 
   Future<void> _confirmSignOut() async {
