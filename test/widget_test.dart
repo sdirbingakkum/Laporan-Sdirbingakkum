@@ -4,11 +4,20 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:laporan_sdirbingakkum/app/app.dart';
 import 'package:laporan_sdirbingakkum/features/auth/presentation/sign_in_page.dart';
+import 'package:laporan_sdirbingakkum/features/home/presentation/home_page.dart';
 
 Future<void> _pumpSignInAtSize(WidgetTester tester, Size size) async {
   await tester.binding.setSurfaceSize(size);
   await tester.pumpWidget(
     const ProviderScope(child: MaterialApp(home: SignInPage())),
+  );
+  await tester.pumpAndSettle();
+}
+
+Future<void> _pumpHomeAtSize(WidgetTester tester, Size size) async {
+  await tester.binding.setSurfaceSize(size);
+  await tester.pumpWidget(
+    const ProviderScope(child: MaterialApp(home: HomePage())),
   );
   await tester.pumpAndSettle();
 }
@@ -73,5 +82,40 @@ void main() {
 
     expect(find.text('Email wajib diisi.'), findsOneWidget);
     expect(find.text('Password wajib diisi.'), findsOneWidget);
+  });
+
+  testWidgets('main menu renders five pie menu sections', (tester) async {
+    await _pumpHomeAtSize(tester, const Size(390, 844));
+
+    expect(find.byType(HomePage), findsOneWidget);
+    expect(find.text('MENU UTAMA'), findsOneWidget);
+    expect(find.text('SDIRBINGAKKUM'), findsOneWidget);
+    expect(find.text('GAKKUM'), findsOneWidget);
+    expect(find.text('LAKA LALIN'), findsOneWidget);
+    expect(find.text('SIM TNI'), findsOneWidget);
+    expect(find.text('STATISTIK'), findsOneWidget);
+    expect(find.text('PENGATURAN'), findsOneWidget);
+    expect(find.byType(Scrollable), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('pie menu selection updates the selected menu detail', (
+    tester,
+  ) async {
+    await _pumpHomeAtSize(tester, const Size(390, 844));
+
+    final gesture = find.byType(GestureDetector).last;
+    final center = tester.getCenter(gesture);
+    final size = tester.getSize(gesture);
+
+    await tester.tapAt(
+      Offset(
+        center.dx,
+        center.dy - size.width * 0.34,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('GAKKUM'), findsWidgets);
   });
 }
