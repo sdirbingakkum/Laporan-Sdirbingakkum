@@ -9,6 +9,7 @@ import '../../../shared/widgets/app_header.dart';
 const _bg = Color(0xFF03150F);
 const _surface = Color(0xFF09231A);
 const _gold = Color(0xFFD7A93C);
+const _goldLight = Color(0xFFF1D37A);
 const _emerald = Color(0xFF34D399);
 const _text = Color(0xFFF8F5EC);
 const _muted = Color(0xFFB7C2BC);
@@ -1126,7 +1127,7 @@ Future<void> _showK9AnalysisSheet(
                                       style: const TextStyle(
                                         color: _text,
                                         fontSize: 12,
-                                        fontWeight: FontWeight.w650,
+                                        fontWeight: FontWeight.w600,
                                         letterSpacing: 0.25,
                                       ),
                                     ),
