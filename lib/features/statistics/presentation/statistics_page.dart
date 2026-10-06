@@ -147,15 +147,15 @@ class StatisticsPage extends StatelessWidget {
   String get _title {
     switch (module) {
       case StatisticsModule.pelanggaran:
-        return 'STATISTIK PELANGGARAN';
+        return 'PELANGGARAN';
       case StatisticsModule.lakaLalin:
-        return 'STATISTIK LAKA-LALIN';
+        return 'LAKA-LALIN';
       case StatisticsModule.simTni:
-        return 'STATISTIK SIM TNI';
+        return 'SIM TNI';
       case StatisticsModule.k9:
-        return 'STATISTIK K9';
+        return 'K9';
       case StatisticsModule.provos:
-        return 'STATISTIK PROVOS TNI-AD';
+        return 'PROVOS TNI-AD';
     }
   }
 

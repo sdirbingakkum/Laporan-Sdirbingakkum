@@ -234,7 +234,7 @@ void main() {
 
     expect(find.byType(StatisticsPage), findsOneWidget);
     expect(find.byType(SingleChildScrollView), findsNothing);
-    expect(find.text('STATISTIK K9'), findsOneWidget);
+    expect(find.text('K9'), findsOneWidget);
     expect(find.byIcon(Icons.arrow_back_rounded), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
