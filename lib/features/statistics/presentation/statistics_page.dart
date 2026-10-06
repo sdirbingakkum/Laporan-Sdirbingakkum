@@ -262,7 +262,7 @@ class _ContentBody extends StatelessWidget {
         if (ranking.isNotEmpty)
           _AnalysisButton(
             accent: accent,
-            onPressed: () => _showRankingSheet(context, ranking, accent),
+            onPressed: () => _showRankingSheet(context, module, ranking, accent),
           ),
       ],
     );
@@ -329,6 +329,7 @@ class _TotalSimCard extends StatelessWidget {
 
 Future<void> _showRankingSheet(
   BuildContext context,
+  StatisticsModule module,
   List<_RankData> ranking,
   Color accent,
 ) async {
@@ -341,7 +342,7 @@ Future<void> _showRankingSheet(
         0,
         (max, item) => item.value > max ? item.value : max,
       );
-      final title = _moduleTitleForSheet(context, accent);
+      final title = _moduleTitleForSheet(module);
 
       return ClipRRect(
         borderRadius: const BorderRadius.vertical(
@@ -533,21 +534,19 @@ Future<void> _showRankingSheet(
   );
 }
 
-String _moduleTitleForSheet(BuildContext context, Color accent) {
-  final routeName = ModalRoute.of(context)?.settings.name ?? '';
-  if (routeName.contains('laka-lalin')) {
-    return 'LAKA-LALIN';
+String _moduleTitleForSheet(StatisticsModule module) {
+  switch (module) {
+    case StatisticsModule.pelanggaran:
+      return 'PELANGGARAN';
+    case StatisticsModule.lakaLalin:
+      return 'LAKA-LALIN';
+    case StatisticsModule.simTni:
+      return 'SIM TNI';
+    case StatisticsModule.k9:
+      return 'K9';
+    case StatisticsModule.provos:
+      return 'PROVOS TNI-AD';
   }
-  if (routeName.contains('sim-tni')) {
-    return 'SIM TNI';
-  }
-  if (routeName.contains('provos')) {
-    return 'PROVOS TNI-AD';
-  }
-  if (routeName.contains('k9')) {
-    return 'K9';
-  }
-  return 'PELANGGARAN';
 }
 
 
