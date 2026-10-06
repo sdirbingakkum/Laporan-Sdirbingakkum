@@ -84,7 +84,7 @@ void main() {
     expect(find.text('Password wajib diisi.'), findsOneWidget);
   });
 
-  testWidgets('main menu renders four pie menu sections', (tester) async {
+  testWidgets('main menu renders five pie menu sections', (tester) async {
     await _pumpHomeAtSize(tester, const Size(390, 844));
 
     expect(find.byType(HomePage), findsOneWidget);
@@ -94,6 +94,7 @@ void main() {
     expect(find.text('STATISTIK SIM TNI'), findsOneWidget);
     expect(find.text('STATISTIK PROVOS TNI-AD'), findsOneWidget);
     expect(find.text('STATISTIK LAKA-LALIN'), findsOneWidget);
+    expect(find.text('K9'), findsOneWidget);
     expect(find.byType(Scrollable), findsNothing);
     expect(tester.takeException(), isNull);
   });
