@@ -548,8 +548,10 @@ class _AnimatedStatCard extends StatelessWidget {
       curve: Curves.easeOutCubic,
       child: _GlassStatCard(card: card, accent: accent),
       builder: (context, value, child) {
-        final progress =
-            ((value * 1.18) - delay.inMilliseconds / 820).clamp(0.0, 1.0);
+        final progress = ((value * 1.18) - delay.inMilliseconds / 820).clamp(
+          0.0,
+          1.0,
+        );
         return Opacity(
           opacity: progress,
           child: Transform.translate(
@@ -698,11 +700,7 @@ class _StatisticsBackgroundGradient extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF0A1F0E),
-            Color(0xFF1A2A10),
-            Color(0xFF1C1208),
-          ],
+          colors: [Color(0xFF0A1F0E), Color(0xFF1A2A10), Color(0xFF1C1208)],
         ),
       ),
     );
