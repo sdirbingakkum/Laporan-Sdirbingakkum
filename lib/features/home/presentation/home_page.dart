@@ -12,7 +12,6 @@ import '../../../shared/widgets/app_header.dart';
 
 const _bg = Color(0xFF03150F);
 const _surface = Color(0xFF09231A);
-const _surfaceSoft = Color(0xFF0D2C20);
 const _goldLight = Color(0xFFF1D37A);
 const _text = Color(0xFFF8F5EC);
 const _muted = Color(0xFFB7C2BC);
