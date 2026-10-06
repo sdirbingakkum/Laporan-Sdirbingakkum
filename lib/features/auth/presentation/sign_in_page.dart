@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/auth_repository.dart';
+import '../../../shared/widgets/app_background.dart';
 
 const _bg = Color(0xFF03150F);
 const _surfaceSoft = Color(0xFF0D2C20);
@@ -124,11 +125,9 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bg,
-      body: Stack(
-        children: [
-          const Positioned.fill(child: _SignInBackdrop()),
-          SafeArea(
-            child: LayoutBuilder(
+      body: AppBackground(
+        child: SafeArea(
+          child: LayoutBuilder(
               builder: (context, constraints) {
                 final horizontalPadding = constraints.maxWidth >= 520
                     ? 32.0
@@ -152,7 +151,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
               },
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -262,7 +261,12 @@ class _SignInCard extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xCC102F24), Color(0xB309231A), Color(0x9903150F)],
+              colors: [
+                Color(0x9C183B2D),
+                Color(0x72102C20),
+                Color(0x7007130E),
+              ],
+              stops: [0.0, 0.46, 1.0],
             ),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: _gold.withValues(alpha: 0.30)),
@@ -477,48 +481,4 @@ class _DarkField extends StatelessWidget {
       validator: validator,
     );
   }
-}
-
-class _SignInBackdrop extends StatelessWidget {
-  const _SignInBackdrop();
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(painter: _BackdropPainter());
-  }
-}
-
-class _BackdropPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 1;
-
-    paint.color = _gold.withValues(alpha: 0.10);
-    final large = Rect.fromCircle(
-      center: Offset(size.width * 0.12, size.height * 0.88),
-      radius: size.width * 0.70,
-    );
-    canvas.drawArc(large, -0.8, 1.5, false, paint);
-
-    final second = Rect.fromCircle(
-      center: Offset(size.width * 0.94, size.height * 0.20),
-      radius: size.width * 0.58,
-    );
-    canvas.drawArc(second, 1.9, 1.0, false, paint);
-
-    paint
-      ..strokeWidth = 0.7
-      ..color = Colors.white.withValues(alpha: 0.035);
-
-    for (var i = 0; i < 7; i++) {
-      final y = size.height * 0.74 + i * 15;
-      canvas.drawLine(Offset(-20, y), Offset(size.width * 0.32, y - 50), paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
