@@ -7,6 +7,7 @@ const _text = Color(0xFFF8F5EC);
 const _muted = Color(0xFFB7C2BC);
 const _surface = Color(0xFF09231A);
 
+/// Fixed Material 3 application header for post-login surfaces.
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   const AppHeader({
     required this.title,
