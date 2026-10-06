@@ -5,12 +5,14 @@ class AdaptiveNavigationShell extends StatefulWidget {
     required this.title,
     required this.destinations,
     required this.body,
+    this.actions,
     super.key,
   });
 
   final String title;
   final List<NavigationDestination> destinations;
   final Widget body;
+  final List<Widget>? actions;
 
   @override
   State<AdaptiveNavigationShell> createState() =>
@@ -29,7 +31,7 @@ class _AdaptiveNavigationShellState extends State<AdaptiveNavigationShell> {
 
         if (wide) {
           return Scaffold(
-            appBar: AppBar(title: Text(widget.title)),
+            appBar: AppBar(title: Text(widget.title), actions: widget.actions),
             body: Row(
               children: [
                 NavigationRail(
