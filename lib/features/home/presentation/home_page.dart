@@ -505,11 +505,45 @@ class _PieMenuPainter extends CustomPainter {
     final outerRadius = size.shortestSide * 0.43;
     final sweep = 2 * math.pi / itemCount;
 
-    // One soft black shadow anchors the wheel without a visible glow.
+    // A soft cast shadow plus a very shallow extrusion creates restrained
+    // 3D depth without making the wheel look heavy.
     final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.26)
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 15);
-    canvas.drawCircle(center + const Offset(0, 5), outerRadius, shadowPaint);
+      ..color = Colors.black.withValues(alpha: 0.30)
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 17);
+    canvas.drawCircle(center + const Offset(0, 8), outerRadius, shadowPaint);
+
+    final depth = (size.shortestSide * 0.018).clamp(5.0, 8.0).toDouble();
+
+    // Build the side wall from back to front. It remains in each module's
+    // own color family, only darkened toward black.
+    for (var layer = 5; layer >= 1; layer--) {
+      final offsetY = depth * layer / 5;
+      final depthFactor = 0.78 - (layer * 0.025);
+
+      for (var i = 0; i < itemCount; i++) {
+        final start = -math.pi / 2 + i * sweep;
+        final light = _lightPalette[i];
+        final sideCenter = center.translate(0, offsetY);
+
+        final path = Path()
+          ..moveTo(sideCenter.dx, sideCenter.dy)
+          ..lineTo(
+            sideCenter.dx + math.cos(start) * outerRadius,
+            sideCenter.dy + math.sin(start) * outerRadius,
+          )
+          ..arcTo(
+            Rect.fromCircle(center: sideCenter, radius: outerRadius),
+            start,
+            sweep,
+            false,
+          )
+          ..close();
+
+        final sidePaint = Paint()
+          ..color = Color.lerp(light, Colors.black, depthFactor)!;
+        canvas.drawPath(path, sidePaint);
+      }
+    }
 
     for (var i = 0; i < itemCount; i++) {
       final start = -math.pi / 2 + i * sweep;
@@ -530,8 +564,8 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      // Broader metallic shading: the highlight stays restrained, while
-      // the color-to-black transition is intentionally more visible.
+      // Broad metallic shading: highlight, true module color, then a deep
+      // controlled shadow. The light-to-dark change is intentionally visible.
       final paint = Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
@@ -552,7 +586,7 @@ class _PieMenuPainter extends CustomPainter {
         final selectedEdge = Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 0.9
-          ..color = Colors.white.withValues(alpha: 0.14);
+          ..color = Colors.white.withValues(alpha: 0.16);
         canvas.drawPath(path, selectedEdge);
       }
     }
@@ -576,6 +610,7 @@ class _PieMenuPainter extends CustomPainter {
       );
     }
 
+    // Thin rim plus separate top and lower bevel lines complete the 3D read.
     final rimPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0
@@ -584,15 +619,31 @@ class _PieMenuPainter extends CustomPainter {
 
     final highlight = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.65
+      ..strokeWidth = 0.8
       ..strokeCap = StrokeCap.round
-      ..color = Colors.white.withValues(alpha: 0.07);
+      ..color = Colors.white.withValues(alpha: 0.11);
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: outerRadius - 1),
-      -2.45,
-      1.30,
+      -2.50,
+      1.45,
       false,
       highlight,
+    );
+
+    final lowerBevel = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0
+      ..strokeCap = StrokeCap.round
+      ..color = Colors.black.withValues(alpha: 0.24);
+    canvas.drawArc(
+      Rect.fromCircle(
+        center: center.translate(0, 0.6),
+        radius: outerRadius - 0.6,
+      ),
+      0.45,
+      1.70,
+      false,
+      lowerBevel,
     );
   }
 
