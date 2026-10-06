@@ -427,7 +427,7 @@ class _PieMenuLabel extends StatelessWidget {
                             alpha: selected ? 0.080 : 0.050,
                           ),
                           item.lightColor.withValues(
-                            alpha: selected ? 0.105 : 0.055,
+                            alpha: selected ? 0.14 : 0.085,
                           ),
                           const Color(0xFF06120D).withValues(alpha: 0.62),
                         ],
@@ -452,8 +452,8 @@ class _PieMenuLabel extends StatelessWidget {
                     child: Icon(
                       item.icon,
                       color: selected
-                          ? item.lightColor.withValues(alpha: 0.92)
-                          : item.lightColor.withValues(alpha: 0.72),
+                          ? item.lightColor.withValues(alpha: 0.96)
+                          : item.lightColor.withValues(alpha: 0.84),
                       size: compact ? 15 : 18,
                     ),
                   ),
@@ -489,22 +489,22 @@ class _PieMenuPainter extends CustomPainter {
   final int itemCount;
   final int selectedIndex;
 
-  // Distinct module colors are preserved, but used as translucent glass tints
-  // rather than opaque painted wedges.
+  // Canonical menu colors: each module keeps its own identity while the
+  // sector treatment remains translucent and glass-like.
   static const _lightPalette = <Color>[
-    Color(0xFFE3A15F), // orange
-    Color(0xFFD47C7B), // red
-    Color(0xFF7EA5D8), // blue
-    Color(0xFFD8B962), // gold
-    Color(0xFF76B18E), // green
+    Color(0xFFF09A4A), // PELANGGARAN — orange
+    Color(0xFFE15B5B), // LAKA-LALIN — red
+    Color(0xFF5D8FE0), // SIM TNI — blue
+    Color(0xFFE3BE4F), // K9 — gold
+    Color(0xFF49A86B), // PROVOS TNI-AD — green
   ];
 
   static const _darkPalette = <Color>[
-    Color(0xFF6A4428),
-    Color(0xFF61383D),
-    Color(0xFF314B68),
-    Color(0xFF625329),
-    Color(0xFF2F5843),
+    Color(0xFF8B4E21),
+    Color(0xFF813237),
+    Color(0xFF315991),
+    Color(0xFF8A691B),
+    Color(0xFF285E40),
   ];
 
   @override
@@ -553,27 +553,28 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      // Colored glass: vivid enough to distinguish each module, but still
-      // translucent so the shared background and blur remain visible.
+      // Thin, sophisticated color glazing: the module color is unmistakable,
+      // but the page background still shows through the glass.
       final paint = Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withValues(alpha: selected ? 0.085 : 0.055),
-            light.withValues(alpha: selected ? 0.16 : 0.105),
-            dark.withValues(alpha: selected ? 0.115 : 0.075),
-            const Color(0xFF020A07).withValues(alpha: 0.26),
+            Colors.white.withValues(alpha: selected ? 0.075 : 0.045),
+            light.withValues(alpha: selected ? 0.28 : 0.20),
+            dark.withValues(alpha: selected ? 0.16 : 0.105),
+            const Color(0xFF020A07).withValues(alpha: 0.24),
           ],
-          stops: const [0.0, 0.28, 0.70, 1.0],
+          stops: const [0.0, 0.30, 0.68, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, paint);
 
-      // Hairline color rim: enough polish to read as glass, never a hard block.
+      // A very fine chromatic rim reinforces the five-color system without
+      // turning the wheel into a flat, heavily outlined graphic.
       final rim = Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = selected ? 1.05 : 0.75
-        ..color = light.withValues(alpha: selected ? 0.42 : 0.22);
+        ..strokeWidth = selected ? 0.95 : 0.70
+        ..color = light.withValues(alpha: selected ? 0.50 : 0.34);
       canvas.drawPath(path, rim);
     }
 
