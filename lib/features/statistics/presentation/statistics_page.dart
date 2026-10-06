@@ -676,9 +676,9 @@ class _GlassStatCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withValues(alpha: 0.045),
-                cardAccent.withValues(alpha: 0.065),
-                _surface.withValues(alpha: 0.74),
+                Colors.white.withValues(alpha: 0.032),
+                cardAccent.withValues(alpha: 0.045),
+                _surface.withValues(alpha: 0.72),
               ],
               stops: const [0.0, 0.34, 1.0],
             ),
