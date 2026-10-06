@@ -30,7 +30,6 @@ Color _moduleAccent(StatisticsModule module) {
   }
 }
 
-
 class StatisticsPage extends StatelessWidget {
   const StatisticsPage({required this.module, super.key});
 
@@ -250,7 +249,12 @@ class _ContentBody extends StatelessWidget {
             children: [
               for (var index = 0; index < columns.length; index++) ...[
                 if (index > 0) const SizedBox(width: 10),
-                Expanded(child: _StatsColumnView(column: columns[index], accent: accent)),
+                Expanded(
+                  child: _StatsColumnView(
+                    column: columns[index],
+                    accent: accent,
+                  ),
+                ),
               ],
             ],
           ),
@@ -344,7 +348,7 @@ Future<void> _showRankingSheet(
           filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
           child: Container(
             height: MediaQuery.sizeOf(context).height * 0.68,
-        padding: const EdgeInsets.fromLTRB(22, 12, 22, 26),
+            padding: const EdgeInsets.fromLTRB(22, 12, 22, 26),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -359,82 +363,82 @@ Future<void> _showRankingSheet(
             ),
             child: Column(
               children: [
-            Container(
-              width: 44,
-              height: 5,
-              decoration: BoxDecoration(
-                color: Colors.white24,
-                borderRadius: BorderRadius.circular(99),
-              ),
-            ),
-            const SizedBox(height: 18),
-            Text(
-              'ANALISIS VISUAL',
-              style: TextStyle(
-                color: accent,
-                fontSize: 18,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 0.8,
-              ),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'TOP 5 POMDAM',
-              style: TextStyle(
-                color: _muted,
-                fontSize: 10,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 2.4,
-              ),
-            ),
-            const SizedBox(height: 22),
-            Expanded(
-              child: ListView.separated(
-                itemCount: ranking.length,
-                separatorBuilder: (_, index) => const SizedBox(height: 18),
-                itemBuilder: (context, index) {
-                  final item = ranking[index];
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Container(
+                  width: 44,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(99),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  'ANALISIS VISUAL',
+                  style: TextStyle(
+                    color: accent,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'TOP 5 POMDAM',
+                  style: TextStyle(
+                    color: _muted,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 2.4,
+                  ),
+                ),
+                const SizedBox(height: 22),
+                Expanded(
+                  child: ListView.separated(
+                    itemCount: ranking.length,
+                    separatorBuilder: (_, index) => const SizedBox(height: 18),
+                    itemBuilder: (context, index) {
+                      final item = ranking[index];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Expanded(
-                            child: Text(
-                              item.name,
-                              style: const TextStyle(
-                                color: _text,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  item.name,
+                                  style: const TextStyle(
+                                    color: _text,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
                               ),
-                            ),
+                              Text(
+                                item.value.toString(),
+                                style: TextStyle(
+                                  color: accent,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            item.value.toString(),
-                            style: TextStyle(
-                              color: accent,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w900,
+                          const SizedBox(height: 7),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(99),
+                            child: LinearProgressIndicator(
+                              minHeight: 9,
+                              value: maxValue == 0 ? 0 : item.value / maxValue,
+                              backgroundColor: Colors.black38,
+                              valueColor: AlwaysStoppedAnimation<Color>(accent),
                             ),
                           ),
                         ],
-                      ),
-                      const SizedBox(height: 7),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(99),
-                        child: LinearProgressIndicator(
-                          minHeight: 9,
-                          value: maxValue == 0 ? 0 : item.value / maxValue,
-                          backgroundColor: Colors.black38,
-                          valueColor: AlwaysStoppedAnimation<Color>(accent),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),
@@ -555,13 +559,12 @@ class _AnimatedStatCard extends StatelessWidget {
       tween: Tween(begin: 0, end: 1),
       duration: const Duration(milliseconds: 720),
       curve: Curves.easeOutCubic,
-      child: _GlassStatCard(
-        card: card,
-        accent: accent,
-      ),
+      child: _GlassStatCard(card: card, accent: accent),
       builder: (context, value, child) {
-        final progress =
-            ((value * 1.18) - delay.inMilliseconds / 820).clamp(0.0, 1.0);
+        final progress = ((value * 1.18) - delay.inMilliseconds / 820).clamp(
+          0.0,
+          1.0,
+        );
         return Opacity(
           opacity: progress,
           child: Transform.translate(
@@ -581,10 +584,7 @@ class _AnimatedStatCard extends StatelessWidget {
 }
 
 class _GlassStatCard extends StatelessWidget {
-  const _GlassStatCard({
-    required this.card,
-    required this.accent,
-  });
+  const _GlassStatCard({required this.card, required this.accent});
 
   final _StatCardData card;
   final Color accent;

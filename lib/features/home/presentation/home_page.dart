@@ -628,9 +628,8 @@ class _MenuBackdropState extends State<_MenuBackdrop>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _controller,
-      builder: (context, child) => CustomPaint(
-        painter: _MenuBackdropPainter(_controller.value),
-      ),
+      builder: (context, child) =>
+          CustomPaint(painter: _MenuBackdropPainter(_controller.value)),
     );
   }
 }
@@ -644,21 +643,22 @@ class _MenuBackdropPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final pulse = 0.55 + (math.sin(phase * math.pi) + 1) * 0.10;
     final glow = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          _gold.withValues(alpha: 0.14 * pulse),
-          _gold.withValues(alpha: 0.025),
-          Colors.transparent,
-        ],
-      ).createShader(
-        Rect.fromCircle(
-          center: Offset(
-            size.width * (0.18 + phase * 0.14),
-            size.height * 0.18,
-          ),
-          radius: size.width * 0.62,
-        ),
-      );
+      ..shader =
+          RadialGradient(
+            colors: [
+              _gold.withValues(alpha: 0.14 * pulse),
+              _gold.withValues(alpha: 0.025),
+              Colors.transparent,
+            ],
+          ).createShader(
+            Rect.fromCircle(
+              center: Offset(
+                size.width * (0.18 + phase * 0.14),
+                size.height * 0.18,
+              ),
+              radius: size.width * 0.62,
+            ),
+          );
     canvas.drawRect(Offset.zero & size, glow);
 
     final paint = Paint()
