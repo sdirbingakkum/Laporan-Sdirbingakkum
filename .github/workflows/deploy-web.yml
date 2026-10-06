@@ -1,4 +1,4 @@
-name: Deploy Flutter Web
+name: Build Flutter Web Artifact
 
 on:
   push:
@@ -7,23 +7,17 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: github-pages
-  cancel-in-progress: false
+  group: flutter-web-build
+  cancel-in-progress: true
 
 env:
   FLUTTER_VERSION: "3.47.3"
 
 jobs:
-  deploy:
+  build-web:
     runs-on: ubuntu-24.04
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,11 +29,6 @@ jobs:
           channel: stable
           cache: true
           pub-cache: true
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Ensure Web runner
         run: flutter create . --platforms=web
@@ -68,11 +57,10 @@ jobs:
       - name: SPA fallback
         run: cp build/web/index.html build/web/404.html
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v4
+      - name: Upload Web artifact
+        uses: actions/upload-artifact@v4
         with:
+          name: flutter-web-release
           path: build/web
-
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v4
+          if-no-files-found: error
+          retention-days: 7
