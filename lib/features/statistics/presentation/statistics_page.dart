@@ -100,7 +100,17 @@ class StatisticsPage extends StatelessWidget {
           ),
         ];
       case StatisticsModule.k9:
-        return const [];
+        return const [
+          _StatColumn(
+            label: 'AGUSTUS 2026',
+            cards: [
+              _StatCardData('NYATA', '27', _emerald),
+              _StatCardData('SESUAI ORGAS', '30', _gold),
+              _StatCardData('KEKURANGAN', '8', Color(0xFFF59E0B)),
+              _StatCardData('SATUAN', '2', Color(0xFF7DD3FC)),
+            ],
+          ),
+        ];
       case StatisticsModule.provos:
         return [
           _StatColumn(
@@ -142,7 +152,10 @@ class StatisticsPage extends StatelessWidget {
           _RankData('POMDAM IM', 110),
         ];
       case StatisticsModule.k9:
-        return const [];
+        return const [
+          _RankData('YONPOMAD PUSPOMAD', 17),
+          _RankData('POMDAM JAYA', 10),
+        ];
       case StatisticsModule.provos:
         return const [
           _RankData('POMDAM III/SLW', 624),
@@ -163,7 +176,7 @@ class StatisticsPage extends StatelessWidget {
       case StatisticsModule.simTni:
         return 'SIM TNI';
       case StatisticsModule.k9:
-        return 'DATA K-9';
+        return 'K9';
       case StatisticsModule.provos:
         return 'PROVOS TNI-AD';
     }
@@ -175,9 +188,8 @@ class StatisticsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isK9 = module == StatisticsModule.k9;
     return Scaffold(
-      key: ValueKey('statistics-${module.name}'),
+      key: ValueKey('statistics-' + module.name),
       backgroundColor: _bg,
       appBar: AppHeader(
         title: _title,
@@ -192,22 +204,19 @@ class StatisticsPage extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
             child: Center(
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: isK9 ? 560 : 760),
-                child: isK9
-                    ? const _K9Report()
-                    : _ContentBody(
-                        columns: _columns,
-                        module: module,
-                        ranking: _ranking,
-                        accent: _moduleAccent(module),
-                        totalSim: module == StatisticsModule.simTni
-                            ? _columns.first.cards.fold<int>(
-                                0,
-                                (sum, card) =>
-                                    sum + (int.tryParse(card.value) ?? 0),
-                              )
-                            : null,
-                      ),
+                constraints: const BoxConstraints(maxWidth: 760),
+                child: _ContentBody(
+                  columns: _columns,
+                  module: module,
+                  ranking: _ranking,
+                  accent: _moduleAccent(module),
+                  totalSim: module == StatisticsModule.simTni
+                      ? _columns.first.cards.fold<int>(
+                          0,
+                          (sum, card) => sum + (int.tryParse(card.value) ?? 0),
+                        )
+                      : null,
+                ),
               ),
             ),
           ),
@@ -452,8 +461,21 @@ Future<void> _showRankingSheet(
                         duration: Duration(milliseconds: 750 + index * 120),
                         curve: Curves.easeOutCubic,
                         builder: (context, progress, _) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                          final k9Unit = module == StatisticsModule.k9
+                              ? _k9Units.firstWhere(
+                                  (unit) => unit.name == item.name,
+                                )
+                              : null;
+
+                          return InkWell(
+                            borderRadius: BorderRadius.circular(8),
+                            onTap: k9Unit == null
+                                ? null
+                                : () => _showK9UnitSheet(context, k9Unit),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 3),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Row(
                                 mainAxisAlignment:
@@ -511,6 +533,8 @@ Future<void> _showRankingSheet(
                                 ),
                               ),
                             ],
+                              ),
+                            ),
                           );
                         },
                       );
@@ -764,95 +788,6 @@ class _GlassStatCard extends StatelessWidget {
   }
 }
 
-class _K9Report extends StatelessWidget {
-  const _K9Report();
-
-  static const _metrics = <_StatCardData>[
-    _StatCardData('NYATA', '27', _emerald),
-    _StatCardData('SESUAI ORGAS', '30', _gold),
-    _StatCardData('KEKURANGAN', '8', Color(0xFFF59E0B)),
-    _StatCardData('SATUAN', '2', Color(0xFF7DD3FC)),
-  ];
-
-  static const _units = <_K9UnitData>[
-    _K9UnitData(name: 'YONPOMAD PUSPOMAD', actual: 17, org: 12, shortage: null),
-    _K9UnitData(name: 'POMDAM JAYA', actual: 10, org: 18, shortage: 8),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const Text(
-          'AGUSTUS 2026',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: _gold,
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 2.0,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          key: const ValueKey('k9-summary-row-1'),
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: _AnimatedStatCard(card: _metrics[0], delay: Duration.zero),
-            ),
-            SizedBox(width: 16),
-            Expanded(
-              child: _AnimatedStatCard(
-                card: _metrics[1],
-                delay: Duration(milliseconds: 75),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          key: const ValueKey('k9-summary-row-2'),
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: _AnimatedStatCard(
-                card: _metrics[2],
-                delay: Duration(milliseconds: 150),
-              ),
-            ),
-            SizedBox(width: 16),
-            Expanded(
-              child: _AnimatedStatCard(
-                card: _metrics[3],
-                delay: Duration(milliseconds: 225),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        const Text(
-          'TOTAL DATA TERSEDIA · BUKAN TOTAL NASIONAL',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: _muted,
-            fontSize: 9,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.9,
-          ),
-        ),
-        const SizedBox(height: 16),
-        _AnalysisButton(
-          accent: _moduleAccent(StatisticsModule.k9),
-          label: 'ANALISIS STATISTIK',
-          onPressed: () => _showK9AnalysisSheet(context, _units),
-        ),
-      ],
-    );
-  }
-}
-
 class _K9UnitData {
   const _K9UnitData({
     required this.name,
@@ -866,6 +801,21 @@ class _K9UnitData {
   final int org;
   final int? shortage;
 }
+
+const _k9Units = <_K9UnitData>[
+  _K9UnitData(
+    name: 'YONPOMAD PUSPOMAD',
+    actual: 17,
+    org: 12,
+    shortage: null,
+  ),
+  _K9UnitData(
+    name: 'POMDAM JAYA',
+    actual: 10,
+    org: 18,
+    shortage: 8,
+  ),
+];
 
 Future<void> _showK9AnalysisSheet(
   BuildContext context,
@@ -932,117 +882,7 @@ Future<void> _showK9AnalysisSheet(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 0.6,
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Text(
-                        'DATA K-9 · TOP POMDAM / SATUAN',
-                        style: TextStyle(
-                          color: _muted,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.3,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 22),
-                Expanded(
-                  child: ListView.separated(
-                    itemCount: units.length > 5 ? 5 : units.length,
-                    separatorBuilder: (_, index) => const SizedBox(height: 20),
-                    itemBuilder: (context, index) {
-                      final unit = units[index];
-                      final width = maxValue == 0
-                          ? 0.0
-                          : unit.actual / maxValue;
-
-                      return InkWell(
-                        borderRadius: BorderRadius.circular(8),
-                        onTap: () => _showK9UnitSheet(context, unit),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 3),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      unit.name,
-                                      style: const TextStyle(
-                                        color: _text,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.25,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    unit.actual.toString(),
-                                    style: const TextStyle(
-                                      color: _goldLight,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 7),
-                              Container(
-                                height: 12,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: Colors.black.withValues(alpha: 0.24),
-                                  border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.05),
-                                  ),
-                                ),
-                                child: FractionallySizedBox(
-                                  alignment: Alignment.centerLeft,
-                                  widthFactor: width,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          _gold.withValues(alpha: 0.95),
-                                          _emerald.withValues(alpha: 0.72),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              const Text(
-                                'TEKAN UNTUK DRILL-DOWN',
-                                style: TextStyle(
-                                  color: _muted,
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.7,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    },
-  );
-}
-
-Future<void> _showK9UnitSheet(BuildContext context, _K9UnitData unit) async {
+                 Future<void> _showK9UnitSheet(BuildContext context, _K9UnitData unit) async {
   await showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
