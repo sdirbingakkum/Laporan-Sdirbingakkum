@@ -140,6 +140,7 @@ void main() {
 
     expect(find.byType(HomePage), findsOneWidget);
     expect(find.text('LAPORAN STATISTIK'), findsNothing);
+    expect(find.text('ANALISIS STATISTIK'), findsNothing);
     expect(find.text('SDIRBINGAKKUM'), findsOneWidget);
     expect(find.text('PELANGGARAN'), findsOneWidget);
     expect(find.text('LAKA-LALIN'), findsOneWidget);
@@ -252,6 +253,8 @@ void main() {
     expect(find.byKey(const ValueKey('sim-total-card')), findsOneWidget);
     expect(find.text('TOTAL SIM'), findsOneWidget);
     expect(find.text('400'), findsOneWidget);
+    expect(find.text('STATISTIK'), findsOneWidget);
+    expect(find.text('ANALISIS STATISTIK'), findsNothing);
     expect(find.byKey(const ValueKey('report-period-columns')), findsOneWidget);
   });
 
