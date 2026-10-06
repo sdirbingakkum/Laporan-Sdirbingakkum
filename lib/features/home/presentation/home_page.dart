@@ -475,11 +475,11 @@ class _PieMenuPainter extends CustomPainter {
   ];
 
   static const _darkPalette = <Color>[
-    Color(0xFFC66B27),
-    Color(0xFFB83E45),
-    Color(0xFF3F69AE),
-    Color(0xFFB18A25),
-    Color(0xFF34784F),
+    Color(0xFFC86D2D),
+    Color(0xFFC4474E),
+    Color(0xFF456EAB),
+    Color(0xFFC19A35),
+    Color(0xFF3F825A),
   ];
 
   @override
@@ -514,26 +514,33 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      // The requested look: one unmistakable color per sector, with a
-      // narrow, polished gradient rather than a flat fill or glass overlay.
+      // Sophisticated three-stop gradient: the sector stays unmistakably
+      // orange/red/blue/gold/green, but the change in tone is deliberately thin.
+      final middle = Color.lerp(light, dark, 0.38)!;
       final paint = Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withValues(alpha: selected ? 0.10 : 0.055),
-            light.withValues(alpha: selected ? 0.98 : 0.90),
-            dark.withValues(alpha: selected ? 0.84 : 0.70),
-          ],
-          stops: const [0.0, 0.20, 1.0],
+          colors: selected
+              ? [
+                  light,
+                  middle,
+                  dark,
+                ]
+              : [
+                  light.withValues(alpha: 0.94),
+                  middle.withValues(alpha: 0.94),
+                  dark.withValues(alpha: 0.90),
+                ],
+          stops: const [0.0, 0.46, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, paint);
 
       if (selected) {
         final selectedEdge = Paint()
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.0
-          ..color = Colors.white.withValues(alpha: 0.20);
+          ..strokeWidth = 0.9
+          ..color = Colors.white.withValues(alpha: 0.14);
         canvas.drawPath(path, selectedEdge);
       }
     }
@@ -565,9 +572,9 @@ class _PieMenuPainter extends CustomPainter {
 
     final highlight = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.8
+      ..strokeWidth = 0.65
       ..strokeCap = StrokeCap.round
-      ..color = Colors.white.withValues(alpha: 0.10);
+      ..color = Colors.white.withValues(alpha: 0.07);
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: outerRadius - 1),
       -2.45,
