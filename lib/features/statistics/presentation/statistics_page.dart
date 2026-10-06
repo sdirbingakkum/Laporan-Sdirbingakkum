@@ -216,8 +216,7 @@ class StatisticsPage extends StatelessWidget {
                   totalSim: module == StatisticsModule.simTni
                       ? columns.first.cards.fold<int>(
                           0,
-                          (sum, card) =>
-                              sum + (int.tryParse(card.value) ?? 0),
+                          (sum, card) => sum + (int.tryParse(card.value) ?? 0),
                         )
                       : null,
                 ),
