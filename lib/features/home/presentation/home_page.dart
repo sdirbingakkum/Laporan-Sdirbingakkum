@@ -26,35 +26,35 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   static const _items = <_MenuItemData>[
     _MenuItemData(
-      label: 'STATISTIK PELANGGARAN',
+      label: 'Statistik Pelanggaran',
       description: 'Ringkasan dan tren pelanggaran hukum.',
       icon: Icons.gavel_rounded,
       lightColor: Color(0xFFF09A4A),
       darkColor: Color(0xFF5A2B0D),
     ),
     _MenuItemData(
-      label: 'STATISTIK LAKA-LALIN',
+      label: 'Statistik Laka-lalin',
       description: 'Ringkasan dan tren kecelakaan lalu lintas.',
       icon: Icons.directions_car_filled_outlined,
       lightColor: Color(0xFFE15B5B),
       darkColor: Color(0xFF461518),
     ),
     _MenuItemData(
-      label: 'STATISTIK SIM TNI',
+      label: 'Statistik SIM TNI',
       description: 'Ringkasan penerbitan dan data SIM TNI.',
       icon: Icons.badge_outlined,
       lightColor: Color(0xFF5D8FE0),
       darkColor: Color(0xFF192A55),
     ),
     _MenuItemData(
-      label: 'STATISTIK K9',
+      label: 'Statistik K9',
       description: 'Informasi dan statistik satuan K9.',
       icon: Icons.pets_rounded,
       lightColor: Color(0xFFE3BE4F),
       darkColor: Color(0xFF59410D),
     ),
     _MenuItemData(
-      label: 'STATISTIK PROVOS TNI-AD',
+      label: 'Statistik Provos TNI-AD',
       description: 'Ringkasan data dan kinerja Provos TNI-AD.',
       icon: Icons.military_tech_rounded,
       lightColor: Color(0xFF49A86B),
