@@ -11,8 +11,15 @@ import 'package:laporan_sdirbingakkum/features/home/presentation/home_page.dart'
 import 'package:laporan_sdirbingakkum/shared/widgets/app_header.dart';
 import 'package:laporan_sdirbingakkum/features/statistics/presentation/statistics_page.dart';
 
-Future<void> _pumpSignInAtSize(WidgetTester tester, Size size) async {
+Future<void> _setSurfaceSize(WidgetTester tester, Size size) async {
   await tester.binding.setSurfaceSize(size);
+  addTearDown(() async {
+    await tester.binding.setSurfaceSize(null);
+  });
+}
+
+Future<void> _pumpSignInAtSize(WidgetTester tester, Size size) async {
+  await _setSurfaceSize(tester, size);
   await tester.pumpWidget(
     const ProviderScope(child: MaterialApp(home: SignInPage())),
   );
@@ -20,7 +27,7 @@ Future<void> _pumpSignInAtSize(WidgetTester tester, Size size) async {
 }
 
 Future<void> _pumpHomeAtSize(WidgetTester tester, Size size) async {
-  await tester.binding.setSurfaceSize(size);
+  await _setSurfaceSize(tester, size);
   await tester.pumpWidget(
     const ProviderScope(child: MaterialApp(home: HomePage())),
   );
@@ -43,10 +50,6 @@ String _routeFor(StatisticsModule module) {
 }
 
 void main() {
-  tearDown(() async {
-    await TestWidgetsFlutterBinding.instance.setSurfaceSize(null);
-  });
-
   testWidgets('application shows configuration gate without secret', (
     tester,
   ) async {
@@ -150,7 +153,7 @@ void main() {
       ],
     );
 
-    await tester.binding.setSurfaceSize(const Size(390, 844));
+    await _setSurfaceSize(tester, const Size(390, 844));
     await tester.pumpWidget(
       ProviderScope(child: MaterialApp.router(routerConfig: router)),
     );
@@ -219,7 +222,7 @@ void main() {
   });
 
   testWidgets('K9 opens as an empty content page', (tester) async {
-    await tester.binding.setSurfaceSize(const Size(390, 844));
+    await _setSurfaceSize(tester, const Size(390, 844));
     await tester.pumpWidget(
       MaterialApp(home: const StatisticsPage(module: StatisticsModule.k9)),
     );
@@ -227,7 +230,7 @@ void main() {
 
     expect(find.byType(StatisticsPage), findsOneWidget);
     expect(find.byType(SingleChildScrollView), findsNothing);
-    expect(find.text('STATISTIK K9'), findsNothing);
+    expect(find.text('STATISTIK K9'), findsOneWidget);
     expect(find.byIcon(Icons.arrow_back_rounded), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
