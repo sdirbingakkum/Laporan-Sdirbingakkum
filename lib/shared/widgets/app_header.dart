@@ -12,7 +12,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   const AppHeader({
     required this.title,
     required this.onSignOut,
-    this.subtitle = 'PUSPOMAD • Sistem Laporan Bidang Gakkum',
+    this.subtitle = 'PUSPOMAD • SISTEM LAPORAN BIDANG GAKKUM',
     this.onBack,
     super.key,
   });
@@ -57,7 +57,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
               ),
             )
           : IconButton(
-              tooltip: 'Kembali',
+              tooltip: 'KEMBALI',
               onPressed: onBack,
               icon: const Icon(Icons.arrow_back_rounded),
             ),
@@ -112,7 +112,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         PopupMenuButton<String>(
-          tooltip: 'Menu akun',
+          tooltip: 'MENU AKUN',
           icon: const Icon(Icons.more_vert_rounded),
           color: _surface,
           onSelected: (value) {
@@ -129,7 +129,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                   Icon(Icons.logout_rounded, color: _goldLight),
                   SizedBox(width: 10),
                   Text(
-                    'Keluar / Sign Out',
+                    'KELUAR / SIGN OUT',
                     style: TextStyle(color: _text),
                   ),
                 ],
