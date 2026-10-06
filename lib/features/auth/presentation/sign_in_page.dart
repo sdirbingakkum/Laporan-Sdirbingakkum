@@ -123,283 +123,289 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final width = constraints.maxWidth;
-                final height = constraints.maxHeight;
-                final compact = height < 620;
-                final veryCompact = height < 520;
-                final horizontal = width < 380 ? 18.0 : 24.0;
-                final logoMax = compact ? 112.0 : 154.0;
-                final logoSize = logoMax.clamp(92.0, 154.0);
-                final topGap = veryCompact ? 8.0 : compact ? 12.0 : 20.0;
-                final brandingGap = veryCompact ? 7.0 : compact ? 10.0 : 14.0;
-                final formGap = veryCompact ? 12.0 : compact ? 16.0 : 24.0;
-                final cardPadding = veryCompact ? 14.0 : compact ? 16.0 : 20.0;
-                final fieldGap = veryCompact ? 9.0 : 12.0;
-                final buttonHeight = compact ? 48.0 : 52.0;
+                final horizontalPadding =
+                    constraints.maxWidth >= 520 ? 32.0 : 16.0;
+                final contentWidth = (constraints.maxWidth -
+                        horizontalPadding * 2)
+                    .clamp(0.0, 460.0);
 
                 return Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: horizontal),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 460),
-                      child: SizedBox(
-                        height: constraints.maxHeight,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(height: topGap),
-                            Container(
-                              width: logoSize,
-                              height: logoSize,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: _gold.withValues(alpha: 0.22),
-                                    blurRadius: 32,
-                                    spreadRadius: 1,
-                                    offset: const Offset(0, 12),
-                                  ),
-                                ],
-                                border: Border.all(
-                                  color: _gold.withValues(alpha: 0.58),
-                                  width: 1.1,
-                                ),
-                              ),
-                              child: ClipOval(
-                                child: Image.asset(
-                                  'assets/images/pomad_prima.webp',
-                                  fit: BoxFit.cover,
-                                  semanticLabel: 'Logo POMAD PRIMA',
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: brandingGap),
-                            Text(
-                              'SDIRBINGAKKUM',
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                color: _goldLight,
-                                fontFamily: 'serif',
-                                fontSize: veryCompact ? 23 : compact ? 26 : 31,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: veryCompact ? 1.0 : 1.6,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'P U S P O M A D',
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                color: _text,
-                                fontSize: veryCompact ? 13 : 15,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: veryCompact ? 2.8 : 3.8,
-                              ),
-                            ),
-                            SizedBox(height: veryCompact ? 5 : compact ? 7 : 10),
-                            Text(
-                              'Sistem Laporan Bidang Gakkum',
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: _text,
-                                fontSize: veryCompact ? 13 : 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            SizedBox(height: veryCompact ? 2 : 4),
-                            Text(
-                              'Profesional • Responsif • Integritas • Modern • Adaptif',
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: _muted,
-                                fontSize: veryCompact ? 9 : compact ? 10 : 11,
-                              ),
-                            ),
-                            SizedBox(height: formGap),
-                            Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: _surface.withValues(alpha: 0.94),
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(
-                                  color: _gold.withValues(alpha: 0.25),
-                                ),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.black54,
-                                    blurRadius: 26,
-                                    offset: Offset(0, 14),
-                                  ),
-                                ],
-                              ),
-                              padding: EdgeInsets.all(cardPadding),
-                              child: Form(
-                                key: _formKey,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Akses Sistem',
-                                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                        color: _text,
-                                        fontSize: veryCompact ? 18 : 20,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 3),
-                                    Text(
-                                      'Masuk menggunakan akun yang terdaftar.',
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: _muted,
-                                        fontSize: veryCompact ? 10 : 11,
-                                      ),
-                                    ),
-                                    SizedBox(height: veryCompact ? 12 : 15),
-                                    _DarkField(
-                                      controller: _emailController,
-                                      label: 'Email',
-                                      hint: 'Masukkan email Anda',
-                                      icon: Icons.mail_outline_rounded,
-                                      keyboardType: TextInputType.emailAddress,
-                                      textInputAction: TextInputAction.next,
-                                      autofillHints: const [
-                                        AutofillHints.username,
-                                        AutofillHints.email,
-                                      ],
-                                      enabled: !_isLoading,
-                                      dense: compact,
-                                      validator: (value) {
-                                        final email = value?.trim() ?? '';
-                                        if (email.isEmpty) {
-                                          return 'Email wajib diisi.';
-                                        }
-
-                                        final emailPattern = RegExp(
-                                          r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
-                                        );
-                                        if (!emailPattern.hasMatch(email)) {
-                                          return 'Masukkan alamat email yang valid.';
-                                        }
-
-                                        return null;
-                                      },
-                                    ),
-                                    SizedBox(height: fieldGap),
-                                    _DarkField(
-                                      controller: _passwordController,
-                                      label: 'Password',
-                                      hint: 'Masukkan password Anda',
-                                      icon: Icons.lock_outline_rounded,
-                                      obscureText: _obscurePassword,
-                                      textInputAction: TextInputAction.done,
-                                      autofillHints: const [AutofillHints.password],
-                                      enabled: !_isLoading,
-                                      dense: compact,
-                                      onFieldSubmitted: (_) => _signIn(),
-                                      suffix: IconButton(
-                                        tooltip: _obscurePassword
-                                            ? 'Tampilkan password'
-                                            : 'Sembunyikan password',
-                                        color: _muted,
-                                        onPressed: _isLoading
-                                            ? null
-                                            : () {
-                                                setState(() {
-                                                  _obscurePassword =
-                                                      !_obscurePassword;
-                                                });
-                                              },
-                                        icon: Icon(
-                                          _obscurePassword
-                                              ? Icons.visibility_outlined
-                                              : Icons.visibility_off_outlined,
-                                          size: compact ? 19 : 22,
-                                        ),
-                                      ),
-                                      validator: (value) {
-                                        if ((value ?? '').isEmpty) {
-                                          return 'Password wajib diisi.';
-                                        }
-
-                                        return null;
-                                      },
-                                    ),
-                                    SizedBox(height: veryCompact ? 14 : 18),
-                                    SizedBox(
-                                      height: buttonHeight,
-                                      child: FilledButton(
-                                        onPressed: _isLoading ? null : _signIn,
-                                        style: FilledButton.styleFrom(
-                                          backgroundColor: _goldLight,
-                                          foregroundColor:
-                                              const Color(0xFF10140F),
-                                          disabledBackgroundColor: _goldDark
-                                              .withValues(alpha: 0.58),
-                                          disabledForegroundColor:
-                                              Colors.black54,
-                                          elevation: 0,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(14),
-                                          ),
-                                        ),
-                                        child: AnimatedSwitcher(
-                                          duration:
-                                              const Duration(milliseconds: 180),
-                                          child: _isLoading
-                                              ? const SizedBox(
-                                                  key: ValueKey('loading'),
-                                                  width: 21,
-                                                  height: 21,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    strokeWidth: 2.4,
-                                                  ),
-                                                )
-                                              : const Row(
-                                                  key: ValueKey('label'),
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      'Masuk',
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w800,
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 8),
-                                                    Icon(
-                                                      Icons
-                                                          .arrow_forward_rounded,
-                                                      size: 20,
-                                                    ),
-                                                  ],
-                                                ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                          ],
-                        ),
-                      ),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.center,
+                    child: SizedBox(
+                      width: contentWidth,
+                      child: const _SignInContent(),
                     ),
                   ),
                 );
               },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SignInContent extends ConsumerStatefulWidget {
+  const _SignInContent();
+
+  @override
+  ConsumerState<_SignInContent> createState() => _SignInContentState();
+}
+
+class _SignInContentState extends ConsumerState<_SignInContent> {
+  @override
+  Widget build(BuildContext context) {
+    final parent = context.findAncestorStateOfType<_SignInPageState>()!;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Form(
+      key: parent._formKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 10),
+          Container(
+            width: 150,
+            height: 150,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: _gold.withValues(alpha: 0.6),
+                width: 1.2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: _gold.withValues(alpha: 0.22),
+                  blurRadius: 34,
+                  spreadRadius: 1,
+                  offset: const Offset(0, 14),
+                ),
+              ],
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                'assets/images/pomad_prima.webp',
+                fit: BoxFit.cover,
+                semanticLabel: 'Logo POMAD PRIMA',
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            'SDIRBINGAKKUM',
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            style: textTheme.headlineMedium?.copyWith(
+              color: _goldLight,
+              fontFamily: 'serif',
+              fontSize: 30,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.5,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            'P U S P O M A D',
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            style: textTheme.titleMedium?.copyWith(
+              color: _text,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 3.6,
+            ),
+          ),
+          const SizedBox(height: 9),
+          Text(
+            'Sistem Laporan Bidang Gakkum',
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            style: textTheme.bodyMedium?.copyWith(
+              color: _text,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            'Profesional • Responsif • Integritas • Modern • Adaptif',
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            style: textTheme.bodySmall?.copyWith(
+              color: _muted,
+              fontSize: 10,
+            ),
+          ),
+          const SizedBox(height: 20),
+          _SignInCard(parent: parent),
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+}
+
+class _SignInCard extends StatelessWidget {
+  const _SignInCard({required this.parent});
+
+  final _SignInPageState parent;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: _surface.withValues(alpha: 0.94),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: _gold.withValues(alpha: 0.25),
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black54,
+            blurRadius: 26,
+            offset: Offset(0, 14),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Akses Sistem',
+            style: textTheme.titleLarge?.copyWith(
+              color: _text,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            'Masuk menggunakan akun yang terdaftar.',
+            style: textTheme.bodySmall?.copyWith(
+              color: _muted,
+              fontSize: 11,
+            ),
+          ),
+          const SizedBox(height: 15),
+          _DarkField(
+            controller: parent._emailController,
+            label: 'Email',
+            hint: 'Masukkan email Anda',
+            icon: Icons.mail_outline_rounded,
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            autofillHints: const [
+              AutofillHints.username,
+              AutofillHints.email,
+            ],
+            enabled: !parent._isLoading,
+            dense: false,
+            validator: (value) {
+              final email = value?.trim() ?? '';
+              if (email.isEmpty) {
+                return 'Email wajib diisi.';
+              }
+
+              final emailPattern = RegExp(
+                r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+              );
+              if (!emailPattern.hasMatch(email)) {
+                return 'Masukkan alamat email yang valid.';
+              }
+
+              return null;
+            },
+          ),
+          const SizedBox(height: 10),
+          _DarkField(
+            controller: parent._passwordController,
+            label: 'Password',
+            hint: 'Masukkan password Anda',
+            icon: Icons.lock_outline_rounded,
+            obscureText: parent._obscurePassword,
+            textInputAction: TextInputAction.done,
+            autofillHints: const [AutofillHints.password],
+            enabled: !parent._isLoading,
+            dense: false,
+            onFieldSubmitted: (_) => parent._signIn(),
+            suffix: IconButton(
+              tooltip: parent._obscurePassword
+                  ? 'Tampilkan password'
+                  : 'Sembunyikan password',
+              color: _muted,
+              onPressed: parent._isLoading
+                  ? null
+                  : () {
+                      parent.setState(() {
+                        parent._obscurePassword = !parent._obscurePassword;
+                      });
+                    },
+              icon: Icon(
+                parent._obscurePassword
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
+              ),
+            ),
+            validator: (value) {
+              if ((value ?? '').isEmpty) {
+                return 'Password wajib diisi.';
+              }
+
+              return null;
+            },
+          ),
+          const SizedBox(height: 17),
+          SizedBox(
+            height: 52,
+            child: FilledButton(
+              onPressed: parent._isLoading ? null : parent._signIn,
+              style: FilledButton.styleFrom(
+                backgroundColor: _goldLight,
+                foregroundColor: const Color(0xFF10140F),
+                disabledBackgroundColor: _goldDark.withValues(alpha: 0.58),
+                disabledForegroundColor: Colors.black54,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 180),
+                child: parent._isLoading
+                    ? const SizedBox(
+                        key: ValueKey('loading'),
+                        width: 21,
+                        height: 21,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.4,
+                        ),
+                      )
+                    : const Row(
+                        key: ValueKey('label'),
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Masuk',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Icon(
+                            Icons.arrow_forward_rounded,
+                            size: 20,
+                          ),
+                        ],
+                      ),
+              ),
             ),
           ),
         ],
@@ -458,9 +464,16 @@ class _DarkField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        prefixIcon: Icon(icon, color: _muted, size: dense ? 19 : 21),
+        prefixIcon: Icon(
+          icon,
+          color: _muted,
+          size: dense ? 19 : 21,
+        ),
         suffixIcon: suffix,
-        labelStyle: TextStyle(color: _muted, fontSize: dense ? 12 : 13),
+        labelStyle: TextStyle(
+          color: _muted,
+          fontSize: dense ? 12 : 13,
+        ),
         floatingLabelStyle: const TextStyle(
           color: _goldLight,
           fontWeight: FontWeight.w700,
@@ -501,30 +514,6 @@ class _DarkField extends StatelessWidget {
   }
 }
 
-class _OrDivider extends StatelessWidget {
-  const _OrDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Expanded(child: Divider(color: _line)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Text(
-            'atau',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: _muted,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        const Expanded(child: Divider(color: _line)),
-      ],
-    );
-  }
-}
-
 class _SignInBackdrop extends StatelessWidget {
   const _SignInBackdrop();
 
@@ -561,7 +550,11 @@ class _BackdropPainter extends CustomPainter {
 
     for (var i = 0; i < 7; i++) {
       final y = size.height * 0.74 + i * 15;
-      canvas.drawLine(Offset(-20, y), Offset(size.width * 0.32, y - 50), paint);
+      canvas.drawLine(
+        Offset(-20, y),
+        Offset(size.width * 0.32, y - 50),
+        paint,
+      );
     }
   }
 
