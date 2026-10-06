@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -270,58 +271,105 @@ class _PieMenuCenter extends StatelessWidget {
     return FractionallySizedBox(
       widthFactor: 0.34,
       heightFactor: 0.34,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF173428), Color(0xFF0B2118), Color(0xFF06120D)],
-            stops: [0.0, 0.52, 1.0],
-          ),
-          border: Border.all(color: Color(0x55F1D37A), width: 1.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black45,
-              blurRadius: 18,
-              offset: Offset(0, 7),
-            ),
-          ],
-        ),
-        child: Center(
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 220),
-            switchInCurve: Curves.easeOutCubic,
-            switchOutCurve: Curves.easeInCubic,
-            transitionBuilder: (child, animation) {
-              return ScaleTransition(
-                scale: animation,
-                child: FadeTransition(opacity: animation, child: child),
-              );
-            },
-            child: Column(
-              key: ValueKey(centerKey),
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  icon,
-                  color: iconColor.withValues(alpha: 0.94),
-                  size: diameterForCenter(context),
+      child: ClipOval(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withValues(alpha: 0.16),
+                  const Color(0xFF173428).withValues(alpha: 0.36),
+                  const Color(0xFF06120D).withValues(alpha: 0.62),
+                ],
+                stops: const [0.0, 0.42, 1.0],
+              ),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.24),
+                width: 1.0,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.34),
+                  blurRadius: 18,
+                  offset: const Offset(0, 7),
                 ),
-                const SizedBox(height: 6),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    centerKey,
-                    textAlign: TextAlign.center,
-                    maxLines: centerKey == 'MENU UTAMA' ? 2 : 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: item == null ? _text : iconColor,
-                      fontSize: centerTextSize(context, centerKey),
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: centerKey.length > 18 ? 0.05 : 0.55,
-                      height: 1.02,
+              ],
+            ),
+            child: Stack(
+              children: [
+                Positioned(
+                  left: -14,
+                  top: -16,
+                  child: Container(
+                    width: 78,
+                    height: 78,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          Colors.white.withValues(alpha: 0.14),
+                          Colors.transparent,
+                        ],
+                        stops: const [0.0, 0.72],
+                      ),
+                    ),
+                  ),
+                ),
+                Center(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 220),
+                    switchInCurve: Curves.easeOutCubic,
+                    switchOutCurve: Curves.easeInCubic,
+                    transitionBuilder: (child, animation) {
+                      return ScaleTransition(
+                        scale: animation,
+                        child: FadeTransition(
+                          opacity: animation,
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: Column(
+                      key: ValueKey(centerKey),
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          icon,
+                          color: iconColor.withValues(alpha: 0.94),
+                          size: diameterForCenter(context),
+                        ),
+                        const SizedBox(height: 6),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                            centerKey,
+                            textAlign: TextAlign.center,
+                            maxLines: centerKey == 'MENU UTAMA' ? 2 : 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: item == null ? _text : iconColor,
+                              fontSize: centerTextSize(context, centerKey),
+                              fontWeight: FontWeight.w700,
+                              letterSpacing:
+                                  centerKey.length > 18 ? 0.05 : 0.55,
+                              height: 1.02,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black.withValues(
+                                    alpha: 0.48,
+                                  ),
+                                  offset: const Offset(0.8, 1.2),
+                                  blurRadius: 0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
