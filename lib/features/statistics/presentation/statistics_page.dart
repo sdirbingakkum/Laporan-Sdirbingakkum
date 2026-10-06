@@ -84,21 +84,13 @@ class StatisticsPage extends StatelessWidget {
       case StatisticsModule.k9:
         return const [];
       case StatisticsModule.provos:
-        return const [
+        return [
           _StatColumn(
-            label: '2026',
+            label: DateTime.now().year.toString(),
             cards: [
               _StatCardData('JUMLAH', '2000', Color(0xFF49A86B)),
               _StatCardData('SUDAH DIK/TAR', '500', Color(0xFF49A86B)),
               _StatCardData('BELUM DIK/TAR', '1500', Color(0xFFF09A4A)),
-            ],
-          ),
-          _StatColumn(
-            label: 'SEPT',
-            cards: [
-              _StatCardData('JUMLAH', '250', Color(0xFF49A86B)),
-              _StatCardData('SUDAH DIK/TAR', '50', Color(0xFF49A86B)),
-              _StatCardData('BELUM DIK/TAR', '200', Color(0xFFF09A4A)),
             ],
           ),
         ];
@@ -189,6 +181,13 @@ class StatisticsPage extends StatelessWidget {
                         child: _ContentBody(
                           columns: _columns,
                           ranking: _ranking,
+                          totalSim: module == StatisticsModule.simTni
+                              ? _columns.first.cards.fold<int>(
+                                  0,
+                                  (sum, card) =>
+                                      sum + (int.tryParse(card.value) ?? 0),
+                                )
+                              : null,
                         ),
                       ),
                     ),
@@ -202,42 +201,91 @@ class StatisticsPage extends StatelessWidget {
 }
 
 class _ContentBody extends StatelessWidget {
-  const _ContentBody({required this.columns, required this.ranking});
+  const _ContentBody({
+    required this.columns,
+    required this.ranking,
+    this.totalSim,
+  });
 
   final List<_StatColumn> columns;
   final List<_RankData> ranking;
+  final int? totalSim;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final useTwoColumns = constraints.maxWidth >= 600;
-            if (useTwoColumns) {
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: _StatsColumnView(column: columns[0])),
-                  const SizedBox(width: 14),
-                  Expanded(child: _StatsColumnView(column: columns[1])),
-                ],
-              );
-            }
-            return Column(
-              children: [
-                _StatsColumnView(column: columns[0]),
-                const SizedBox(height: 14),
-                _StatsColumnView(column: columns[1]),
+        if (totalSim != null) ...[
+          _TotalSimCard(total: totalSim!),
+          const SizedBox(height: 14),
+        ],
+        if (columns.length == 1)
+          _StatsColumnView(column: columns.first)
+        else
+          Row(
+            key: const ValueKey('report-period-columns'),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (var index = 0; index < columns.length; index++) ...[
+                if (index > 0) const SizedBox(width: 10),
+                Expanded(child: _StatsColumnView(column: columns[index])),
               ],
-            );
-          },
-        ),
+            ],
+          ),
         const SizedBox(height: 16),
         if (ranking.isNotEmpty)
           _AnalysisButton(onPressed: () => _showRankingSheet(context, ranking)),
       ],
+    );
+  }
+}
+
+class _TotalSimCard extends StatelessWidget {
+  const _TotalSimCard({required this.total});
+
+  final int total;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const ValueKey('sim-total-card'),
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      decoration: BoxDecoration(
+        color: _surface.withValues(alpha: 0.82),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: _gold.withValues(alpha: 0.24)),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 14,
+            offset: Offset(0, 7),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'TOTAL SIM',
+            style: TextStyle(
+              color: _muted,
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 2.0,
+            ),
+          ),
+          Text(
+            total.toString(),
+            style: const TextStyle(
+              color: _goldLight,
+              fontSize: 30,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
