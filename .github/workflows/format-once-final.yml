@@ -1,0 +1,41 @@
+name: One-time Dart formatter
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.3"
+          channel: stable
+          cache: true
+          pub-cache: true
+
+      - name: Format
+        run: |
+          flutter pub get
+          dart format lib test
+
+      - name: Commit formatted source
+        run: |
+          if git diff --quiet; then
+            echo "Already formatted."
+            exit 0
+          fi
+          git config user.name "sdirbingakkum formatter"
+          git config user.email "sdirbingakkum@gmail.com"
+          git add lib test
+          git commit -m "chore: apply Dart formatting"
+          git push origin HEAD:main
