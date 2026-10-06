@@ -51,7 +51,6 @@ void main() {
     expect(find.text('Akun terdaftar di lingkungan PUSPOMAD'), findsNothing);
     expect(find.text('© 2026 PUSPOMAD'), findsNothing);
     expect(find.byType(Scrollable), findsNothing);
-    expect(find.byIcon(Icons.gavel_rounded), findsNWidgets(2));
   });
 
   testWidgets('sign in fits a short phone viewport without overflow', (
@@ -96,6 +95,7 @@ void main() {
     expect(find.text('STATISTIK PROVOS TNI-AD'), findsOneWidget);
     expect(find.text('STATISTIK LAKA-LALIN'), findsOneWidget);
     expect(find.text('K9'), findsOneWidget);
+    expect(find.byIcon(Icons.gavel_rounded), findsNWidgets(2));
     expect(find.byType(Scrollable), findsNothing);
     expect(tester.takeException(), isNull);
   });
