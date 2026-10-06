@@ -298,7 +298,7 @@ class _SignInCard extends StatelessWidget {
           const SizedBox(height: 15),
           _DarkField(
             controller: parent._emailController,
-            label: 'Email',
+            label: 'EMAIL',
             hint: 'MASUKKAN EMAIL ANDA',
             icon: Icons.mail_outline_rounded,
             keyboardType: TextInputType.emailAddress,
@@ -323,7 +323,7 @@ class _SignInCard extends StatelessWidget {
           const SizedBox(height: 10),
           _DarkField(
             controller: parent._passwordController,
-            label: 'Password',
+            label: 'PASSWORD',
             hint: 'MASUKKAN PASSWORD ANDA',
             icon: Icons.lock_outline_rounded,
             obscureText: parent._obscurePassword,

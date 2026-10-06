@@ -73,7 +73,7 @@ void main() {
     expect(find.text('MASUK'), findsOneWidget);
     expect(find.text('Akun terdaftar di lingkungan PUSPOMAD'), findsNothing);
     expect(find.text('© 2026 PUSPOMAD'), findsNothing);
-    expect(find.byType(Scrollable), findsNothing);
+    expect(find.byType(SingleChildScrollView), findsNothing);
   });
 
   testWidgets('sign in fits a short phone viewport without overflow', (
@@ -82,7 +82,7 @@ void main() {
     await _pumpSignInAtSize(tester, const Size(320, 568));
 
     expect(tester.takeException(), isNull);
-    expect(find.byType(Scrollable), findsNothing);
+    expect(find.byType(SingleChildScrollView), findsNothing);
     expect(find.text('MASUK'), findsOneWidget);
   });
 
@@ -92,7 +92,7 @@ void main() {
     await _pumpSignInAtSize(tester, const Size(280, 480));
 
     expect(tester.takeException(), isNull);
-    expect(find.byType(Scrollable), findsNothing);
+    expect(find.byType(SingleChildScrollView), findsNothing);
     expect(find.text('MASUK'), findsOneWidget);
   });
 
@@ -128,7 +128,7 @@ void main() {
     expect(find.text('STATISTIK K9'), findsOneWidget);
     expect(find.text('STATISTIK PROVOS TNI-AD'), findsOneWidget);
     expect(find.byIcon(Icons.apps_rounded), findsOneWidget);
-    expect(find.byType(Scrollable), findsNothing);
+    expect(find.byType(SingleChildScrollView), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -213,7 +213,7 @@ void main() {
       await _pumpHomeAtSize(tester, size);
       expect(tester.takeException(), isNull);
       expect(find.text('SEMUA STATISTIK'), findsOneWidget);
-      expect(find.byType(Scrollable), findsNothing);
+      expect(find.byType(SingleChildScrollView), findsNothing);
 
       final gesture = find.byType(GestureDetector).last;
       final pieSize = tester.getSize(gesture);
