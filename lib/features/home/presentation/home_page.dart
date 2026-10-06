@@ -533,10 +533,6 @@ class _PieMenuPainter extends CustomPainter {
         center.dx + math.cos(start) * outerRadius,
         center.dy + math.sin(start) * outerRadius,
       );
-      final topEnd = Offset(
-        center.dx + math.cos(end) * outerRadius,
-        center.dy + math.sin(end) * outerRadius,
-      );
       final bottomEnd = Offset(
         bottomCenter.dx + math.cos(end) * outerRadius,
         bottomCenter.dy + math.sin(end) * outerRadius,
