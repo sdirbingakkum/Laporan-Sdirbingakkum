@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'app_background.dart';
+
 const _gold = Color(0xFFD7A93C);
 const _goldLight = Color(0xFFF1D37A);
 const _text = Color(0xFFF8F5EC);
@@ -32,11 +34,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.transparent,
       flexibleSpace: DecoratedBox(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF0A2A1F), Color(0xFF061C14), Color(0xFF03150F)],
-          ),
+          gradient: appBackgroundGradient,
         ),
       ),
       foregroundColor: _text,
