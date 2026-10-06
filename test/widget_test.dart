@@ -69,7 +69,7 @@ void main() {
     expect(find.byType(SignInPage), findsOneWidget);
     expect(find.text('AKSES SISTEM'), findsNothing);
     expect(find.byType(TextFormField), findsNWidgets(2));
-        expect(find.text('MASUK'), findsOneWidget);
+    expect(find.text('MASUK'), findsOneWidget);
     expect(find.text('MASUK MENGGUNAKAN AKUN YANG TERDAFTAR.'), findsNothing);
     expect(
       find.text('PROFESIONAL • RESPONSIF • INTEGRITAS • MODERN • ADAPTIF'),
