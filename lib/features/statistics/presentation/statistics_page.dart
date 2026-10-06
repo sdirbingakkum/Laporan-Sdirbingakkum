@@ -290,15 +290,21 @@ class _TotalSimCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            accent.withValues(alpha: 0.22),
-            _surface.withValues(alpha: 0.64),
-            Colors.white.withValues(alpha: 0.04),
+            accent.withValues(alpha: 0.10),
+            Colors.white.withValues(alpha: 0.035),
+            _surface.withValues(alpha: 0.76),
           ],
+          stops: const [0.0, 0.36, 1.0],
         ),
         borderRadius: BorderRadius.circular(6.4),
-        border: Border.all(color: accent.withValues(alpha: 0.34)),
-        boxShadow: const [
+        border: Border.all(color: accent.withValues(alpha: 0.22)),
+        boxShadow: [
           BoxShadow(
+            color: accent.withValues(alpha: 0.045),
+            blurRadius: 18,
+            offset: const Offset(0, 5),
+          ),
+          const BoxShadow(
             color: Colors.black26,
             blurRadius: 14,
             offset: Offset(0, 7),
@@ -674,9 +680,18 @@ class _GlassStatCard extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 90),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.03),
-            // The prototype uses a normal 1px glass border plus a 3px
-            // accent border on the actual left edge of each card.
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white.withValues(alpha: 0.045),
+                cardAccent.withValues(alpha: 0.065),
+                _surface.withValues(alpha: 0.74),
+              ],
+              stops: const [0.0, 0.34, 1.0],
+            ),
+            // The accent remains the actual left edge of the card. It is not
+            // a floating/translated overlay, so it cannot drift from position.
             border: Border(
               top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
               right: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
@@ -701,10 +716,10 @@ class _GlassStatCard extends StatelessWidget {
                   height: 64,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: cardAccent.withValues(alpha: 0.20),
+                    color: cardAccent.withValues(alpha: 0.12),
                     boxShadow: [
                       BoxShadow(
-                        color: cardAccent.withValues(alpha: 0.16),
+                        color: cardAccent.withValues(alpha: 0.08),
                         blurRadius: 22,
                         spreadRadius: 1,
                       ),
