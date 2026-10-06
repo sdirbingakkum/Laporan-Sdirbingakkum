@@ -29,26 +29,36 @@ class _HomePageState extends ConsumerState<HomePage> {
       label: 'STATISTIK PELANGGARAN',
       description: 'Ringkasan dan tren pelanggaran hukum.',
       icon: Icons.gavel_rounded,
+      lightColor: Color(0xFFE15B5B),
+      darkColor: Color(0xFF461518),
     ),
     _MenuItemData(
       label: 'STATISTIK SIM TNI',
       description: 'Ringkasan penerbitan dan data SIM TNI.',
       icon: Icons.badge_outlined,
+      lightColor: Color(0xFFE3BE4F),
+      darkColor: Color(0xFF59410D),
     ),
     _MenuItemData(
       label: 'STATISTIK PROVOS TNI-AD',
       description: 'Ringkasan data dan kinerja Provos TNI-AD.',
       icon: Icons.military_tech_rounded,
+      lightColor: Color(0xFF49A86B),
+      darkColor: Color(0xFF123827),
     ),
     _MenuItemData(
       label: 'STATISTIK LAKA-LALIN',
       description: 'Ringkasan dan tren kecelakaan lalu lintas.',
       icon: Icons.directions_car_filled_outlined,
+      lightColor: Color(0xFF5D8FE0),
+      darkColor: Color(0xFF192A55),
     ),
     _MenuItemData(
       label: 'K9',
       description: 'Informasi dan statistik satuan K9.',
       icon: Icons.pets_rounded,
+      lightColor: Color(0xFFF3EFE3),
+      darkColor: Color(0xFF4A514B),
     ),
   ];
 
@@ -306,7 +316,7 @@ class _MenuHeader extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: _gold.withValues(alpha: 0.18),
+                color: item.lightColor.withValues(alpha: 0.16),
                 blurRadius: 26,
                 offset: const Offset(0, 9),
               ),
@@ -546,11 +556,11 @@ class _PieMenuLabel extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: selected
-                      ? _gold.withValues(alpha: 0.24)
+                      ? item.lightColor.withValues(alpha: 0.18)
                       : _surface.withValues(alpha: 0.78),
                   border: Border.all(
                     color: selected
-                        ? _goldLight.withValues(alpha: 0.82)
+                        ? item.lightColor.withValues(alpha: 0.84)
                         : _gold.withValues(alpha: 0.26),
                     width: selected ? 1.4 : 1,
                   ),
@@ -565,7 +575,7 @@ class _PieMenuLabel extends StatelessWidget {
                 ),
                 child: Icon(
                   item.icon,
-                  color: selected ? _goldLight : _muted,
+                  color: selected ? item.lightColor : _muted,
                   size: selected ? 21 : 19,
                 ),
               ),
@@ -602,6 +612,22 @@ class _PieMenuPainter extends CustomPainter {
 
   static const _segmentGap = 0.045;
 
+  static const _lightPalette = <Color>[
+    Color(0xFFE15B5B), // red
+    Color(0xFFE3BE4F), // yellow
+    Color(0xFF49A86B), // green
+    Color(0xFF5D8FE0), // blue
+    Color(0xFFF3EFE3), // white
+  ];
+
+  static const _darkPalette = <Color>[
+    Color(0xFF461518),
+    Color(0xFF59410D),
+    Color(0xFF123827),
+    Color(0xFF192A55),
+    Color(0xFF4A514B),
+  ];
+
   @override
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
@@ -629,22 +655,22 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      final colors = switch (i) {
-        0 => const [_goldLight, _goldDark],
-        1 => const [Color(0xFFC49731), Color(0xFF765218)],
-        2 => const [Color(0xFFE0B94F), Color(0xFF9A6D22)],
-        3 => const [Color(0xFFCFA53B), Color(0xFF815C20)],
-        _ => const [Color(0xFFE8C765), Color(0xFF8A6320)],
-      };
+      final colors = <Color>[
+        // Merah: merah marun gelap dengan highlight elegan.
+        _lightPalette[i].withValues(alpha: selected ? 1 : 0.90),
+        _darkPalette[i],
+      ];
 
       final paint = Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            selected ? colors.first : colors.first.withValues(alpha: 0.82),
-            selected ? colors.last : colors.last.withValues(alpha: 0.90),
+            colors.first,
+            colors.first.withValues(alpha: selected ? 0.88 : 0.72),
+            colors.last,
           ],
+          stops: const [0.0, 0.42, 1.0],
         ).createShader(
           Rect.fromCircle(center: center, radius: radius),
         );
@@ -655,8 +681,8 @@ class _PieMenuPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = selected ? 1.7 : 1
         ..color = selected
-            ? _goldLight.withValues(alpha: 0.95)
-            : _gold.withValues(alpha: 0.34);
+            ? colors.first.withValues(alpha: 0.96)
+            : colors.first.withValues(alpha: 0.34);
 
       canvas.drawPath(path, borderPaint);
     }
@@ -724,11 +750,15 @@ class _MenuItemData {
     required this.label,
     required this.description,
     required this.icon,
+    required this.lightColor,
+    required this.darkColor,
   });
 
   final String label;
   final String description;
   final IconData icon;
+  final Color lightColor;
+  final Color darkColor;
 }
 
 class _MenuBackdrop extends StatelessWidget {
