@@ -11,7 +11,6 @@ const _surface = Color(0xFF09231A);
 const _surfaceSoft = Color(0xFF0D2C20);
 const _gold = Color(0xFFD7A93C);
 const _goldLight = Color(0xFFF1D37A);
-const _goldDark = Color(0xFF8D651E);
 const _text = Color(0xFFF8F5EC);
 const _muted = Color(0xFFB7C2BC);
 
@@ -32,7 +31,6 @@ class _HomePageState extends ConsumerState<HomePage> {
       description: 'Ringkasan dan tren pelanggaran hukum.',
       icon: Icons.gavel_rounded,
       lightColor: Color(0xFFF09A4A),
-      darkColor: Color(0xFF5A2B0D),
       route: '/statistik/pelanggaran',
     ),
     _MenuItemData(
@@ -40,7 +38,6 @@ class _HomePageState extends ConsumerState<HomePage> {
       description: 'Ringkasan dan tren kecelakaan lalu lintas.',
       icon: Icons.directions_car_filled_outlined,
       lightColor: Color(0xFFE15B5B),
-      darkColor: Color(0xFF461518),
       route: '/statistik/laka-lalin',
     ),
     _MenuItemData(
@@ -48,7 +45,6 @@ class _HomePageState extends ConsumerState<HomePage> {
       description: 'Ringkasan penerbitan dan data SIM TNI.',
       icon: Icons.badge_outlined,
       lightColor: Color(0xFF5D8FE0),
-      darkColor: Color(0xFF192A55),
       route: '/statistik/sim-tni',
     ),
     _MenuItemData(
@@ -56,7 +52,6 @@ class _HomePageState extends ConsumerState<HomePage> {
       description: 'Informasi dan statistik satuan K9.',
       icon: Icons.pets_rounded,
       lightColor: Color(0xFFE3BE4F),
-      darkColor: Color(0xFF59410D),
       route: '/statistik/k9',
     ),
     _MenuItemData(
@@ -64,7 +59,6 @@ class _HomePageState extends ConsumerState<HomePage> {
       description: 'Ringkasan data dan kinerja Provos TNI-AD.',
       icon: Icons.military_tech_rounded,
       lightColor: Color(0xFF49A86B),
-      darkColor: Color(0xFF123827),
       route: '/statistik/provos',
     ),
   ];
@@ -687,7 +681,6 @@ class _MenuItemData {
   final String description;
   final IconData icon;
   final Color lightColor;
-  final Color darkColor;
   final String route;
 }
 
@@ -912,7 +905,7 @@ class _PieMenuLabel extends StatelessWidget {
     final angle =
         -math.pi / 2 + (2 * math.pi / itemCount) * (index + 0.5);
     final compact = diameter < 310;
-    final labelWidth = (diameter * 0.29).clamp(72.0, 104.0);
+    final labelWidth = (diameter * 0.29).clamp(72.0, 104.0).toDouble();
     final iconSize = compact ? 32.0 : 38.0;
     final fontSize = compact ? 8.2 : 9.3;
 
@@ -968,7 +961,7 @@ class _PieMenuLabel extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: selected ? item.lightColor : _text,
-                  fontSize: item.label == 'Statistik Provos TNI-AD'
+                  fontSize: item.label.length > 20
                       ? math.max(fontSize - 0.5, 7.6)
                       : fontSize,
                   fontWeight: FontWeight.w900,
