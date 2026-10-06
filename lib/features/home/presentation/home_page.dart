@@ -509,11 +509,7 @@ class _PieMenuPainter extends CustomPainter {
     final faceShadow = Paint()
       ..color = Colors.black.withValues(alpha: 0.20)
       ..maskFilter = MaskFilter.blur(BlurStyle.normal, 12);
-    canvas.drawCircle(
-      center.translate(0, 2.5),
-      outerRadius + 1,
-      faceShadow,
-    );
+    canvas.drawCircle(center.translate(0, 2.5), outerRadius + 1, faceShadow);
 
     for (var i = 0; i < itemCount; i++) {
       final start = -math.pi / 2 + i * sweep;
@@ -566,9 +562,7 @@ class _PieMenuPainter extends CustomPainter {
             Colors.transparent,
           ],
           stops: const [0.0, 0.20, 0.62],
-        ).createShader(
-          Rect.fromCircle(center: center, radius: outerRadius),
-        );
+        ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, upperSpecular);
 
       final lowerDepth = Paint()
@@ -581,9 +575,7 @@ class _PieMenuPainter extends CustomPainter {
             Colors.transparent,
           ],
           stops: const [0.0, 0.34, 0.82],
-        ).createShader(
-          Rect.fromCircle(center: center, radius: outerRadius),
-        );
+        ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, lowerDepth);
     }
 
