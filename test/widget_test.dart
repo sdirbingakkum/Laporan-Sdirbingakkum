@@ -5,7 +5,24 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:laporan_sdirbingakkum/app/app.dart';
 import 'package:laporan_sdirbingakkum/features/auth/presentation/sign_in_page.dart';
 
+Future<void> _pumpSignInAtSize(
+  WidgetTester tester,
+  Size size,
+) async {
+  await tester.binding.setSurfaceSize(size);
+  await tester.pumpWidget(
+    const ProviderScope(
+      child: MaterialApp(home: SignInPage()),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
 void main() {
+  tearDown(() async {
+    await TestWidgetsFlutterBinding.instance.setSurfaceSize(null);
+  });
+
   testWidgets('application shows configuration gate without secret', (
     tester,
   ) async {
@@ -17,24 +34,45 @@ void main() {
     expect(find.text('Konfigurasi aplikasi belum lengkap'), findsOneWidget);
   });
 
-  testWidgets('sign in page renders mobile-first form', (tester) async {
-    await tester.pumpWidget(
-      const ProviderScope(child: MaterialApp(home: SignInPage())),
-    );
+  testWidgets('sign in page renders responsive form without extra footer', (
+    tester,
+  ) async {
+    await _pumpSignInAtSize(tester, const Size(390, 844));
 
+    expect(find.byType(SignInPage), findsOneWidget);
     expect(find.text('Akses Sistem'), findsOneWidget);
     expect(find.text('Email'), findsOneWidget);
     expect(find.text('Password'), findsOneWidget);
     expect(find.text('Masuk'), findsOneWidget);
+    expect(find.text('Akun terdaftar di lingkungan PUSPOMAD'), findsNothing);
+    expect(find.text('© 2026 PUSPOMAD'), findsNothing);
+    expect(find.byType(Scrollable), findsNothing);
+  });
+
+  testWidgets('sign in fits a short phone viewport without overflow', (
+    tester,
+  ) async {
+    await _pumpSignInAtSize(tester, const Size(320, 568));
+
+    expect(tester.takeException(), isNull);
+    expect(find.byType(Scrollable), findsNothing);
+    expect(find.text('Masuk'), findsOneWidget);
+  });
+
+  testWidgets('sign in fits a narrow short viewport without overflow', (
+    tester,
+  ) async {
+    await _pumpSignInAtSize(tester, const Size(280, 480));
+
+    expect(tester.takeException(), isNull);
+    expect(find.byType(Scrollable), findsNothing);
+    expect(find.text('Masuk'), findsOneWidget);
   });
 
   testWidgets('sign in form validates required fields', (tester) async {
-    await tester.pumpWidget(
-      const ProviderScope(child: MaterialApp(home: SignInPage())),
-    );
+    await _pumpSignInAtSize(tester, const Size(390, 844));
 
     final signInButton = find.widgetWithText(FilledButton, 'Masuk');
-    await tester.ensureVisible(signInButton);
     await tester.tap(signInButton);
     await tester.pump();
 
