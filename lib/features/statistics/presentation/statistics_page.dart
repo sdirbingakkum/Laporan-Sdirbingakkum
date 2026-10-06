@@ -9,7 +9,6 @@ import '../../../shared/widgets/app_header.dart';
 const _bg = Color(0xFF03150F);
 const _surface = Color(0xFF09231A);
 const _gold = Color(0xFFD7A93C);
-const _goldLight = Color(0xFFF1D37A);
 const _emerald = Color(0xFF34D399);
 const _text = Color(0xFFF8F5EC);
 const _muted = Color(0xFFB7C2BC);
@@ -188,8 +187,9 @@ class StatisticsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasContent = module != StatisticsModule.k9;
     return Scaffold(
-      key: ValueKey('statistics-' + module.name),
+      key: ValueKey('statistics-${module.name}'),
       backgroundColor: _bg,
       appBar: AppHeader(
         title: _title,
@@ -200,26 +200,29 @@ class StatisticsPage extends StatelessWidget {
       body: AppBackground(
         child: SafeArea(
           top: false,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 760),
-                child: _ContentBody(
-                  columns: _columns,
-                  module: module,
-                  ranking: _ranking,
-                  accent: _moduleAccent(module),
-                  totalSim: module == StatisticsModule.simTni
-                      ? _columns.first.cards.fold<int>(
-                          0,
-                          (sum, card) => sum + (int.tryParse(card.value) ?? 0),
-                        )
-                      : null,
-                ),
-              ),
-            ),
-          ),
+          child: hasContent
+              ? SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 760),
+                      child: _ContentBody(
+                        columns: _columns,
+                        module: module,
+                        ranking: _ranking,
+                        accent: _moduleAccent(module),
+                        totalSim: module == StatisticsModule.simTni
+                            ? _columns.first.cards.fold<int>(
+                                0,
+                                (sum, card) =>
+                                    sum + (int.tryParse(card.value) ?? 0),
+                              )
+                            : null,
+                      ),
+                    ),
+                  ),
+                )
+              : const SizedBox.expand(),
         ),
       ),
     );
@@ -267,8 +270,18 @@ class _ContentBody extends StatelessWidget {
         if (ranking.isNotEmpty)
           _AnalysisButton(
             accent: accent,
-            onPressed: () =>
-                _showRankingSheet(context, module, ranking, accent),
+            label: module == StatisticsModule.k9
+                ? 'ANALISIS STATISTIK'
+                : 'STATISTIK',
+            onPressed: () => _showRankingSheet(
+              context,
+              module,
+              ranking,
+              accent,
+              onItemTap: module == StatisticsModule.k9
+                  ? (index) => _showK9UnitSheet(context, _k9Units[index])
+                  : null,
+            ),
           ),
       ],
     );
@@ -343,8 +356,9 @@ Future<void> _showRankingSheet(
   BuildContext context,
   StatisticsModule module,
   List<_RankData> ranking,
-  Color accent,
-) async {
+  Color accent, {
+  Future<void> Function(int index)? onItemTap,
+}) async {
   await showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
@@ -461,21 +475,8 @@ Future<void> _showRankingSheet(
                         duration: Duration(milliseconds: 750 + index * 120),
                         curve: Curves.easeOutCubic,
                         builder: (context, progress, _) {
-                          final k9Unit = module == StatisticsModule.k9
-                              ? _k9Units.firstWhere(
-                                  (unit) => unit.name == item.name,
-                                )
-                              : null;
-
-                          return InkWell(
-                            borderRadius: BorderRadius.circular(8),
-                            onTap: k9Unit == null
-                                ? null
-                                : () => _showK9UnitSheet(context, k9Unit),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 3),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                          final content = Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Row(
                                 mainAxisAlignment:
@@ -533,9 +534,20 @@ Future<void> _showRankingSheet(
                                 ),
                               ),
                             ],
-                              ),
-                            ),
                           );
+
+                          return onItemTap == null
+                              ? content
+                              : InkWell(
+                                  borderRadius: BorderRadius.circular(8),
+                                  onTap: () => onItemTap(index),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 3,
+                                    ),
+                                    child: content,
+                                  ),
+                                );
                         },
                       );
                     },
@@ -788,20 +800,6 @@ class _GlassStatCard extends StatelessWidget {
   }
 }
 
-class _K9UnitData {
-  const _K9UnitData({
-    required this.name,
-    required this.actual,
-    required this.org,
-    required this.shortage,
-  });
-
-  final String name;
-  final int actual;
-  final int org;
-  final int? shortage;
-}
-
 const _k9Units = <_K9UnitData>[
   _K9UnitData(
     name: 'YONPOMAD PUSPOMAD',
@@ -817,39 +815,63 @@ const _k9Units = <_K9UnitData>[
   ),
 ];
 
-Future<void> _showK9AnalysisSheet(
+class _K9UnitData {
+  const _K9UnitData({
+    required this.name,
+    required this.actual,
+    required this.org,
+    required this.shortage,
+  });
+
+  final String name;
+  final int actual;
+  final int org;
+  final int? shortage;
+}
+
+Future<void> _showK9UnitSheet(
   BuildContext context,
-  List<_K9UnitData> units,
+  _K9UnitData unit,
 ) async {
   await showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
     builder: (context) {
-      final maxValue = units.fold<int>(
-        0,
-        (max, unit) => unit.actual > max ? unit.actual : max,
-      );
+      final accent = _moduleAccent(StatisticsModule.k9);
+      final cards = <_StatCardData>[
+        _StatCardData('NYATA', unit.actual.toString(), _emerald),
+        _StatCardData('SESUAI ORGAS', unit.org.toString(), _gold),
+        if (unit.shortage != null)
+          _StatCardData(
+            'KEKURANGAN',
+            unit.shortage.toString(),
+            const Color(0xFFF59E0B),
+          ),
+      ];
 
       return ClipRRect(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         child: BackdropFilter(
           filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
           child: Container(
-            height: MediaQuery.sizeOf(context).height * 0.64,
-            padding: const EdgeInsets.fromLTRB(22, 12, 22, 24),
+            height: MediaQuery.sizeOf(context).height * 0.48,
+            padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withValues(alpha: 0.055),
-                  _surface.withValues(alpha: 0.94),
-                  _gold.withValues(alpha: 0.055),
+                  Colors.white.withValues(alpha: 0.05),
+                  _surface.withValues(alpha: 0.92),
+                  accent.withValues(alpha: 0.08),
                 ],
               ),
               border: Border(
-                top: BorderSide(color: _gold.withValues(alpha: 0.24), width: 1),
+                top: BorderSide(
+                  color: accent.withValues(alpha: 0.28),
+                  width: 1,
+                ),
               ),
               boxShadow: const [
                 BoxShadow(
@@ -858,56 +880,6 @@ Future<void> _showK9AnalysisSheet(
                   offset: Offset(0, -10),
                 ),
               ],
-            ),
-            child: Column(
-              children: [
-                Container(
-                  width: 48,
-                  height: 6,
-                  margin: const EdgeInsets.only(bottom: 18),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.16),
-                    borderRadius: BorderRadius.circular(99),
-                  ),
-                ),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'ANALISIS VISUAL',
-                        style: TextStyle(
-                          color: _goldLight,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.6,
-                 Future<void> _showK9UnitSheet(BuildContext context, _K9UnitData unit) async {
-  await showModalBottomSheet<void>(
-    context: context,
-    backgroundColor: Colors.transparent,
-    isScrollControlled: true,
-    builder: (context) {
-      return ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        child: BackdropFilter(
-          filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-          child: Container(
-            height: MediaQuery.sizeOf(context).height * 0.50,
-            padding: const EdgeInsets.fromLTRB(22, 12, 22, 24),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white.withValues(alpha: 0.055),
-                  _surface.withValues(alpha: 0.94),
-                  _gold.withValues(alpha: 0.06),
-                ],
-              ),
-              border: Border(
-                top: BorderSide(color: _gold.withValues(alpha: 0.24), width: 1),
-              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -926,13 +898,13 @@ Future<void> _showK9AnalysisSheet(
                 Text(
                   unit.name,
                   style: const TextStyle(
-                    color: _goldLight,
+                    color: Color(0xFFF1D37A),
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.7,
                   ),
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(height: 4),
                 const Text(
                   'DATA K-9',
                   style: TextStyle(
@@ -942,33 +914,12 @@ Future<void> _showK9AnalysisSheet(
                     letterSpacing: 1.4,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 18),
                 Row(
                   children: [
-                    Expanded(
-                      child: _K9DetailMetric(
-                        label: 'NYATA',
-                        value: unit.actual.toString(),
-                        accent: _emerald,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _K9DetailMetric(
-                        label: 'SESUAI ORGAS',
-                        value: unit.org.toString(),
-                        accent: _gold,
-                      ),
-                    ),
-                    if (unit.shortage != null) ...[
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _K9DetailMetric(
-                          label: 'KURANG',
-                          value: unit.shortage.toString(),
-                          accent: const Color(0xFFF59E0B),
-                        ),
-                      ),
+                    for (var i = 0; i < cards.length; i++) ...[
+                      if (i > 0) const SizedBox(width: 10),
+                      Expanded(child: _GlassStatCard(card: cards[i])),
                     ],
                   ],
                 ),
@@ -991,55 +942,6 @@ Future<void> _showK9AnalysisSheet(
       );
     },
   );
-}
-
-class _K9DetailMetric extends StatelessWidget {
-  const _K9DetailMetric({
-    required this.label,
-    required this.value,
-    required this.accent,
-  });
-
-  final String label;
-  final String value;
-  final Color accent;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(minHeight: 92),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.025),
-        borderRadius: BorderRadius.circular(7),
-        border: Border.all(color: accent.withValues(alpha: 0.18)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              color: _muted,
-              fontSize: 8.5,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.7,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            value,
-            style: TextStyle(
-              color: accent,
-              fontSize: 28,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _StatColumn {
