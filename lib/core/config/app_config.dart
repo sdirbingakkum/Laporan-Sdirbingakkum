@@ -1,0 +1,25 @@
+class AppConfig {
+  const AppConfig({
+    required this.supabaseUrl,
+    required this.publishableKey,
+  });
+
+  static AppConfig fromEnvironment() {
+    const url = String.fromEnvironment(
+      'SUPABASE_URL',
+      defaultValue: 'https://ybepaqmrrgsaeqnqrsrf.supabase.co',
+    );
+    const key = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
+
+    return const AppConfig(
+      supabaseUrl: url,
+      publishableKey: key,
+    );
+  }
+
+  final String supabaseUrl;
+  final String publishableKey;
+
+  bool get isConfigured =>
+      supabaseUrl.trim().isNotEmpty && publishableKey.trim().isNotEmpty;
+}
