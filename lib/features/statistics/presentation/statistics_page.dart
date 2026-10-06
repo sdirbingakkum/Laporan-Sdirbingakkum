@@ -176,7 +176,7 @@ class StatisticsPage extends StatelessWidget {
                               ),
                             ),
                             if (hasContent)
-                              _ContentBody(columns: _columns, ranking: ranking),
+                              _ContentBody(columns: _columns, ranking: _ranking),
                           ],
                         ),
                       ),
