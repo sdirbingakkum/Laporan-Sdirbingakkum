@@ -69,6 +69,8 @@ void main() {
     expect(find.byType(SignInPage), findsOneWidget);
     expect(find.text('AKSES SISTEM'), findsNothing);
     expect(find.byType(TextFormField), findsNWidgets(2));
+    expect(find.text('USERNAME'), findsOneWidget);
+    expect(find.text('EMAIL'), findsNothing);
     expect(find.text('MASUK'), findsOneWidget);
     expect(find.text('MASUK MENGGUNAKAN AKUN YANG TERDAFTAR.'), findsNothing);
     expect(
@@ -106,8 +108,21 @@ void main() {
     await tester.tap(signInButton);
     await tester.pump();
 
-    expect(find.text('EMAIL WAJIB DIISI.'), findsOneWidget);
+    expect(find.text('USERNAME WAJIB DIISI.'), findsOneWidget);
     expect(find.text('PASSWORD WAJIB DIISI.'), findsOneWidget);
+  });
+
+  testWidgets('sign in rejects a typed email domain', (tester) async {
+    await _pumpSignInAtSize(tester, const Size(390, 844));
+
+    final fields = find.byType(TextFormField);
+    await tester.enterText(fields.at(0), 'NAMA@PUSPOMAD.MIL.ID');
+    await tester.enterText(fields.at(1), 'PASSWORD');
+
+    await tester.tap(find.widgetWithText(FilledButton, 'MASUK'));
+    await tester.pump();
+
+    expect(find.text('MASUKKAN USERNAME TANPA DOMAIN.'), findsOneWidget);
   });
 
   testWidgets('post-login header is fixed and unframed', (tester) async {
@@ -223,6 +238,35 @@ void main() {
       expect(pieSize.width, lessThanOrEqualTo(size.width - 40));
       expect(pieSize.height, lessThanOrEqualTo(size.height));
     }
+  });
+
+  testWidgets('SIM TNI shows total SIM above aligned period columns', (
+    tester,
+  ) async {
+    await _setSurfaceSize(tester, const Size(390, 844));
+    await tester.pumpWidget(
+      const MaterialApp(home: StatisticsPage(module: StatisticsModule.simTni)),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('sim-total-card')), findsOneWidget);
+    expect(find.text('TOTAL SIM'), findsOneWidget);
+    expect(find.text('400'), findsOneWidget);
+    expect(find.byKey(const ValueKey('report-period-columns')), findsOneWidget);
+  });
+
+  testWidgets('PROVOS shows only the current year period', (tester) async {
+    await _setSurfaceSize(tester, const Size(390, 844));
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: StatisticsPage(module: StatisticsModule.provos),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(DateTime.now().year.toString()), findsOneWidget);
+    expect(find.text('SEPT'), findsNothing);
+    expect(find.byKey(const ValueKey('report-period-columns')), findsNothing);
   });
 
   testWidgets('K9 opens as an empty content page', (tester) async {
