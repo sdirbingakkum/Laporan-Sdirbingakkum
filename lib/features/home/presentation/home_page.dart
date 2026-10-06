@@ -528,9 +528,7 @@ class _PieMenuPainter extends CustomPainter {
           const Color(0xFF020A07).withValues(alpha: 0.18),
         ],
         stops: const [0.0, 0.46, 1.0],
-      ).createShader(
-        Rect.fromCircle(center: center, radius: outerRadius),
-      );
+      ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
     canvas.drawCircle(center, outerRadius, basePaint);
 
     for (var i = 0; i < itemCount; i++) {
@@ -564,9 +562,7 @@ class _PieMenuPainter extends CustomPainter {
             dark.withValues(alpha: selected ? 0.040 : 0.022),
           ],
           stops: const [0.0, 0.46, 1.0],
-        ).createShader(
-          Rect.fromCircle(center: center, radius: outerRadius),
-        );
+        ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, paint);
 
       // Selected wedge gets only a thin luminous edge, not a solid highlight.
