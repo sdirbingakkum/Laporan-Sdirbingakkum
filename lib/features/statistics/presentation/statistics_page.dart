@@ -311,7 +311,7 @@ class _TotalSimCard extends StatelessWidget {
           ),
           Text(
             total.toString(),
-            style: const TextStyle(
+            style: TextStyle(
               color: accent,
               fontSize: 30,
               fontWeight: FontWeight.w900,
@@ -338,16 +338,27 @@ Future<void> _showRankingSheet(
         (max, item) => item.value > max ? item.value : max,
       );
 
-      return Container(
-        height: MediaQuery.sizeOf(context).height * 0.68,
+      return ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        child: BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+          child: Container(
+            height: MediaQuery.sizeOf(context).height * 0.68,
         padding: const EdgeInsets.fromLTRB(22, 12, 22, 26),
-        decoration: const BoxDecoration(
-          color: _surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-          border: Border(top: BorderSide(color: accent, width: 0.9)),
-        ),
-        child: Column(
-          children: [
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withValues(alpha: 0.07),
+                  _surface.withValues(alpha: 0.92),
+                  accent.withValues(alpha: 0.09),
+                ],
+              ),
+              border: Border(top: BorderSide(color: accent, width: 0.9)),
+            ),
+            child: Column(
+              children: [
             Container(
               width: 44,
               height: 5,
@@ -401,8 +412,8 @@ Future<void> _showRankingSheet(
                           ),
                           Text(
                             item.value.toString(),
-                            style: const TextStyle(
-                              color: _goldLight,
+                            style: TextStyle(
+                              color: accent,
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
                             ),
@@ -424,7 +435,9 @@ Future<void> _showRankingSheet(
                 },
               ),
             ),
-          ],
+              ],
+            ),
+          ),
         ),
       );
     },
@@ -432,9 +445,10 @@ Future<void> _showRankingSheet(
 }
 
 class _AnalysisButton extends StatelessWidget {
-  const _AnalysisButton({required this.onPressed});
+  const _AnalysisButton({required this.onPressed, required this.accent});
 
   final VoidCallback onPressed;
+  final Color accent;
 
   @override
   Widget build(BuildContext context) {
@@ -446,12 +460,12 @@ class _AnalysisButton extends StatelessWidget {
         style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.7),
       ),
       style: FilledButton.styleFrom(
-        backgroundColor: _surface.withValues(alpha: 0.88),
-        foregroundColor: _goldLight,
+        backgroundColor: accent.withValues(alpha: 0.15),
+        foregroundColor: accent,
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 18),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
-          side: BorderSide(color: _gold.withValues(alpha: 0.22)),
+          side: BorderSide(color: accent.withValues(alpha: 0.34)),
         ),
       ),
     );
