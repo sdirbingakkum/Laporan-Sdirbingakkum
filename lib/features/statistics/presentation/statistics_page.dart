@@ -795,8 +795,8 @@ class _K9Report extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        const Row(
-          key: ValueKey('k9-summary-row-1'),
+        Row(
+          key: const ValueKey('k9-summary-row-1'),
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
@@ -812,8 +812,8 @@ class _K9Report extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        const Row(
-          key: ValueKey('k9-summary-row-2'),
+        Row(
+          key: const ValueKey('k9-summary-row-2'),
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
