@@ -68,11 +68,13 @@ void main() {
 
     expect(find.byType(SignInPage), findsOneWidget);
     expect(find.text('AKSES SISTEM'), findsNothing);
-    expect(find.text('EMAIL'), findsOneWidget);
-    expect(find.text('PASSWORD'), findsOneWidget);
-    expect(find.text('MASUK'), findsOneWidget);
+    expect(find.byType(TextFormField), findsNWidgets(2));
+        expect(find.text('MASUK'), findsOneWidget);
     expect(find.text('MASUK MENGGUNAKAN AKUN YANG TERDAFTAR.'), findsNothing);
-    expect(find.text('PROFESIONAL • RESPONSIF • INTEGRITAS • MODERN • ADAPTIF'), findsNothing);
+    expect(
+      find.text('PROFESIONAL • RESPONSIF • INTEGRITAS • MODERN • ADAPTIF'),
+      findsNothing,
+    );
     expect(find.text('© 2026 PUSPOMAD'), findsNothing);
     expect(find.byType(SingleChildScrollView), findsNothing);
   });
@@ -104,8 +106,8 @@ void main() {
     await tester.tap(signInButton);
     await tester.pump();
 
-    expect(find.text('EMAIL wajib diisi.'), findsOneWidget);
-    expect(find.text('PASSWORD wajib diisi.'), findsOneWidget);
+    expect(find.text('EMAIL WAJIB DIISI.'), findsOneWidget);
+    expect(find.text('PASSWORD WAJIB DIISI.'), findsOneWidget);
   });
 
   testWidgets('post-login header is fixed and unframed', (tester) async {
@@ -121,7 +123,7 @@ void main() {
     await _pumpHomeAtSize(tester, const Size(390, 844));
 
     expect(find.byType(HomePage), findsOneWidget);
-    expect(find.text('SEMUA STATISTIK'), findsOneWidget);
+    expect(find.text('LAPORAN STATISTIK'), findsOneWidget);
     expect(find.text('SDIRBINGAKKUM'), findsOneWidget);
     expect(find.text('PELANGGARAN'), findsOneWidget);
     expect(find.text('LAKA-LALIN'), findsOneWidget);
