@@ -397,6 +397,8 @@ class _PieMenuLabel extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Background-free 3D icon: a compact dark extrusion plus a
+              // tiny upper highlight make it feel raised from the colored face.
               AnimatedScale(
                 scale: selected ? 1.08 : 1,
                 duration: const Duration(milliseconds: 180),
@@ -407,6 +409,29 @@ class _PieMenuLabel extends StatelessWidget {
                       ? const Color(0xFFF8F5EC)
                       : const Color(0xFFEFECE3),
                   size: compact ? iconSize * 0.78 : iconSize * 0.80,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withValues(
+                        alpha: selected ? 0.72 : 0.58,
+                      ),
+                      offset: const Offset(1.5, 2.2),
+                      blurRadius: 0,
+                    ),
+                    Shadow(
+                      color: item.lightColor.withValues(
+                        alpha: selected ? 0.22 : 0.14,
+                      ),
+                      offset: const Offset(0.7, 1.0),
+                      blurRadius: 0,
+                    ),
+                    Shadow(
+                      color: Colors.white.withValues(
+                        alpha: selected ? 0.14 : 0.08,
+                      ),
+                      offset: const Offset(-0.55, -0.65),
+                      blurRadius: 0,
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 6),
@@ -423,6 +448,31 @@ class _PieMenuLabel extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.35,
                   height: 1.05,
+                  shadows: [
+                    // Small stacked offsets create letter extrusion without
+                    // introducing any background behind the label.
+                    Shadow(
+                      color: Colors.black.withValues(
+                        alpha: selected ? 0.72 : 0.58,
+                      ),
+                      offset: const Offset(1.2, 1.8),
+                      blurRadius: 0,
+                    ),
+                    Shadow(
+                      color: Colors.black.withValues(
+                        alpha: selected ? 0.28 : 0.20,
+                      ),
+                      offset: const Offset(0.55, 0.9),
+                      blurRadius: 0,
+                    ),
+                    Shadow(
+                      color: Colors.white.withValues(
+                        alpha: selected ? 0.14 : 0.08,
+                      ),
+                      offset: const Offset(-0.45, -0.5),
+                      blurRadius: 0,
+                    ),
+                  ],
                 ),
               ),
             ],
