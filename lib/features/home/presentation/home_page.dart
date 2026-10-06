@@ -7,10 +7,7 @@ import '../../auth/data/auth_repository.dart';
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
-  Future<void> _confirmSignOut(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
+  Future<void> _confirmSignOut(BuildContext context, WidgetRef ref) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
