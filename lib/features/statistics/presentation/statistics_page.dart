@@ -701,19 +701,19 @@ class _GlassStatCard extends StatelessWidget {
           child: Stack(
             children: [
               Positioned(
-                right: -18,
-                bottom: -18,
+                right: -14,
+                bottom: -14,
                 child: Container(
-                  width: 52,
-                  height: 52,
+                  width: 42,
+                  height: 42,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       center: Alignment.topLeft,
                       radius: 1.0,
                       colors: [
-                        cardAccent.withValues(alpha: 0.060),
-                        cardAccent.withValues(alpha: 0.016),
+                        cardAccent.withValues(alpha: 0.038),
+                        cardAccent.withValues(alpha: 0.009),
                         Colors.transparent,
                       ],
                       stops: const [0.0, 0.58, 1.0],
