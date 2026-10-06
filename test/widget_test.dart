@@ -210,7 +210,8 @@ void main() {
       } else if (modules[index] == StatisticsModule.provos) {
         expect(find.text('SUDAH DIK/TAR'), findsWidgets);
       } else {
-        expect(find.text('AGUSTUS 2026'), findsOneWidget);
+        expect(find.text('2026'), findsOneWidget);
+        expect(find.text('AGUSTUS 2026'), findsNothing);
         expect(find.byType(SingleChildScrollView), findsOneWidget);
       }
 
@@ -285,15 +286,16 @@ void main() {
     expect(find.text('K9'), findsOneWidget);
     expect(find.byKey(const ValueKey('report-period-columns')), findsOneWidget);
     expect(find.text('2026'), findsOneWidget);
-    expect(find.text('AGUSTUS 2026'), findsOneWidget);
+    expect(find.text('2026'), findsOneWidget);
+    expect(find.text('AGUSTUS 2026'), findsNothing);
     expect(find.text('NYATA'), findsOneWidget);
-    expect(find.text('27'), findsOneWidget);
+    expect(find.text('51'), findsOneWidget);
     expect(find.text('SESUAI ORGAS'), findsOneWidget);
-    expect(find.text('30'), findsOneWidget);
+    expect(find.text('33'), findsOneWidget);
     expect(find.text('KEKURANGAN'), findsOneWidget);
     expect(find.text('8'), findsOneWidget);
     expect(find.text('SATUAN'), findsOneWidget);
-    expect(find.text('2'), findsOneWidget);
+    expect(find.text('4'), findsOneWidget);
     expect(find.text('ANALISIS STATISTIK'), findsOneWidget);
     expect(find.byIcon(Icons.arrow_back_rounded), findsOneWidget);
     expect(tester.takeException(), isNull);
