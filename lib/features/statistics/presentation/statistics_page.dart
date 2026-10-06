@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -443,83 +445,206 @@ class _AnalysisButton extends StatelessWidget {
 }
 
 class _StatsColumnView extends StatelessWidget {
-  const _StatsColumnView({required this.column});
+  const _StatsColumnView({required this.column, required this.accent});
 
   final _StatColumn column;
+  final Color accent;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: _surface.withValues(alpha: 0.56),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: _gold.withValues(alpha: 0.13)),
-      ),
-      child: Column(
-        children: [
-          Text(
-            column.label,
-            style: const TextStyle(
-              color: _goldLight,
-              fontSize: 12,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 3.4,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(22),
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white.withValues(alpha: 0.07),
+                _surface.withValues(alpha: 0.52),
+                accent.withValues(alpha: 0.08),
+              ],
             ),
+            border: Border.all(color: accent.withValues(alpha: 0.24)),
+            boxShadow: [
+              BoxShadow(
+                color: accent.withValues(alpha: 0.08),
+                blurRadius: 28,
+                spreadRadius: 1,
+              ),
+              const BoxShadow(
+                color: Colors.black26,
+                blurRadius: 18,
+                offset: Offset(0, 10),
+              ),
+            ],
           ),
-          const SizedBox(height: 11),
-          for (final card in column.cards) ...[
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
-              decoration: BoxDecoration(
-                color: _surfaceSoft.withValues(alpha: 0.90),
-                borderRadius: BorderRadius.circular(15),
-                border: Border(left: BorderSide(color: card.color, width: 3)),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 12,
-                    offset: Offset(0, 6),
-                  ),
-                ],
+          child: Column(
+            children: [
+              Text(
+                column.label,
+                style: TextStyle(
+                  color: accent,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 3.4,
+                ),
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      card.label,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: _muted,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.4,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    card.value,
-                    style: TextStyle(
-                      color: card.color,
-                      fontSize: 23,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 9),
-          ],
-        ],
+              const SizedBox(height: 11),
+              for (var index = 0; index < column.cards.length; index++) ...[
+                _AnimatedStatCard(
+                  card: column.cards[index],
+                  accent: accent,
+                  delay: Duration(milliseconds: index * 70),
+                ),
+                if (index != column.cards.length - 1) const SizedBox(height: 9),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-class _StatColumn {
+class _AnimatedStatCard extends StatelessWidget {
+  const _AnimatedStatCard({
+    required this.card,
+    required this.accent,
+    required this.delay,
+  });
+
+  final _StatCardData card;
+  final Color accent;
+  final Duration delay;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 720),
+      curve: Curves.easeOutCubic,
+      child: _GlassStatCard(
+        card: card,
+        accent: accent,
+      ),
+      builder: (context, value, child) {
+        final progress =
+            ((value * 1.18) - delay.inMilliseconds / 820).clamp(0.0, 1.0);
+        return Opacity(
+          opacity: progress,
+          child: Transform.translate(
+            offset: Offset(
+              0,
+              (1 - Curves.easeOutCubic.transform(progress)) * 16,
+            ),
+            child: Transform.scale(
+              scale: 0.965 + progress * 0.035,
+              child: child,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _GlassStatCard extends StatelessWidget {
+  const _GlassStatCard({
+    required this.card,
+    required this.accent,
+  });
+
+  final _StatCardData card;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14.6),
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 13, sigmaY: 13),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white.withValues(alpha: 0.08),
+                _surfaceSoft.withValues(alpha: 0.62),
+                accent.withValues(alpha: 0.11),
+              ],
+            ),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.10),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: accent.withValues(alpha: 0.13),
+                blurRadius: 22,
+                spreadRadius: 1,
+              ),
+              const BoxShadow(
+                color: Colors.black26,
+                blurRadius: 12,
+                offset: Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 3,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: accent,
+                  borderRadius: BorderRadius.circular(99),
+                  boxShadow: [
+                    BoxShadow(
+                      color: accent.withValues(alpha: 0.35),
+                      blurRadius: 12,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 11),
+              Expanded(
+                child: Text(
+                  card.label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: _muted,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.4,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                card.value,
+                style: TextStyle(
+                  color: accent,
+                  fontSize: 23,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatColumn {class _StatColumn {
   const _StatColumn({required this.label, required this.cards});
 
   final String label;
