@@ -183,36 +183,46 @@ class StatisticsPage extends StatelessWidget {
         onSignOut: () => _signOut(context),
         onBack: () => Navigator.of(context).pop(),
       ),
-      body: Stack(
-        children: [
-          const Positioned.fill(child: _StatisticsBackdrop()),
-          SafeArea(
-            top: false,
-            child: hasContent
-                ? SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 760),
-                        child: _ContentBody(
-                          columns: _columns,
-                          module: module,
-                          ranking: _ranking,
-                          accent: _moduleAccent(module),
-                          totalSim: module == StatisticsModule.simTni
-                              ? _columns.first.cards.fold<int>(
-                                  0,
-                                  (sum, card) =>
-                                      sum + (int.tryParse(card.value) ?? 0),
-                                )
-                              : null,
-                        ),
+      body: Container(
+        decoration: const BoxDecoration(
+          // Prototype baseline: the report content uses the same page-level
+          // background gradient as the original web prototype.
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF0A1F0E),
+              Color(0xFF1A2A10),
+              Color(0xFF1C1208),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          top: false,
+          child: hasContent
+              ? SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 760),
+                      child: _ContentBody(
+                        columns: _columns,
+                        module: module,
+                        ranking: _ranking,
+                        accent: _moduleAccent(module),
+                        totalSim: module == StatisticsModule.simTni
+                            ? _columns.first.cards.fold<int>(
+                                0,
+                                (sum, card) =>
+                                    sum + (int.tryParse(card.value) ?? 0),
+                              )
+                            : null,
                       ),
                     ),
-                  )
-                : const SizedBox.expand(),
-          ),
-        ],
+                  ),
+                )
+              : const SizedBox.expand(),
+        ),
       ),
     );
   }
@@ -669,7 +679,14 @@ class _GlassStatCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.03),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            // The prototype uses a normal 1px glass border plus a 3px
+            // accent border on the actual left edge of each card.
+            border: Border(
+              top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+              right: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+              bottom: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+              left: BorderSide(color: cardAccent, width: 3),
+            ),
             boxShadow: const [
               BoxShadow(
                 color: Colors.black12,
@@ -696,17 +713,6 @@ class _GlassStatCard extends StatelessWidget {
                         spreadRadius: 1,
                       ),
                     ],
-                  ),
-                ),
-              ),
-              Positioned.fill(
-                child: IgnorePointer(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        left: BorderSide(color: cardAccent, width: 3),
-                      ),
-                    ),
                   ),
                 ),
               ),
@@ -769,46 +775,3 @@ class _RankData {
   final int value;
 }
 
-class _StatisticsBackdrop extends StatelessWidget {
-  const _StatisticsBackdrop();
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(painter: _StatisticsBackdropPainter());
-  }
-}
-
-class _StatisticsBackdropPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 1;
-
-    paint.color = _gold.withValues(alpha: 0.10);
-    canvas.drawArc(
-      Rect.fromCircle(
-        center: Offset(size.width * 0.08, size.height * 0.88),
-        radius: size.width * 0.72,
-      ),
-      -0.8,
-      1.5,
-      false,
-      paint,
-    );
-    canvas.drawArc(
-      Rect.fromCircle(
-        center: Offset(size.width * 0.95, size.height * 0.15),
-        radius: size.width * 0.60,
-      ),
-      1.9,
-      1.0,
-      false,
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
