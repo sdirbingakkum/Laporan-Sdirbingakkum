@@ -36,11 +36,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0A2A1F),
-              Color(0xFF061C14),
-              Color(0xFF03150F),
-            ],
+            colors: [Color(0xFF0A2A1F), Color(0xFF061C14), Color(0xFF03150F)],
           ),
         ),
       ),
