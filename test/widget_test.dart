@@ -163,7 +163,7 @@ void main() {
 
       expect(find.byType(HomePage), findsNothing);
       expect(
-        find.byKey(ValueKey('statistics-' + modules[index].name)),
+        find.byKey(ValueKey('statistics-${modules[index].name}')),
         findsOneWidget,
       );
 
