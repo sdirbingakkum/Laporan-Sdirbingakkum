@@ -2,13 +2,6 @@ name: Build Flutter Web Preview
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "lib/**"
-      - "web/**"
-      - "pubspec.yaml"
-      - ".github/workflows/deploy-web.yml"
 
 permissions:
   contents: read
