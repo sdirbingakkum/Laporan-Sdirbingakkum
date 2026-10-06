@@ -185,12 +185,13 @@ class StatisticsPage extends StatelessWidget {
       ),
       body: Stack(
         children: [
+          const Positioned.fill(child: _StatisticsBackgroundGradient()),
           const Positioned.fill(child: _StatisticsBackdrop()),
           SafeArea(
             top: false,
             child: hasContent
                 ? SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 30),
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
                     child: Center(
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 760),
@@ -483,60 +484,29 @@ class _StatsColumnView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(22),
-      child: BackdropFilter(
-        filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white.withValues(alpha: 0.07),
-                _surface.withValues(alpha: 0.52),
-                accent.withValues(alpha: 0.08),
-              ],
-            ),
-            border: Border.all(color: accent.withValues(alpha: 0.24)),
-            boxShadow: [
-              BoxShadow(
-                color: accent.withValues(alpha: 0.08),
-                blurRadius: 28,
-                spreadRadius: 1,
-              ),
-              const BoxShadow(
-                color: Colors.black26,
-                blurRadius: 18,
-                offset: Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              Text(
-                column.label,
-                style: TextStyle(
-                  color: accent,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 3.4,
-                ),
-              ),
-              const SizedBox(height: 11),
-              for (var index = 0; index < column.cards.length; index++) ...[
-                _AnimatedStatCard(
-                  card: column.cards[index],
-                  accent: accent,
-                  delay: Duration(milliseconds: index * 70),
-                ),
-                if (index != column.cards.length - 1) const SizedBox(height: 9),
-              ],
-            ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          column.label,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: _gold,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 2.0,
           ),
         ),
-      ),
+        const SizedBox(height: 8),
+        for (var index = 0; index < column.cards.length; index++) ...[
+          _AnimatedStatCard(
+            card: column.cards[index],
+            accent: accent,
+            delay: Duration(milliseconds: index * 75),
+          ),
+          if (index != column.cards.length - 1) const SizedBox(height: 12),
+        ],
+      ],
     );
   }
 }
@@ -560,10 +530,8 @@ class _AnimatedStatCard extends StatelessWidget {
       curve: Curves.easeOutCubic,
       child: _GlassStatCard(card: card, accent: accent),
       builder: (context, value, child) {
-        final progress = ((value * 1.18) - delay.inMilliseconds / 820).clamp(
-          0.0,
-          1.0,
-        );
+        final progress =
+            ((value * 1.18) - delay.inMilliseconds / 820).clamp(0.0, 1.0);
         return Opacity(
           opacity: progress,
           child: Transform.translate(
@@ -591,77 +559,86 @@ class _GlassStatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(14.6),
+      borderRadius: BorderRadius.circular(6.4),
       child: BackdropFilter(
-        filter: ui.ImageFilter.blur(sigmaX: 13, sigmaY: 13),
+        filter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
+          constraints: const BoxConstraints(minHeight: 90),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withValues(alpha: 0.08),
-                _surfaceSoft.withValues(alpha: 0.62),
-                accent.withValues(alpha: 0.11),
+                Colors.white.withValues(alpha: 0.045),
+                _surfaceSoft.withValues(alpha: 0.54),
+                accent.withValues(alpha: 0.09),
               ],
             ),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.10),
-              width: 1,
+            border: Border(
+              left: BorderSide(color: accent, width: 3),
+              top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+              right: BorderSide(color: Colors.white.withValues(alpha: 0.04)),
+              bottom: BorderSide(color: Colors.white.withValues(alpha: 0.04)),
             ),
             boxShadow: [
               BoxShadow(
-                color: accent.withValues(alpha: 0.13),
-                blurRadius: 22,
-                spreadRadius: 1,
-              ),
-              const BoxShadow(
-                color: Colors.black26,
+                color: Colors.black.withValues(alpha: 0.20),
                 blurRadius: 12,
-                offset: Offset(0, 6),
+                offset: const Offset(0, 6),
               ),
             ],
           ),
-          child: Row(
+          child: Stack(
             children: [
-              Container(
-                width: 3,
-                height: 34,
-                decoration: BoxDecoration(
-                  color: accent,
-                  borderRadius: BorderRadius.circular(99),
-                  boxShadow: [
-                    BoxShadow(
-                      color: accent.withValues(alpha: 0.35),
-                      blurRadius: 12,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 11),
-              Expanded(
-                child: Text(
-                  card.label,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: _muted,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.4,
+              Positioned(
+                right: -16,
+                bottom: -16,
+                child: Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: accent.withValues(alpha: 0.13),
+                    boxShadow: [
+                      BoxShadow(
+                        color: accent.withValues(alpha: 0.17),
+                        blurRadius: 20,
+                        spreadRadius: 2,
+                      ),
+                    ],
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
-              Text(
-                card.value,
-                style: TextStyle(
-                  color: accent,
-                  fontSize: 23,
-                  fontWeight: FontWeight.w900,
-                ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    card.label,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: _muted,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.45,
+                      height: 1.15,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    card.value,
+                    style: TextStyle(
+                      color: accent,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.6,
+                      height: 1.0,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -691,6 +668,27 @@ class _RankData {
 
   final String name;
   final int value;
+}
+
+class _StatisticsBackgroundGradient extends StatelessWidget {
+  const _StatisticsBackgroundGradient();
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF0A1F0E),
+            Color(0xFF1A2A10),
+            Color(0xFF1C1208),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _StatisticsBackdrop extends StatelessWidget {
