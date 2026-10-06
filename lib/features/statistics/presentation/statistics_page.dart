@@ -103,15 +103,10 @@ class StatisticsPage extends StatelessWidget {
           _StatColumn(
             label: '2026',
             cards: [
-              _StatCardData('NYATA', '27', _emerald),
-              _StatCardData('SESUAI ORGAS', '30', _gold),
-            ],
-          ),
-          _StatColumn(
-            label: 'AGUSTUS 2026',
-            cards: [
+              _StatCardData('NYATA', '51', _emerald),
+              _StatCardData('SESUAI ORGAS', '33', _gold),
               _StatCardData('KEKURANGAN', '8', Color(0xFFF59E0B)),
-              _StatCardData('SATUAN', '2', Color(0xFF7DD3FC)),
+              _StatCardData('SATUAN', '4', Color(0xFF7DD3FC)),
             ],
           ),
         ];
@@ -157,8 +152,10 @@ class StatisticsPage extends StatelessWidget {
         ];
       case StatisticsModule.k9:
         return const [
+          _RankData('POMDAM V/BRW', 19),
           _RankData('YONPOMAD PUSPOMAD', 17),
           _RankData('POMDAM JAYA', 10),
+          _RankData('POMDAM XII/TPR', 5),
         ];
       case StatisticsModule.provos:
         return const [
@@ -820,8 +817,10 @@ class _GlassStatCard extends StatelessWidget {
 }
 
 const _k9Units = <_K9UnitData>[
+  _K9UnitData(name: 'POMDAM V/BRW', actual: 19, org: null, shortage: null),
   _K9UnitData(name: 'YONPOMAD PUSPOMAD', actual: 17, org: 12, shortage: null),
   _K9UnitData(name: 'POMDAM JAYA', actual: 10, org: 18, shortage: 8),
+  _K9UnitData(name: 'POMDAM XII/TPR', actual: 5, org: 3, shortage: null),
 ];
 
 class _K9UnitData {
@@ -847,7 +846,8 @@ Future<void> _showK9UnitSheet(BuildContext context, _K9UnitData unit) async {
       final accent = _moduleAccent(StatisticsModule.k9);
       final cards = <_StatCardData>[
         _StatCardData('NYATA', unit.actual.toString(), _emerald),
-        _StatCardData('SESUAI ORGAS', unit.org.toString(), _gold),
+        if (unit.org != null)
+          _StatCardData('SESUAI ORGAS', unit.org.toString(), _gold),
         if (unit.shortage != null)
           _StatCardData(
             'KEKURANGAN',
@@ -931,11 +931,13 @@ Future<void> _showK9UnitSheet(BuildContext context, _K9UnitData unit) async {
                     ],
                   ],
                 ),
-                if (unit.shortage == null) ...[
+                if (unit.org == null || unit.shortage == null) ...[
                   const SizedBox(height: 12),
-                  const Text(
-                    'KEKURANGAN TIDAK DICANTUMKAN PADA DATA SATUAN INI.',
-                    style: TextStyle(
+                  Text(
+                    unit.org == null
+                        ? 'ORGANISASI K9 BELUM DICANTUMKAN PADA DATA SATUAN INI.'
+                        : 'KEKURANGAN TIDAK TERCATAT PADA DATA SATUAN INI.',
+                    style: const TextStyle(
                       color: _muted,
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
