@@ -522,45 +522,41 @@ class _PieMenuPainter extends CustomPainter {
         ..close();
 
       final depthPaint = Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            dark.withValues(alpha: 0.92),
-            const Color(0xFF020806).withValues(alpha: 0.88),
-          ],
-        ).createShader(
-          Rect.fromCircle(
-            center: segmentCenterPoint + const Offset(0, 6),
-            radius: outerRadius,
-          ),
-        );
+        ..shader =
+            LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                dark.withValues(alpha: 0.92),
+                const Color(0xFF020806).withValues(alpha: 0.88),
+              ],
+            ).createShader(
+              Rect.fromCircle(
+                center: segmentCenterPoint + const Offset(0, 6),
+                radius: outerRadius,
+              ),
+            );
       canvas.drawPath(path.shift(const Offset(0, 6)), depthPaint);
 
       final shadowPaint = Paint()
         ..color = Colors.black.withValues(alpha: selected ? 0.34 : 0.20)
-        ..maskFilter = MaskFilter.blur(
-          BlurStyle.normal,
-          selected ? 12 : 8,
-        );
-      canvas.drawPath(
-        path.shift(Offset(0, selected ? 8 : 5)),
-        shadowPaint,
-      );
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, selected ? 12 : 8);
+      canvas.drawPath(path.shift(Offset(0, selected ? 8 : 5)), shadowPaint);
 
       final paint = Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            light.withValues(alpha: selected ? 0.96 : 0.88),
-            light.withValues(alpha: selected ? 0.72 : 0.62),
-            dark.withValues(alpha: 0.96),
-          ],
-          stops: const [0.0, 0.42, 1.0],
-        ).createShader(
-          Rect.fromCircle(center: segmentCenterPoint, radius: outerRadius),
-        );
+        ..shader =
+            LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                light.withValues(alpha: selected ? 0.96 : 0.88),
+                light.withValues(alpha: selected ? 0.72 : 0.62),
+                dark.withValues(alpha: 0.96),
+              ],
+              stops: const [0.0, 0.42, 1.0],
+            ).createShader(
+              Rect.fromCircle(center: segmentCenterPoint, radius: outerRadius),
+            );
       canvas.drawPath(path, paint);
 
       final bevelPaint = Paint()

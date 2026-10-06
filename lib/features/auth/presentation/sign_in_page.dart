@@ -260,11 +260,7 @@ class _SignInCard extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Color(0x9C183B2D),
-                Color(0x72102C20),
-                Color(0x7007130E),
-              ],
+              colors: [Color(0x9C183B2D), Color(0x72102C20), Color(0x7007130E)],
               stops: [0.0, 0.46, 1.0],
             ),
             borderRadius: BorderRadius.circular(24),

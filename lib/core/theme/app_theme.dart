@@ -10,15 +10,16 @@ class AppTheme {
     const text = Color(0xFFF8F5EC);
     const muted = Color(0xFFB7C2BC);
 
-    final scheme = ColorScheme.fromSeed(
-      seedColor: const Color(0xFFD7A93C),
-      brightness: Brightness.dark,
-    ).copyWith(
-      surface: surface,
-      onSurface: text,
-      primary: gold,
-      onPrimary: const Color(0xFF10140F),
-    );
+    final scheme =
+        ColorScheme.fromSeed(
+          seedColor: const Color(0xFFD7A93C),
+          brightness: Brightness.dark,
+        ).copyWith(
+          surface: surface,
+          onSurface: text,
+          primary: gold,
+          onPrimary: const Color(0xFF10140F),
+        );
 
     return ThemeData(
       colorScheme: scheme,
@@ -34,9 +35,7 @@ class AppTheme {
         backgroundColor: surface,
         contentTextStyle: const TextStyle(color: text),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }

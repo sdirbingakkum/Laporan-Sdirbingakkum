@@ -33,9 +33,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.transparent,
       flexibleSpace: DecoratedBox(
-        decoration: const BoxDecoration(
-          gradient: appBackgroundGradient,
-        ),
+        decoration: const BoxDecoration(gradient: appBackgroundGradient),
       ),
       foregroundColor: _text,
       elevation: 0,

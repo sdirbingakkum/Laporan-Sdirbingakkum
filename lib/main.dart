@@ -19,8 +19,7 @@ Future<void> main() async {
   );
   const publishableKey = String.fromEnvironment(
     'SUPABASE_PUBLISHABLE_KEY',
-    defaultValue:
-        'sb_publishable_2G1L_dvjx5o99fTwcgvwYw_zDrzc0N-',
+    defaultValue: 'sb_publishable_2G1L_dvjx5o99fTwcgvwYw_zDrzc0N-',
   );
 
   await Supabase.initialize(url: supabaseUrl, publishableKey: publishableKey);
