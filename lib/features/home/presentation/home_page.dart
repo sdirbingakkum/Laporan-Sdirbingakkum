@@ -24,6 +24,7 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   int _selectedIndex = 0;
+  bool _navigationInProgress = false;
 
   static const _items = <_MenuItemData>[
     _MenuItemData(
@@ -120,10 +121,22 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
   }
 
-  void _selectMenu(int index) {
+  void _selectMenu(int index) async {
+    if (_navigationInProgress) {
+      return;
+    }
+
     setState(() {
       _selectedIndex = index;
+      _navigationInProgress = true;
     });
+
+    await Future<void>.delayed(const Duration(milliseconds: 180));
+
+    if (!mounted) {
+      return;
+    }
+
     context.push(_items[index].route);
   }
 
