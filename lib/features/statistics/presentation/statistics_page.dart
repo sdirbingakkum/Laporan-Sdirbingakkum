@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../shared/widgets/app_header.dart';
 
 const _bg = Color(0xFF03150F);
 const _surface = Color(0xFF09231A);
@@ -141,69 +144,55 @@ class StatisticsPage extends StatelessWidget {
     }
   }
 
+  String get _title {
+    switch (module) {
+      case StatisticsModule.pelanggaran:
+        return 'Statistik Pelanggaran';
+      case StatisticsModule.lakaLalin:
+        return 'Statistik Laka-lalin';
+      case StatisticsModule.simTni:
+        return 'Statistik SIM TNI';
+      case StatisticsModule.k9:
+        return 'Statistik K9';
+      case StatisticsModule.provos:
+        return 'Statistik Provos TNI-AD';
+    }
+  }
+
+  Future<void> _signOut(BuildContext context) async {
+    await Supabase.instance.client.auth.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     final hasContent = module != StatisticsModule.k9;
     return Scaffold(
-      key: ValueKey('statistics-${module.name}'),
+      key: ValueKey('statistics-\${module.name}'),
       backgroundColor: _bg,
+      appBar: AppHeader(
+        title: _title,
+        subtitle: 'PUSPOMAD • SDIRBINGAKKUM',
+        onSignOut: () => _signOut(context),
+        onBack: () => Navigator.of(context).pop(),
+      ),
       body: Stack(
         children: [
           const Positioned.fill(child: _StatisticsBackdrop()),
           SafeArea(
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 30),
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 760),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              width: 170,
-                              height: 112,
-                              child: ClipRect(
-                                child: Transform.scale(
-                                  scale: 1.48,
-                                  child: Image.asset(
-                                    'assets/images/pomad_puspomad.webp',
-                                    fit: BoxFit.contain,
-                                    semanticLabel: 'Logo PUSPOMAD',
-                                  ),
-                                ),
-                              ),
-                            ),
-                            if (hasContent)
-                              _ContentBody(columns: _columns, ranking: _ranking),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+            top: false,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 30),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 760),
+                  child: hasContent
+                      ? _ContentBody(
+                          columns: _columns,
+                          ranking: _ranking,
+                        )
+                      : const SizedBox.shrink(),
                 ),
-                Positioned(
-                  top: 10,
-                  left: 12,
-                  child: Material(
-                    color: _surface.withValues(alpha: 0.88),
-                    shape: const CircleBorder(),
-                    child: InkWell(
-                      customBorder: const CircleBorder(),
-                      onTap: () => Navigator.of(context).pop(),
-                      child: const Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Icon(
-                          Icons.arrow_back_rounded,
-                          color: _goldLight,
-                          size: 22,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ],
