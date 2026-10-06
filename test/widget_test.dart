@@ -210,7 +210,8 @@ void main() {
       } else if (modules[index] == StatisticsModule.provos) {
         expect(find.text('SUDAH DIK/TAR'), findsWidgets);
       } else {
-        expect(find.byType(SingleChildScrollView), findsNothing);
+        expect(find.text('AGUSTUS 2026'), findsOneWidget);
+        expect(find.byType(SingleChildScrollView), findsOneWidget);
       }
 
       await tester.tap(find.byIcon(Icons.arrow_back_rounded));
