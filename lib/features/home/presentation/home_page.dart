@@ -522,19 +522,9 @@ class _PieMenuPainter extends CustomPainter {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            selected
-                ? light
-                : light.withValues(alpha: 0.94),
-            Color.lerp(
-              light,
-              Colors.black,
-              selected ? 0.12 : 0.16,
-            )!,
-            Color.lerp(
-              light,
-              Colors.black,
-              selected ? 0.36 : 0.42,
-            )!,
+            selected ? light : light.withValues(alpha: 0.94),
+            Color.lerp(light, Colors.black, selected ? 0.12 : 0.16)!,
+            Color.lerp(light, Colors.black, selected ? 0.36 : 0.42)!,
           ],
           stops: const [0.0, 0.72, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
