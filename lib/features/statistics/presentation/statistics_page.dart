@@ -248,7 +248,7 @@ class _ContentBody extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               for (var index = 0; index < columns.length; index++) ...[
-                if (index > 0) const SizedBox(width: 10),
+                if (index > 0) const SizedBox(width: 16),
                 Expanded(
                   child: _StatsColumnView(
                     column: columns[index],
@@ -291,7 +291,7 @@ class _TotalSimCard extends StatelessWidget {
             Colors.white.withValues(alpha: 0.04),
           ],
         ),
-        borderRadius: BorderRadius.circular(17.6),
+        borderRadius: BorderRadius.circular(6.4),
         border: Border.all(color: accent.withValues(alpha: 0.34)),
         boxShadow: const [
           BoxShadow(
@@ -341,100 +341,185 @@ Future<void> _showRankingSheet(
         0,
         (max, item) => item.value > max ? item.value : max,
       );
+      final title = _moduleTitleForSheet(context, accent);
 
       return ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(24),
+        ),
         child: BackdropFilter(
           filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
           child: Container(
-            height: MediaQuery.sizeOf(context).height * 0.68,
-            padding: const EdgeInsets.fromLTRB(22, 12, 22, 26),
+            height: MediaQuery.sizeOf(context).height * 0.70,
+            padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withValues(alpha: 0.07),
+                  Colors.white.withValues(alpha: 0.05),
                   _surface.withValues(alpha: 0.92),
-                  accent.withValues(alpha: 0.09),
+                  accent.withValues(alpha: 0.08),
                 ],
               ),
-              border: Border(top: BorderSide(color: accent, width: 0.9)),
+              border: Border(
+                top: BorderSide(
+                  color: accent.withValues(alpha: 0.28),
+                  width: 1,
+                ),
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black54,
+                  blurRadius: 30,
+                  offset: Offset(0, -10),
+                ),
+              ],
             ),
             child: Column(
               children: [
                 Container(
-                  width: 44,
-                  height: 5,
+                  width: 48,
+                  height: 6,
+                  margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
-                    color: Colors.white24,
+                    color: Colors.white.withValues(alpha: 0.16),
                     borderRadius: BorderRadius.circular(99),
                   ),
                 ),
-                const SizedBox(height: 18),
-                Text(
-                  'ANALISIS VISUAL',
-                  style: TextStyle(
-                    color: accent,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 0.8,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'TOP 5 POMDAM',
-                  style: TextStyle(
-                    color: _muted,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 2.4,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'ANALISIS VISUAL',
+                            style: TextStyle(
+                              color: accent,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.6,
+                              height: 1.05,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            'TOP 5 POMDAM - $title',
+                            style: const TextStyle(
+                              color: _muted,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 2.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    IconButton(
+                      tooltip: 'TUTUP',
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.white.withValues(alpha: 0.05),
+                        foregroundColor: _text,
+                        side: BorderSide(
+                          color: Colors.white.withValues(alpha: 0.10),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6.4),
+                        ),
+                      ),
+                      icon: const Icon(
+                        Icons.close_rounded,
+                        size: 18,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 22),
                 Expanded(
                   child: ListView.separated(
                     itemCount: ranking.length,
-                    separatorBuilder: (_, index) => const SizedBox(height: 18),
+                    separatorBuilder: (_, index) =>
+                        const SizedBox(height: 20),
                     itemBuilder: (context, index) {
                       final item = ranking[index];
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      final fill = index == 0 ? accent : _goldLight;
+                      final width =
+                          maxValue == 0 ? 0.0 : item.value / maxValue;
+
+                      return TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0, end: width),
+                        duration: Duration(
+                          milliseconds: 750 + index * 120,
+                        ),
+                        curve: Curves.easeOutCubic,
+                        builder: (context, progress, _) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Expanded(
-                                child: Text(
-                                  item.name,
-                                  style: const TextStyle(
-                                    color: _text,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w800,
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      item.name,
+                                      style: const TextStyle(
+                                        color: _text,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.3,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    item.value.toString(),
+                                    style: TextStyle(
+                                      color: accent,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 7),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(6.4),
+                                child: Container(
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withValues(
+                                      alpha: 0.22,
+                                    ),
+                                    border: Border.all(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.05,
+                                      ),
+                                    ),
+                                  ),
+                                  child: FractionallySizedBox(
+                                    alignment: Alignment.centerLeft,
+                                    widthFactor: progress,
+                                    child: DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            fill.withValues(alpha: 0.95),
+                                            accent.withValues(alpha: 0.75),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                              Text(
-                                item.value.toString(),
-                                style: TextStyle(
-                                  color: accent,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
                             ],
-                          ),
-                          const SizedBox(height: 7),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(99),
-                            child: LinearProgressIndicator(
-                              minHeight: 9,
-                              value: maxValue == 0 ? 0 : item.value / maxValue,
-                              backgroundColor: Colors.black38,
-                              valueColor: AlwaysStoppedAnimation<Color>(accent),
-                            ),
-                          ),
-                        ],
+                          );
+                        },
                       );
                     },
                   ),
@@ -447,6 +532,24 @@ Future<void> _showRankingSheet(
     },
   );
 }
+
+String _moduleTitleForSheet(BuildContext context, Color accent) {
+  final routeName = ModalRoute.of(context)?.settings.name ?? '';
+  if (routeName.contains('laka-lalin')) {
+    return 'LAKA-LALIN';
+  }
+  if (routeName.contains('sim-tni')) {
+    return 'SIM TNI';
+  }
+  if (routeName.contains('provos')) {
+    return 'PROVOS TNI-AD';
+  }
+  if (routeName.contains('k9')) {
+    return 'K9';
+  }
+  return 'PELANGGARAN';
+}
+
 
 class _AnalysisButton extends StatelessWidget {
   const _AnalysisButton({required this.onPressed, required this.accent});
