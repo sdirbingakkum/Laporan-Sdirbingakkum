@@ -421,7 +421,9 @@ class _PieMenuLabel extends StatelessWidget {
                     stops: const [0.0, 0.48, 1.0],
                   ),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: selected ? 0.28 : 0.16),
+                    color: Colors.white.withValues(
+                      alpha: selected ? 0.28 : 0.16,
+                    ),
                     width: selected ? 0.9 : 0.7,
                   ),
                   boxShadow: [
@@ -543,7 +545,7 @@ class _PieMenuPainter extends CustomPainter {
       }
     }
 
-    // Fine separators and a restrained outer edge preserve the clean wheel geometry.
+    // Fine separators and a restrained outer edge preserve the clean
     final seamPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.8
