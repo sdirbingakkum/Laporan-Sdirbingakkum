@@ -211,28 +211,28 @@ class _MenuHeader extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 72,
+          width: 92,
           height: 72,
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
+            color: _surface.withValues(alpha: 0.72),
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: _gold.withValues(alpha: 0.58),
-              width: 1.2,
+              color: _gold.withValues(alpha: 0.50),
+              width: 1.1,
             ),
             boxShadow: [
               BoxShadow(
-                color: _gold.withValues(alpha: 0.18),
-                blurRadius: 26,
+                color: _gold.withValues(alpha: 0.16),
+                blurRadius: 24,
                 offset: const Offset(0, 9),
               ),
             ],
           ),
-          child: ClipOval(
-            child: Image.asset(
-              'assets/images/pomad_prima.webp',
-              fit: BoxFit.cover,
-              semanticLabel: 'Logo POMAD PRIMA',
-            ),
+          child: Image.asset(
+            'assets/images/pomad_puspomad.webp',
+            fit: BoxFit.contain,
+            semanticLabel: 'Logo PUSPOMAD',
           ),
         ),
         const SizedBox(width: 14),
