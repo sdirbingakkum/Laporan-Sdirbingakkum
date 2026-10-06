@@ -252,18 +252,13 @@ void main() {
     expect(find.byKey(const ValueKey('sim-total-card')), findsOneWidget);
     expect(find.text('TOTAL SIM'), findsOneWidget);
     expect(find.text('400'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('report-period-columns')),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('report-period-columns')), findsOneWidget);
   });
 
   testWidgets('PROVOS shows only the current year period', (tester) async {
     await _setSurfaceSize(tester, const Size(390, 844));
     await tester.pumpWidget(
-      const MaterialApp(
-        home: StatisticsPage(module: StatisticsModule.provos),
-      ),
+      const MaterialApp(home: StatisticsPage(module: StatisticsModule.provos)),
     );
     await tester.pumpAndSettle();
 
