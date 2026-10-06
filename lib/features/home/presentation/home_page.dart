@@ -403,15 +403,25 @@ class _PieMenuLabel extends StatelessWidget {
                 height: selected ? iconSize + 2 : iconSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
+                  // Keep the module color dominant, then let it fall gently
+                  // toward black for a restrained dimensional shadow effect.
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      item.lightColor.withValues(alpha: selected ? 0.96 : 0.86),
-                      item.lightColor.withValues(alpha: selected ? 0.82 : 0.68),
-                      item.lightColor.withValues(alpha: selected ? 0.56 : 0.46),
+                      item.lightColor.withValues(alpha: selected ? 0.96 : 0.88),
+                      Color.lerp(
+                        item.lightColor,
+                        Colors.black,
+                        selected ? 0.14 : 0.18,
+                      )!,
+                      Color.lerp(
+                        item.lightColor,
+                        Colors.black,
+                        selected ? 0.34 : 0.40,
+                      )!,
                     ],
-                    stops: const [0.0, 0.48, 1.0],
+                    stops: const [0.0, 0.72, 1.0],
                   ),
                   border: Border.all(
                     color: Colors.white.withValues(
@@ -421,11 +431,11 @@ class _PieMenuLabel extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: item.lightColor.withValues(
-                        alpha: selected ? 0.18 : 0.10,
+                      color: Colors.black.withValues(
+                        alpha: selected ? 0.30 : 0.22,
                       ),
-                      blurRadius: selected ? 12 : 8,
-                      offset: const Offset(0, 3),
+                      blurRadius: selected ? 11 : 9,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
@@ -474,31 +484,22 @@ class _PieMenuPainter extends CustomPainter {
     Color(0xFF49A86B), // PROVOS TNI-AD — green
   ];
 
-  static const _darkPalette = <Color>[
-    Color(0xFFC86D2D),
-    Color(0xFFC4474E),
-    Color(0xFF456EAB),
-    Color(0xFFC19A35),
-    Color(0xFF3F825A),
-  ];
-
   @override
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
     final outerRadius = size.shortestSide * 0.43;
     final sweep = 2 * math.pi / itemCount;
 
-    // Soft global depth; the sectors themselves stay crisp and colorful.
+    // One soft black shadow anchors the wheel without a visible glow.
     final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.22)
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 14);
+      ..color = Colors.black.withValues(alpha: 0.26)
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 15);
     canvas.drawCircle(center + const Offset(0, 5), outerRadius, shadowPaint);
 
     for (var i = 0; i < itemCount; i++) {
       final start = -math.pi / 2 + i * sweep;
       final selected = i == selectedIndex;
       final light = _lightPalette[i];
-      final dark = _darkPalette[i];
 
       final path = Path()
         ..moveTo(center.dx, center.dy)
@@ -514,21 +515,28 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      // Sophisticated three-stop gradient: the sector stays unmistakably
-      // orange/red/blue/gold/green, but the change in tone is deliberately thin.
-      final middle = Color.lerp(light, dark, 0.38)!;
+      // The base color remains clear; only the lower end receives a
+      // controlled black falloff so the wheel reads dimensional, not glossy.
       final paint = Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: selected
-              ? [light, middle, dark]
-              : [
-                  light.withValues(alpha: 0.94),
-                  middle.withValues(alpha: 0.94),
-                  dark.withValues(alpha: 0.90),
-                ],
-          stops: const [0.0, 0.46, 1.0],
+          colors: [
+            selected
+                ? light
+                : light.withValues(alpha: 0.94),
+            Color.lerp(
+              light,
+              Colors.black,
+              selected ? 0.12 : 0.16,
+            )!,
+            Color.lerp(
+              light,
+              Colors.black,
+              selected ? 0.36 : 0.42,
+            )!,
+          ],
+          stops: const [0.0, 0.72, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, paint);
 
