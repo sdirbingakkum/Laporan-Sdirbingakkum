@@ -167,7 +167,7 @@ class StatisticsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasContent = module != StatisticsModule.k9;
     return Scaffold(
-      key: ValueKey('statistics-\${module.name}'),
+      key: ValueKey('statistics-' + module.name),
       backgroundColor: _bg,
       appBar: AppHeader(
         title: _title,
