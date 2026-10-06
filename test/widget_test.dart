@@ -270,16 +270,28 @@ void main() {
     expect(find.byKey(const ValueKey('report-period-columns')), findsNothing);
   });
 
-  testWidgets('K9 opens as an empty content page', (tester) async {
+  testWidgets('K9 is populated with the standard report layout', (
+    tester,
+  ) async {
     await _setSurfaceSize(tester, const Size(390, 844));
     await tester.pumpWidget(
-      MaterialApp(home: const StatisticsPage(module: StatisticsModule.k9)),
+      const MaterialApp(home: StatisticsPage(module: StatisticsModule.k9)),
     );
     await tester.pumpAndSettle();
 
     expect(find.byType(StatisticsPage), findsOneWidget);
-    expect(find.byType(SingleChildScrollView), findsNothing);
+    expect(find.byType(SingleChildScrollView), findsOneWidget);
     expect(find.text('K9'), findsOneWidget);
+    expect(find.text('AGUSTUS 2026'), findsOneWidget);
+    expect(find.text('NYATA'), findsOneWidget);
+    expect(find.text('27'), findsOneWidget);
+    expect(find.text('SESUAI ORGAS'), findsOneWidget);
+    expect(find.text('30'), findsOneWidget);
+    expect(find.text('KEKURANGAN'), findsOneWidget);
+    expect(find.text('8'), findsOneWidget);
+    expect(find.text('SATUAN'), findsOneWidget);
+    expect(find.text('2'), findsOneWidget);
+    expect(find.text('ANALISIS STATISTIK'), findsOneWidget);
     expect(find.byIcon(Icons.arrow_back_rounded), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
