@@ -10,6 +10,6 @@
   <rect width="192" height="192" rx="42" fill="url(#bg)"/>
   <circle cx="96" cy="96" r="76" fill="none" stroke="#D7A93C" stroke-opacity="0.72" stroke-width="2"/>
   <circle cx="96" cy="96" r="70" fill="#09231A" fill-opacity="0.42" stroke="#F1D37A" stroke-opacity="0.16"/>
-  <image href="assets/images/pomad_prima.webp" x="18" y="18" width="156" height="156"
+  <image href="assets/images/pomad_puspomad.webp" x="18" y="18" width="156" height="156"
          preserveAspectRatio="xMidYMid slice"/>
 </svg>
