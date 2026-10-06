@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:laporan_sdirbingakkum/app/app.dart';
+import 'package:laporan_sdirbingakkum/core/config/app_config.dart';
+import 'package:laporan_sdirbingakkum/shared/widgets/app_background.dart';
 import 'package:laporan_sdirbingakkum/features/auth/presentation/sign_in_page.dart';
 import 'package:laporan_sdirbingakkum/features/home/presentation/home_page.dart';
 import 'package:laporan_sdirbingakkum/shared/widgets/app_header.dart';
@@ -50,6 +52,13 @@ String _routeFor(StatisticsModule module) {
 }
 
 void main() {
+  test('standalone build has embedded Supabase configuration fallback', () {
+    final config = AppConfig.fromEnvironment();
+
+    expect(config.isConfigured, isTrue);
+    expect(config.supabaseUrl, 'https://ybepaqmrrgsaeqnqrsrf.supabase.co');
+  });
+
   testWidgets('application shows configuration gate without secret', (
     tester,
   ) async {
@@ -67,6 +76,7 @@ void main() {
     await _pumpSignInAtSize(tester, const Size(390, 844));
 
     expect(find.byType(SignInPage), findsOneWidget);
+    expect(find.byType(AppBackground), findsOneWidget);
     expect(find.text('AKSES SISTEM'), findsNothing);
     expect(find.byType(TextFormField), findsNWidgets(2));
     expect(find.text('USERNAME'), findsOneWidget);
@@ -139,6 +149,7 @@ void main() {
     await _pumpHomeAtSize(tester, const Size(390, 844));
 
     expect(find.byType(HomePage), findsOneWidget);
+    expect(find.byType(AppBackground), findsOneWidget);
     expect(find.text('LAPORAN STATISTIK'), findsNothing);
     expect(find.text('ANALISIS STATISTIK'), findsNothing);
     expect(find.text('SDIRBINGAKKUM'), findsOneWidget);
@@ -200,6 +211,7 @@ void main() {
         find.byKey(ValueKey('statistics-${modules[index].name}')),
         findsOneWidget,
       );
+      expect(find.byType(AppBackground), findsOneWidget);
 
       if (modules[index] == StatisticsModule.pelanggaran) {
         expect(find.text('TATIB'), findsWidgets);
