@@ -9,6 +9,7 @@ const _bg = Color(0xFF03150F);
 const _surface = Color(0xFF09231A);
 const _surfaceSoft = Color(0xFF0D2C20);
 const _gold = Color(0xFFD7A93C);
+const _emerald = Color(0xFF34D399);
 const _text = Color(0xFFF8F5EC);
 const _muted = Color(0xFFB7C2BC);
 
@@ -446,7 +447,7 @@ Future<void> _showRankingSheet(
                         const SizedBox(height: 20),
                     itemBuilder: (context, index) {
                       final item = ranking[index];
-                      final fill = index == 0 ? accent : _goldLight;
+                      final fill = index == 0 ? accent : _emerald;
                       final width =
                           maxValue == 0 ? 0.0 : item.value / maxValue;
 
@@ -620,7 +621,6 @@ class _StatsColumnView extends StatelessWidget {
         for (var index = 0; index < column.cards.length; index++) ...[
           _AnimatedStatCard(
             card: column.cards[index],
-            accent: accent,
             delay: Duration(milliseconds: index * 75),
           ),
           if (index != column.cards.length - 1) const SizedBox(height: 12),
@@ -631,14 +631,9 @@ class _StatsColumnView extends StatelessWidget {
 }
 
 class _AnimatedStatCard extends StatelessWidget {
-  const _AnimatedStatCard({
-    required this.card,
-    required this.accent,
-    required this.delay,
-  });
+  const _AnimatedStatCard({required this.card, required this.delay});
 
   final _StatCardData card;
-  final Color accent;
   final Duration delay;
 
   @override
@@ -647,7 +642,7 @@ class _AnimatedStatCard extends StatelessWidget {
       tween: Tween(begin: 0, end: 1),
       duration: const Duration(milliseconds: 720),
       curve: Curves.easeOutCubic,
-      child: _GlassStatCard(card: card, accent: accent),
+      child: _GlassStatCard(card: card),
       builder: (context, value, child) {
         final progress = ((value * 1.18) - delay.inMilliseconds / 820).clamp(
           0.0,
@@ -672,10 +667,9 @@ class _AnimatedStatCard extends StatelessWidget {
 }
 
 class _GlassStatCard extends StatelessWidget {
-  const _GlassStatCard({required this.card, required this.accent});
+  const _GlassStatCard({required this.card});
 
   final _StatCardData card;
-  final Color accent;
 
   @override
   Widget build(BuildContext context) {
