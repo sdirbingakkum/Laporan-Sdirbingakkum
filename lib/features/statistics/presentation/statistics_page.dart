@@ -672,7 +672,7 @@ class _GlassStatCard extends StatelessWidget {
   }
 }
 
-class _StatColumn {class _StatColumn {
+class _StatColumn {
   const _StatColumn({required this.label, required this.cards});
 
   final String label;
