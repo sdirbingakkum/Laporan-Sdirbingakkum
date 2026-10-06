@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -176,29 +178,37 @@ class _SignInContentState extends ConsumerState<_SignInContent> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 10),
-          Container(
-            width: 150,
-            height: 150,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: _gold.withValues(alpha: 0.6),
-                width: 1.2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: _gold.withValues(alpha: 0.22),
-                  blurRadius: 34,
-                  spreadRadius: 1,
-                  offset: const Offset(0, 14),
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.86, end: 1),
+            duration: const Duration(milliseconds: 900),
+            curve: Curves.easeOutBack,
+            builder: (context, scale, child) {
+              return Transform.scale(scale: scale, child: child);
+            },
+            child: Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: _gold.withValues(alpha: 0.6),
+                  width: 1.2,
                 ),
-              ],
-            ),
-            child: ClipOval(
-              child: Image.asset(
-                'assets/images/pomad_prima.webp',
-                fit: BoxFit.cover,
-                semanticLabel: 'LOGO POMAD PRIMA',
+                boxShadow: [
+                  BoxShadow(
+                    color: _gold.withValues(alpha: 0.22),
+                    blurRadius: 34,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 14),
+                  ),
+                ],
+              ),
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/images/pomad_prima.webp',
+                  fit: BoxFit.cover,
+                  semanticLabel: 'LOGO POMAD PRIMA',
+                ),
               ),
             ),
           ),
@@ -243,127 +253,147 @@ class _SignInCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: _surface.withValues(alpha: 0.94),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: _gold.withValues(alpha: 0.25)),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black54,
-            blurRadius: 26,
-            offset: Offset(0, 14),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 4),
-          _DarkField(
-            controller: parent._usernameController,
-            label: 'USERNAME',
-            hint: 'MASUKKAN USERNAME ANDA',
-            icon: Icons.person_outline_rounded,
-            keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.next,
-            autofillHints: const [AutofillHints.username],
-            enabled: !parent._isLoading,
-            dense: false,
-            validator: (value) {
-              final username = value?.trim() ?? '';
-              if (username.isEmpty) {
-                return 'USERNAME WAJIB DIISI.';
-              }
-
-              if (username.contains('@')) {
-                return 'MASUKKAN USERNAME TANPA DOMAIN.';
-              }
-
-              return null;
-            },
-          ),
-          const SizedBox(height: 10),
-          _DarkField(
-            controller: parent._passwordController,
-            label: 'PASSWORD',
-            hint: 'MASUKKAN PASSWORD ANDA',
-            icon: Icons.lock_outline_rounded,
-            obscureText: parent._obscurePassword,
-            textInputAction: TextInputAction.done,
-            autofillHints: const [AutofillHints.password],
-            enabled: !parent._isLoading,
-            dense: false,
-            onFieldSubmitted: (_) => parent._signIn(),
-            suffix: IconButton(
-              tooltip: parent._obscurePassword
-                  ? 'TAMPILKAN PASSWORD'
-                  : 'SEMBUNYIKAN PASSWORD',
-              color: _muted,
-              onPressed: parent._isLoading
-                  ? null
-                  : parent._togglePasswordVisibility,
-              icon: Icon(
-                parent._obscurePassword
-                    ? Icons.visibility_outlined
-                    : Icons.visibility_off_outlined,
-              ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xCC102F24),
+                Color(0xB309231A),
+                Color(0x9903150F),
+              ],
             ),
-            validator: (value) {
-              if ((value ?? '').isEmpty) {
-                return 'PASSWORD WAJIB DIISI.';
-              }
-
-              return null;
-            },
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: _gold.withValues(alpha: 0.30)),
+            boxShadow: [
+              BoxShadow(
+                color: _gold.withValues(alpha: 0.07),
+                blurRadius: 30,
+                spreadRadius: 1,
+              ),
+              const BoxShadow(
+                color: Colors.black54,
+                blurRadius: 26,
+                offset: Offset(0, 14),
+              ),
+            ],
           ),
-          const SizedBox(height: 17),
-          SizedBox(
-            height: 52,
-            child: FilledButton(
-              onPressed: parent._isLoading ? null : parent._signIn,
-              style: FilledButton.styleFrom(
-                backgroundColor: _goldLight,
-                foregroundColor: const Color(0xFF10140F),
-                disabledBackgroundColor: _goldDark.withValues(alpha: 0.58),
-                disabledForegroundColor: Colors.black54,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 4),
+              _DarkField(
+                controller: parent._usernameController,
+                label: 'USERNAME',
+                hint: 'MASUKKAN USERNAME ANDA',
+                icon: Icons.person_outline_rounded,
+                keyboardType: TextInputType.text,
+                textInputAction: TextInputAction.next,
+                autofillHints: const [AutofillHints.username],
+                enabled: !parent._isLoading,
+                dense: false,
+                validator: (value) {
+                  final username = value?.trim() ?? '';
+                  if (username.isEmpty) {
+                    return 'USERNAME WAJIB DIISI.';
+                  }
+
+                  if (username.contains('@')) {
+                    return 'MASUKKAN USERNAME TANPA DOMAIN.';
+                  }
+
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              _DarkField(
+                controller: parent._passwordController,
+                label: 'PASSWORD',
+                hint: 'MASUKKAN PASSWORD ANDA',
+                icon: Icons.lock_outline_rounded,
+                obscureText: parent._obscurePassword,
+                textInputAction: TextInputAction.done,
+                autofillHints: const [AutofillHints.password],
+                enabled: !parent._isLoading,
+                dense: false,
+                onFieldSubmitted: (_) => parent._signIn(),
+                suffix: IconButton(
+                  tooltip: parent._obscurePassword
+                      ? 'TAMPILKAN PASSWORD'
+                      : 'SEMBUNYIKAN PASSWORD',
+                  color: _muted,
+                  onPressed: parent._isLoading
+                      ? null
+                      : parent._togglePasswordVisibility,
+                  icon: Icon(
+                    parent._obscurePassword
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
+                  ),
+                ),
+                validator: (value) {
+                  if ((value ?? '').isEmpty) {
+                    return 'PASSWORD WAJIB DIISI.';
+                  }
+
+                  return null;
+                },
+              ),
+              const SizedBox(height: 17),
+              SizedBox(
+                height: 52,
+                child: FilledButton(
+                  onPressed: parent._isLoading ? null : parent._signIn,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: _goldLight,
+                    foregroundColor: const Color(0xFF10140F),
+                    disabledBackgroundColor: _goldDark.withValues(alpha: 0.58),
+                    disabledForegroundColor: Colors.black54,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 180),
+                    child: parent._isLoading
+                        ? const SizedBox(
+                            key: ValueKey('loading'),
+                            width: 21,
+                            height: 21,
+                            child: CircularProgressIndicator(strokeWidth: 2.4),
+                          )
+                        : const Row(
+                            key: ValueKey('label'),
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'MASUK',
+                                style: TextStyle(fontWeight: FontWeight.w800),
+                              ),
+                              SizedBox(width: 8),
+                              Icon(Icons.arrow_forward_rounded, size: 20),
+                            ],
+                          ),
+                  ),
                 ),
               ),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 180),
-                child: parent._isLoading
-                    ? const SizedBox(
-                        key: ValueKey('loading'),
-                        width: 21,
-                        height: 21,
-                        child: CircularProgressIndicator(strokeWidth: 2.4),
-                      )
-                    : const Row(
-                        key: ValueKey('label'),
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'MASUK',
-                            style: TextStyle(fontWeight: FontWeight.w800),
-                          ),
-                          SizedBox(width: 8),
-                          Icon(Icons.arrow_forward_rounded, size: 20),
-                        ],
-                      ),
-              ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 }
+
 
 class _DarkField extends StatelessWidget {
   const _DarkField({
