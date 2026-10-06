@@ -41,15 +41,15 @@ class StatisticsPage extends StatelessWidget {
           _StatColumn(
             label: '2026',
             cards: [
-              _StatCardData('TATIB', '25', Color(0xFFF09A4A)),
-              _StatCardData('LALIN', '70', Color(0xFFF09A4A)),
+              _StatCardData('TATIB', '25', Color(0xFFF59E0B)),
+              _StatCardData('LALIN', '70', Color(0xFF38BDF8)),
             ],
           ),
           _StatColumn(
             label: 'SEPT',
             cards: [
-              _StatCardData('TATIB', '5', Color(0xFFF09A4A)),
-              _StatCardData('LALIN', '10', Color(0xFFF09A4A)),
+              _StatCardData('TATIB', '5', Color(0xFFF59E0B)),
+              _StatCardData('LALIN', '10', Color(0xFF38BDF8)),
             ],
           ),
         ];
@@ -58,19 +58,19 @@ class StatisticsPage extends StatelessWidget {
           _StatColumn(
             label: '2026',
             cards: [
-              _StatCardData('JUMLAH KASUS', '200', Color(0xFFE15B5B)),
-              _StatCardData('LAKA GANDA', '100', Color(0xFFE15B5B)),
-              _StatCardData('TUNGGAL', '50', Color(0xFFE15B5B)),
-              _StatCardData('TABRAK LARI', '50', Color(0xFFE15B5B)),
+              _StatCardData('JUMLAH KASUS', '200', Color(0xFF38BDF8)),
+              _StatCardData('LAKA GANDA', '100', Color(0xFFF97316)),
+              _StatCardData('TUNGGAL', '50', Color(0xFFF59E0B)),
+              _StatCardData('TABRAK LARI', '50', Color(0xFFEF4444)),
             ],
           ),
           _StatColumn(
             label: 'SEPT',
             cards: [
-              _StatCardData('JUMLAH KASUS', '30', Color(0xFFE15B5B)),
-              _StatCardData('LAKA GANDA', '20', Color(0xFFE15B5B)),
-              _StatCardData('TUNGGAL', '5', Color(0xFFE15B5B)),
-              _StatCardData('TABRAK LARI', '5', Color(0xFFE15B5B)),
+              _StatCardData('JUMLAH KASUS', '30', Color(0xFF38BDF8)),
+              _StatCardData('LAKA GANDA', '20', Color(0xFFF97316)),
+              _StatCardData('TUNGGAL', '5', Color(0xFFF59E0B)),
+              _StatCardData('TABRAK LARI', '5', Color(0xFFEF4444)),
             ],
           ),
         ];
@@ -79,21 +79,21 @@ class StatisticsPage extends StatelessWidget {
           _StatColumn(
             label: '2026',
             cards: [
-              _StatCardData('A', '200', Color(0xFF5D8FE0)),
-              _StatCardData('BI', '100', Color(0xFF5D8FE0)),
-              _StatCardData('BII', '50', Color(0xFF5D8FE0)),
-              _StatCardData('BII SUS', '25', Color(0xFF5D8FE0)),
-              _StatCardData('C', '25', Color(0xFF5D8FE0)),
+              _StatCardData('A', '200', Color(0xFF3B82F6)),
+              _StatCardData('BI', '100', Color(0xFF06B6D4)),
+              _StatCardData('BII', '50', Color(0xFF10B981)),
+              _StatCardData('BII SUS', '25', Color(0xFF8B5CF6)),
+              _StatCardData('C', '25', Color(0xFF6366F1)),
             ],
           ),
           _StatColumn(
             label: 'SEPT',
             cards: [
-              _StatCardData('A', '20', Color(0xFF5D8FE0)),
-              _StatCardData('BI', '10', Color(0xFF5D8FE0)),
-              _StatCardData('BII', '5', Color(0xFF5D8FE0)),
-              _StatCardData('BII SUS', '5', Color(0xFF5D8FE0)),
-              _StatCardData('C', '5', Color(0xFF5D8FE0)),
+              _StatCardData('A', '20', Color(0xFF3B82F6)),
+              _StatCardData('BI', '10', Color(0xFF06B6D4)),
+              _StatCardData('BII', '5', Color(0xFF10B981)),
+              _StatCardData('BII SUS', '5', Color(0xFF8B5CF6)),
+              _StatCardData('C', '5', Color(0xFF6366F1)),
             ],
           ),
         ];
@@ -104,9 +104,9 @@ class StatisticsPage extends StatelessWidget {
           _StatColumn(
             label: DateTime.now().year.toString(),
             cards: [
-              _StatCardData('JUMLAH', '2000', Color(0xFF49A86B)),
-              _StatCardData('SUDAH DIK/TAR', '500', Color(0xFF49A86B)),
-              _StatCardData('BELUM DIK/TAR', '1500', Color(0xFF49A86B)),
+              _StatCardData('JUMLAH', '2000', Color(0xFF94A3B8)),
+              _StatCardData('SUDAH DIK/TAR', '500', Color(0xFF10B981)),
+              _StatCardData('BELUM DIK/TAR', '1500', Color(0xFFF59E0B)),
             ],
           ),
         ];
@@ -185,7 +185,6 @@ class StatisticsPage extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          const Positioned.fill(child: _StatisticsBackgroundGradient()),
           const Positioned.fill(child: _StatisticsBackdrop()),
           SafeArea(
             top: false,
@@ -680,6 +679,7 @@ class _GlassStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cardAccent = card.color;
     return ClipRRect(
       borderRadius: BorderRadius.circular(6.4),
       child: BackdropFilter(
@@ -689,26 +689,15 @@ class _GlassStatCard extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 90),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white.withValues(alpha: 0.045),
-                _surfaceSoft.withValues(alpha: 0.54),
-                accent.withValues(alpha: 0.09),
-              ],
+            color: Colors.white.withValues(alpha: 0.03),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.08),
             ),
-            border: Border(
-              left: BorderSide(color: accent, width: 3),
-              top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
-              right: BorderSide(color: Colors.white.withValues(alpha: 0.04)),
-              bottom: BorderSide(color: Colors.white.withValues(alpha: 0.04)),
-            ),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.20),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
+                color: Colors.black12,
+                blurRadius: 30,
+                offset: Offset(0, 4),
               ),
             ],
           ),
@@ -722,14 +711,28 @@ class _GlassStatCard extends StatelessWidget {
                   height: 64,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: accent.withValues(alpha: 0.13),
+                    color: cardAccent.withValues(alpha: 0.20),
                     boxShadow: [
                       BoxShadow(
-                        color: accent.withValues(alpha: 0.17),
-                        blurRadius: 20,
-                        spreadRadius: 2,
+                        color: cardAccent.withValues(alpha: 0.16),
+                        blurRadius: 22,
+                        spreadRadius: 1,
                       ),
                     ],
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        left: BorderSide(
+                          color: cardAccent,
+                          width: 3,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -753,7 +756,7 @@ class _GlassStatCard extends StatelessWidget {
                   Text(
                     card.value,
                     style: TextStyle(
-                      color: accent,
+                      color: cardAccent,
                       fontSize: 30,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.6,
@@ -792,23 +795,6 @@ class _RankData {
   final int value;
 }
 
-class _StatisticsBackgroundGradient extends StatelessWidget {
-  const _StatisticsBackgroundGradient();
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF0A1F0E), Color(0xFF1A2A10), Color(0xFF1C1208)],
-        ),
-      ),
-    );
-  }
-}
-
 class _StatisticsBackdrop extends StatelessWidget {
   const _StatisticsBackdrop();
 
@@ -817,6 +803,7 @@ class _StatisticsBackdrop extends StatelessWidget {
     return CustomPaint(painter: _StatisticsBackdropPainter());
   }
 }
+
 
 class _StatisticsBackdropPainter extends CustomPainter {
   @override
