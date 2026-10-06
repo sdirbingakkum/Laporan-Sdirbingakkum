@@ -30,35 +30,35 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   static const _items = <_MenuItemData>[
     _MenuItemData(
-      label: 'STATISTIK PELANGGARAN',
+      label: 'PELANGGARAN',
       description: 'RINGKASAN DAN TREN PELANGGARAN HUKUM.',
       icon: Icons.gavel_rounded,
       lightColor: Color(0xFFF09A4A),
       route: '/statistik/pelanggaran',
     ),
     _MenuItemData(
-      label: 'STATISTIK LAKA-LALIN',
+      label: 'LAKA-LALIN',
       description: 'RINGKASAN DAN TREN KECELAKAAN LALU LINTAS.',
       icon: Icons.directions_car_filled_outlined,
       lightColor: Color(0xFFE15B5B),
       route: '/statistik/laka-lalin',
     ),
     _MenuItemData(
-      label: 'STATISTIK SIM TNI',
+      label: 'SIM TNI',
       description: 'RINGKASAN PENERBITAN DAN DATA SIM TNI.',
       icon: Icons.badge_outlined,
       lightColor: Color(0xFF5D8FE0),
       route: '/statistik/sim-tni',
     ),
     _MenuItemData(
-      label: 'STATISTIK K9',
+      label: 'K9',
       description: 'HALAMAN K9 DISIAPKAN UNTUK PENGISIAN DATA BERIKUTNYA.',
       icon: Icons.pets_rounded,
       lightColor: Color(0xFFE3BE4F),
       route: '/statistik/k9',
     ),
     _MenuItemData(
-      label: 'STATISTIK PROVOS TNI-AD',
+      label: 'PROVOS TNI-AD',
       description: 'RINGKASAN DATA DAN KINERJA PROVOS TNI-AD.',
       icon: Icons.military_tech_rounded,
       lightColor: Color(0xFF49A86B),
@@ -159,7 +159,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               children: [
                 const SizedBox(height: 16),
                 const Text(
-                  'SEMUA STATISTIK',
+                  'LAPORAN STATISTIK',
                   style: TextStyle(
                     color: _goldLight,
                     fontSize: 14,
@@ -167,7 +167,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     letterSpacing: 4.0,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 6),
                 Expanded(
                   child: Center(
                     child: ConstrainedBox(

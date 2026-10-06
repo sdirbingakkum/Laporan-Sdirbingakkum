@@ -67,11 +67,12 @@ void main() {
     await _pumpSignInAtSize(tester, const Size(390, 844));
 
     expect(find.byType(SignInPage), findsOneWidget);
-    expect(find.text('AKSES SISTEM'), findsOneWidget);
+    expect(find.text('AKSES SISTEM'), findsNothing);
     expect(find.text('EMAIL'), findsOneWidget);
     expect(find.text('PASSWORD'), findsOneWidget);
     expect(find.text('MASUK'), findsOneWidget);
-    expect(find.text('Akun terdaftar di lingkungan PUSPOMAD'), findsNothing);
+    expect(find.text('MASUK MENGGUNAKAN AKUN YANG TERDAFTAR.'), findsNothing);
+    expect(find.text('PROFESIONAL • RESPONSIF • INTEGRITAS • MODERN • ADAPTIF'), findsNothing);
     expect(find.text('© 2026 PUSPOMAD'), findsNothing);
     expect(find.byType(SingleChildScrollView), findsNothing);
   });
@@ -122,11 +123,11 @@ void main() {
     expect(find.byType(HomePage), findsOneWidget);
     expect(find.text('SEMUA STATISTIK'), findsOneWidget);
     expect(find.text('SDIRBINGAKKUM'), findsOneWidget);
-    expect(find.text('STATISTIK PELANGGARAN'), findsOneWidget);
-    expect(find.text('STATISTIK LAKA-LALIN'), findsOneWidget);
-    expect(find.text('STATISTIK SIM TNI'), findsOneWidget);
-    expect(find.text('STATISTIK K9'), findsOneWidget);
-    expect(find.text('STATISTIK PROVOS TNI-AD'), findsOneWidget);
+    expect(find.text('PELANGGARAN'), findsOneWidget);
+    expect(find.text('LAKA-LALIN'), findsOneWidget);
+    expect(find.text('SIM TNI'), findsOneWidget);
+    expect(find.text('K9'), findsOneWidget);
+    expect(find.text('PROVOS TNI-AD'), findsOneWidget);
     expect(find.byIcon(Icons.apps_rounded), findsOneWidget);
     expect(find.byType(SingleChildScrollView), findsNothing);
     expect(tester.takeException(), isNull);

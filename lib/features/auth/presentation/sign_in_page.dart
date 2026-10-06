@@ -217,14 +217,14 @@ class _SignInContentState extends ConsumerState<_SignInContent> {
           ),
           const SizedBox(height: 2),
           Text(
-            'P U S P O M A D',
+            'PUSPOMAD',
             textAlign: TextAlign.center,
             maxLines: 1,
             style: textTheme.titleMedium?.copyWith(
               color: _text,
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              letterSpacing: 3.6,
+              letterSpacing: 1.8,
             ),
           ),
           const SizedBox(height: 9),
@@ -237,13 +237,6 @@ class _SignInContentState extends ConsumerState<_SignInContent> {
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            'PROFESIONAL • RESPONSIF • INTEGRITAS • MODERN • ADAPTIF',
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            style: textTheme.bodySmall?.copyWith(color: _muted, fontSize: 10),
           ),
           const SizedBox(height: 20),
           _SignInCard(parent: parent),
@@ -282,20 +275,7 @@ class _SignInCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            'AKSES SISTEM',
-            style: textTheme.titleLarge?.copyWith(
-              color: _text,
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            'MASUK MENGGUNAKAN AKUN YANG TERDAFTAR.',
-            style: textTheme.bodySmall?.copyWith(color: _muted, fontSize: 11),
-          ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 4),
           _DarkField(
             controller: parent._emailController,
             label: 'EMAIL',

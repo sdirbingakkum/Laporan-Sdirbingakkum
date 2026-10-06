@@ -12,7 +12,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   const AppHeader({
     required this.title,
     required this.onSignOut,
-    this.subtitle = 'PUSPOMAD • SISTEM LAPORAN BIDANG GAKKUM',
+    this.subtitle = 'PUSPOMAD',
     this.onBack,
     super.key,
   });

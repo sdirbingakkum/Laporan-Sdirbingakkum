@@ -171,7 +171,7 @@ class StatisticsPage extends StatelessWidget {
       backgroundColor: _bg,
       appBar: AppHeader(
         title: _title,
-        subtitle: 'PUSPOMAD • SDIRBINGAKKUM',
+        subtitle: 'PUSPOMAD',
         onSignOut: () => _signOut(context),
         onBack: () => Navigator.of(context).pop(),
       ),
