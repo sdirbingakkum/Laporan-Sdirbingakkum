@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-const _headerBg = Color(0xFF061C14);
 const _gold = Color(0xFFD7A93C);
 const _goldLight = Color(0xFFF1D37A);
 const _text = Color(0xFFF8F5EC);
