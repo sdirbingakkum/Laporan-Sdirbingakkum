@@ -17,11 +17,13 @@ Future<void> main() async {
     'SUPABASE_URL',
     defaultValue: 'https://ybepaqmrrgsaeqnqrsrf.supabase.co',
   );
-  const publishableKey = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
+  const publishableKey = String.fromEnvironment(
+    'SUPABASE_PUBLISHABLE_KEY',
+    defaultValue:
+        'sb_publishable_2G1L_dvjx5o99fTwcgvwYw_zDrzc0N-',
+  );
 
-  if (publishableKey.isNotEmpty) {
-    await Supabase.initialize(url: supabaseUrl, publishableKey: publishableKey);
-  }
+  await Supabase.initialize(url: supabaseUrl, publishableKey: publishableKey);
 
   runApp(const ProviderScope(child: LaporanSdirbingakkumApp()));
 }
