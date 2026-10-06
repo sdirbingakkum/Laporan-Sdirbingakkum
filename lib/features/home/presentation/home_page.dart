@@ -397,70 +397,19 @@ class _PieMenuLabel extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              AnimatedContainer(
+              AnimatedScale(
+                scale: selected ? 1.08 : 1,
                 duration: const Duration(milliseconds: 180),
-                width: selected ? iconSize + 2 : iconSize,
-                height: selected ? iconSize + 2 : iconSize,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  // Broader metallic shading: the highlight stays restrained,
-                  // while the color-to-black transition is intentionally more visible.
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color.lerp(
-                        item.lightColor,
-                        Colors.white,
-                        selected ? 0.15 : 0.10,
-                      )!,
-                      Color.lerp(
-                        item.lightColor,
-                        Colors.white,
-                        selected ? 0.05 : 0.03,
-                      )!,
-                      item.lightColor,
-                      Color.lerp(
-                        item.lightColor,
-                        Colors.black,
-                        selected ? 0.16 : 0.20,
-                      )!,
-                      Color.lerp(
-                        item.lightColor,
-                        Colors.black,
-                        selected ? 0.40 : 0.46,
-                      )!,
-                      Color.lerp(
-                        item.lightColor,
-                        Colors.black,
-                        selected ? 0.60 : 0.66,
-                      )!,
-                    ],
-                    stops: const [0.0, 0.10, 0.26, 0.48, 0.72, 1.0],
-                  ),
-                  border: Border.all(
-                    color: Colors.white.withValues(
-                      alpha: selected ? 0.28 : 0.16,
-                    ),
-                    width: selected ? 0.9 : 0.7,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(
-                        alpha: selected ? 0.30 : 0.22,
-                      ),
-                      blurRadius: selected ? 11 : 9,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
+                curve: Curves.easeOutCubic,
                 child: Icon(
                   item.icon,
-                  color: const Color(0xFFF8F5EC),
-                  size: compact ? 15 : 18,
+                  color: selected
+                      ? const Color(0xFFF8F5EC)
+                      : const Color(0xFFEFECE3),
+                  size: compact ? iconSize * 0.78 : iconSize * 0.80,
                 ),
               ),
-              const SizedBox(height: 5),
+              const SizedBox(height: 6),
               Text(
                 item.label,
                 textAlign: TextAlign.center,
@@ -505,76 +454,99 @@ class _PieMenuPainter extends CustomPainter {
     final outerRadius = size.shortestSide * 0.43;
     final sweep = 2 * math.pi / itemCount;
 
-    // Stronger, still controlled 3D construction: cast shadow, visible
-    // lower extrusion, then a bright top face with a metallic bevel.
+    // True cylindrical 3D construction: only the outer side wall is
+    // extruded downward, keeping the center clean and the top face crisp.
     final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.34)
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 19);
-    canvas.drawCircle(
-      center + const Offset(0, 11),
-      outerRadius + 1,
+      ..color = Colors.black.withValues(alpha: 0.32)
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 18);
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: center.translate(0, 12),
+        width: outerRadius * 2.02,
+        height: outerRadius * 2 * 0.34,
+      ),
       shadowPaint,
     );
 
-    final depth = (size.shortestSide * 0.026).clamp(9.0, 13.0).toDouble();
+    final depth = (size.shortestSide * 0.028).clamp(9.0, 14.0).toDouble();
+    final bottomCenter = center.translate(0, depth);
 
-    // The side wall is built in thin layers so the lower edge reads as a
-    // physical thickness rather than a second flat circle.
-    for (var layer = 8; layer >= 1; layer--) {
-      final offsetY = depth * layer / 8;
-      final depthFactor = 0.88 - (layer * 0.035);
+    // Extruded rim: a curved side wall between the top circumference and
+    // the lower circumference. This reads as actual thickness, not a flat
+    // duplicate disc.
+    for (var i = 0; i < itemCount; i++) {
+      final start = -math.pi / 2 + i * sweep;
+      final end = start + sweep;
+      final light = _lightPalette[i];
 
-      for (var i = 0; i < itemCount; i++) {
-        final start = -math.pi / 2 + i * sweep;
-        final light = _lightPalette[i];
-        final sideCenter = center.translate(0, offsetY);
+      final topStart = Offset(
+        center.dx + math.cos(start) * outerRadius,
+        center.dy + math.sin(start) * outerRadius,
+      );
+      final topEnd = Offset(
+        center.dx + math.cos(end) * outerRadius,
+        center.dy + math.sin(end) * outerRadius,
+      );
+      final bottomEnd = Offset(
+        bottomCenter.dx + math.cos(end) * outerRadius,
+        bottomCenter.dy + math.sin(end) * outerRadius,
+      );
 
-        final path = Path()
-          ..moveTo(sideCenter.dx, sideCenter.dy)
-          ..lineTo(
-            sideCenter.dx + math.cos(start) * outerRadius,
-            sideCenter.dy + math.sin(start) * outerRadius,
-          )
-          ..arcTo(
-            Rect.fromCircle(center: sideCenter, radius: outerRadius),
-            start,
-            sweep,
-            false,
-          )
-          ..close();
+      final wallPath = Path()
+        ..moveTo(topStart.dx, topStart.dy)
+        ..arcTo(
+          Rect.fromCircle(center: center, radius: outerRadius),
+          start,
+          sweep,
+          false,
+        )
+        ..lineTo(bottomEnd.dx, bottomEnd.dy)
+        ..arcTo(
+          Rect.fromCircle(center: bottomCenter, radius: outerRadius),
+          end,
+          -sweep,
+          false,
+        )
+        ..close();
 
-        final sidePaint = Paint()
-          ..shader =
-              LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color.lerp(light, Colors.black, 0.46)!,
-                  Color.lerp(light, Colors.black, depthFactor)!,
-                  Color.lerp(light, Colors.black, 0.90)!,
-                ],
-                stops: const [0.0, 0.55, 1.0],
-              ).createShader(
-                Rect.fromCircle(center: sideCenter, radius: outerRadius),
-              );
-        canvas.drawPath(path, sidePaint);
-      }
+      final wallPaint = Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.lerp(light, Colors.black, 0.28)!,
+            Color.lerp(light, Colors.black, 0.58)!,
+            Color.lerp(light, Colors.black, 0.84)!,
+          ],
+          stops: const [0.0, 0.46, 1.0],
+        ).createShader(
+          Rect.fromLTWH(
+            0,
+            center.dy,
+            size.width,
+            depth,
+          ),
+        );
+      canvas.drawPath(wallPath, wallPaint);
     }
 
-    // Add slim separator lines to the visible side wall so the extrusion
-    // remains segmented with the five module faces.
+    // Dark, fine radial seams reinforce the separation between the five
+    // physical slices without adding visual clutter.
     final sideSeamPaint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.9
+      ..strokeWidth = 0.8
       ..strokeCap = StrokeCap.butt
-      ..color = Colors.black.withValues(alpha: 0.42);
+      ..color = Colors.black.withValues(alpha: 0.46);
     for (var i = 0; i < itemCount; i++) {
       final angle = -math.pi / 2 + i * sweep;
       canvas.drawLine(
-        center.translate(0, depth),
         Offset(
           center.dx + math.cos(angle) * outerRadius,
-          center.dy + depth + math.sin(angle) * outerRadius,
+          center.dy + math.sin(angle) * outerRadius,
+        ),
+        Offset(
+          bottomCenter.dx + math.cos(angle) * outerRadius,
+          bottomCenter.dy + math.sin(angle) * outerRadius,
         ),
         sideSeamPaint,
       );
@@ -599,29 +571,45 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      // Broader metallic face: a compact highlight band, the module color,
-      // then a longer rich shadow. This gives the face a curved, metal-like read.
+      // Metallic face: controlled highlight, true module color, then a
+      // longer deep shadow to make the surface feel curved and substantial.
       final paint = Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
             Color.lerp(light, Colors.white, selected ? 0.18 : 0.13)!,
-            Color.lerp(light, Colors.white, selected ? 0.06 : 0.04)!,
+            Color.lerp(light, Colors.white, selected ? 0.05 : 0.03)!,
             light,
-            Color.lerp(light, Colors.black, selected ? 0.12 : 0.17)!,
-            Color.lerp(light, Colors.black, selected ? 0.36 : 0.43)!,
-            Color.lerp(light, Colors.black, selected ? 0.66 : 0.72)!,
+            Color.lerp(light, Colors.black, selected ? 0.14 : 0.19)!,
+            Color.lerp(light, Colors.black, selected ? 0.38 : 0.45)!,
+            Color.lerp(light, Colors.black, selected ? 0.68 : 0.74)!,
           ],
-          stops: const [0.0, 0.10, 0.25, 0.47, 0.72, 1.0],
+          stops: const [0.0, 0.09, 0.24, 0.46, 0.72, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, paint);
+
+      // A fine inset highlight gives the top face a machined bevel.
+      final topBevel = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = selected ? 1.15 : 0.9
+        ..strokeCap = StrokeCap.round
+        ..color = Colors.white.withValues(
+          alpha: selected ? 0.16 : 0.10,
+        );
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: outerRadius - 1.2),
+        start + 0.035,
+        sweep - 0.07,
+        false,
+        topBevel,
+      );
 
       if (selected) {
         final selectedEdge = Paint()
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.0
-          ..color = Colors.white.withValues(alpha: 0.18);
+          ..strokeWidth = 0.9
+          ..color = Colors.white.withValues(alpha: 0.16);
         canvas.drawPath(path, selectedEdge);
       }
     }
