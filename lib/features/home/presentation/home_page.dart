@@ -504,26 +504,26 @@ class _PieMenuPainter extends CustomPainter {
     final outerRadius = size.shortestSide * 0.43;
     final sweep = 2 * math.pi / itemCount;
 
-    // True cylindrical 3D construction: only the outer side wall is
-    // extruded downward, keeping the center clean and the top face crisp.
+    // Deep 3D construction: a substantial extrusion sits below the
+    // colored face, with a soft cast shadow to separate it from the background.
+    final depth = (size.shortestSide * 0.050).clamp(18.0, 26.0).toDouble();
+    final extrusion = Offset(depth * 0.22, depth);
+    final bottomCenter = center + extrusion;
+
     final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.32)
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 18);
+      ..color = Colors.black.withValues(alpha: 0.42)
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 22);
     canvas.drawOval(
       Rect.fromCenter(
-        center: center.translate(0, 12),
-        width: outerRadius * 2.02,
-        height: outerRadius * 2 * 0.34,
+        center: bottomCenter + const Offset(0, 9),
+        width: outerRadius * 2.14,
+        height: outerRadius * 0.70,
       ),
       shadowPaint,
     );
 
-    final depth = (size.shortestSide * 0.028).clamp(9.0, 14.0).toDouble();
-    final bottomCenter = center.translate(0, depth);
-
-    // Extruded rim: a curved side wall between the top circumference and
-    // the lower circumference. This reads as actual thickness, not a flat
-    // duplicate disc.
+    // Thick side wall: the lower-right extrusion is deliberately visible
+    // so the wheel reads as a solid, machined 3D object.
     for (var i = 0; i < itemCount; i++) {
       final start = -math.pi / 2 + i * sweep;
       final end = start + sweep;
@@ -557,25 +557,41 @@ class _PieMenuPainter extends CustomPainter {
 
       final wallPaint = Paint()
         ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           colors: [
-            Color.lerp(light, Colors.black, 0.28)!,
-            Color.lerp(light, Colors.black, 0.58)!,
-            Color.lerp(light, Colors.black, 0.84)!,
+            Color.lerp(light, Colors.black, 0.18)!,
+            Color.lerp(light, Colors.black, 0.44)!,
+            Color.lerp(light, Colors.black, 0.72)!,
+            Color.lerp(light, Colors.black, 0.94)!,
           ],
-          stops: const [0.0, 0.46, 1.0],
-        ).createShader(Rect.fromLTWH(0, center.dy, size.width, depth));
+          stops: const [0.0, 0.28, 0.62, 1.0],
+        ).createShader(
+          Rect.fromPoints(topStart, bottomEnd),
+        );
       canvas.drawPath(wallPath, wallPaint);
     }
 
-    // Dark, fine radial seams reinforce the separation between the five
-    // physical slices without adding visual clutter.
+    // Strong lower edge: a dark lip makes the physical thickness easy to see.
+    final undersideEdge = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8
+      ..strokeCap = StrokeCap.round
+      ..color = Colors.black.withValues(alpha: 0.64);
+    canvas.drawArc(
+      Rect.fromCircle(center: bottomCenter, radius: outerRadius - 0.4),
+      0.08,
+      math.pi - 0.16,
+      false,
+      undersideEdge,
+    );
+
+    // Keep the five physical slices visually separated down the extrusion.
     final sideSeamPaint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.8
+      ..strokeWidth = 1.1
       ..strokeCap = StrokeCap.butt
-      ..color = Colors.black.withValues(alpha: 0.46);
+      ..color = Colors.black.withValues(alpha: 0.58);
     for (var i = 0; i < itemCount; i++) {
       final angle = -math.pi / 2 + i * sweep;
       canvas.drawLine(
@@ -610,30 +626,30 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      // Metallic face: controlled highlight, true module color, then a
-      // longer deep shadow to make the surface feel curved and substantial.
+      // Deeper metallic face: concentrated highlight, clean base color,
+      // then a longer shadow that gives the slice a rounded material feel.
       final paint = Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color.lerp(light, Colors.white, selected ? 0.18 : 0.13)!,
-            Color.lerp(light, Colors.white, selected ? 0.05 : 0.03)!,
+            Color.lerp(light, Colors.white, selected ? 0.22 : 0.16)!,
+            Color.lerp(light, Colors.white, selected ? 0.07 : 0.04)!,
             light,
-            Color.lerp(light, Colors.black, selected ? 0.14 : 0.19)!,
-            Color.lerp(light, Colors.black, selected ? 0.38 : 0.45)!,
-            Color.lerp(light, Colors.black, selected ? 0.68 : 0.74)!,
+            Color.lerp(light, Colors.black, selected ? 0.18 : 0.24)!,
+            Color.lerp(light, Colors.black, selected ? 0.46 : 0.54)!,
+            Color.lerp(light, Colors.black, selected ? 0.76 : 0.84)!,
           ],
-          stops: const [0.0, 0.09, 0.24, 0.46, 0.72, 1.0],
+          stops: const [0.0, 0.08, 0.21, 0.43, 0.70, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, paint);
 
-      // A fine inset highlight gives the top face a machined bevel.
+      // Subtle bevel on the top face, followed by a dark lower bevel.
       final topBevel = Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = selected ? 1.15 : 0.9
+        ..strokeWidth = selected ? 1.35 : 1.0
         ..strokeCap = StrokeCap.round
-        ..color = Colors.white.withValues(alpha: selected ? 0.16 : 0.10);
+        ..color = Colors.white.withValues(alpha: selected ? 0.18 : 0.11);
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: outerRadius - 1.2),
         start + 0.035,
@@ -642,10 +658,23 @@ class _PieMenuPainter extends CustomPainter {
         topBevel,
       );
 
+      final lowerFaceBevel = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = selected ? 1.2 : 0.9
+        ..strokeCap = StrokeCap.round
+        ..color = Colors.black.withValues(alpha: selected ? 0.34 : 0.26);
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: outerRadius - 1.7),
+        start + 0.04,
+        sweep - 0.08,
+        false,
+        lowerFaceBevel,
+      );
+
       if (selected) {
         final selectedEdge = Paint()
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 0.9
+          ..strokeWidth = 1.0
           ..color = Colors.white.withValues(alpha: 0.16);
         canvas.drawPath(path, selectedEdge);
       }
