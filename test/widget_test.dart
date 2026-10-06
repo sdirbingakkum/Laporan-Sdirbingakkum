@@ -284,7 +284,7 @@ void main() {
     expect(find.byType(StatisticsPage), findsOneWidget);
     expect(find.byType(SingleChildScrollView), findsOneWidget);
     expect(find.text('K9'), findsOneWidget);
-    expect(find.byKey(const ValueKey('report-period-columns')), findsOneWidget);
+    expect(find.byKey(const ValueKey('report-period-columns')), findsNothing);
     expect(find.text('2026'), findsOneWidget);
     expect(find.text('2026'), findsOneWidget);
     expect(find.text('AGUSTUS 2026'), findsNothing);
