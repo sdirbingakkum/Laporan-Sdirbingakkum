@@ -326,8 +326,8 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                                   style: FilledButton.styleFrom(
                                     backgroundColor: _goldLight,
                                     foregroundColor: const Color(0xFF10140F),
-                                    disabledBackgroundColor:
-                                        _goldDark.withValues(alpha: 0.58),
+                                    disabledBackgroundColor: _goldDark
+                                        .withValues(alpha: 0.58),
                                     disabledForegroundColor: Colors.black54,
                                     elevation: 0,
                                     shape: RoundedRectangleBorder(
@@ -466,10 +466,7 @@ class _DarkField extends StatelessWidget {
       autofillHints: autofillHints,
       obscureText: obscureText,
       onFieldSubmitted: onFieldSubmitted,
-      style: const TextStyle(
-        color: _text,
-        fontWeight: FontWeight.w600,
-      ),
+      style: const TextStyle(color: _text, fontWeight: FontWeight.w600),
       cursorColor: _goldLight,
       decoration: InputDecoration(
         labelText: label,
@@ -502,10 +499,7 @@ class _DarkField extends StatelessWidget {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: Color(0xFFE28C80),
-            width: 1.4,
-          ),
+          borderSide: const BorderSide(color: Color(0xFFE28C80), width: 1.4),
         ),
       ),
       validator: validator,
@@ -526,9 +520,9 @@ class _OrDivider extends StatelessWidget {
           child: Text(
             'atau',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: _muted,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: _muted,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
         const Expanded(child: Divider(color: _line)),
@@ -573,11 +567,7 @@ class _BackdropPainter extends CustomPainter {
 
     for (var i = 0; i < 7; i++) {
       final y = size.height * 0.74 + i * 15;
-      canvas.drawLine(
-        Offset(-20, y),
-        Offset(size.width * 0.32, y - 50),
-        paint,
-      );
+      canvas.drawLine(Offset(-20, y), Offset(size.width * 0.32, y - 50), paint);
     }
   }
 
