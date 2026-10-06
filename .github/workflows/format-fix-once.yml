@@ -1,4 +1,3 @@
-# Trigger formatter after verified source changes
 name: Format Fix Once
 
 on:
@@ -14,6 +13,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.47.3"
@@ -21,15 +22,17 @@ jobs:
           cache: true
           pub-cache: true
       - run: flutter pub get
-      - run: dart format lib test
-      - name: Commit formatted files and remove helper
+      - name: Format current main and remove helper
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git reset --hard origin/main
+          dart format lib test
           rm -f .github/workflows/format-fix-once.yml
           git add lib test .github/workflows/format-fix-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if git diff --cached --quiet; then
             exit 0
           fi
           git commit -m "chore: format Dart sources"
-          git push
+          git push origin HEAD:main
