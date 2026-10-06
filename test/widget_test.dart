@@ -252,7 +252,10 @@ void main() {
     expect(find.byKey(const ValueKey('sim-total-card')), findsOneWidget);
     expect(find.text('TOTAL SIM'), findsOneWidget);
     expect(find.text('400'), findsOneWidget);
-    expect(find.byKey(const ValueKey('report-period-columns')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('report-period-columns')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('PROVOS shows only the current year period', (tester) async {
