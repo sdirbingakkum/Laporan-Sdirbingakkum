@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../shared/widgets/app_background.dart';
 import '../../../shared/widgets/app_header.dart';
 
 const _bg = Color(0xFF03150F);
@@ -183,16 +184,7 @@ class StatisticsPage extends StatelessWidget {
         onSignOut: () => _signOut(context),
         onBack: () => Navigator.of(context).pop(),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          // Prototype baseline: the report content uses the same page-level
-          // background gradient as the original web prototype.
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF0A1F0E), Color(0xFF1A2A10), Color(0xFF1C1208)],
-          ),
-        ),
+      body: AppBackground(
         child: SafeArea(
           top: false,
           child: hasContent
