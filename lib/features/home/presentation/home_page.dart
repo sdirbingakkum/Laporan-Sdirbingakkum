@@ -541,72 +541,54 @@ class _PieMenuPainter extends CustomPainter {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color.lerp(light, Colors.white, selected ? 0.30 : 0.24)!,
-            Color.lerp(light, Colors.white, selected ? 0.12 : 0.08)!,
+            Color.lerp(light, Colors.white, selected ? 0.36 : 0.30)!,
+            Color.lerp(light, Colors.white, selected ? 0.14 : 0.10)!,
             light,
-            Color.lerp(light, Colors.black, selected ? 0.08 : 0.12)!,
-            Color.lerp(light, Colors.black, selected ? 0.28 : 0.34)!,
-            Color.lerp(light, Colors.black, selected ? 0.50 : 0.58)!,
-            Color.lerp(light, Colors.black, selected ? 0.70 : 0.76)!,
-            Color.lerp(light, Colors.black, selected ? 0.84 : 0.90)!,
+            Color.lerp(light, Colors.black, selected ? 0.07 : 0.10)!,
+            Color.lerp(light, Colors.black, selected ? 0.26 : 0.32)!,
+            Color.lerp(light, Colors.black, selected ? 0.48 : 0.56)!,
+            Color.lerp(light, Colors.black, selected ? 0.68 : 0.74)!,
+            Color.lerp(light, Colors.black, selected ? 0.86 : 0.92)!,
           ],
-          stops: const [0.0, 0.055, 0.14, 0.28, 0.46, 0.66, 0.84, 1.0],
+          stops: const [0.0, 0.05, 0.13, 0.27, 0.45, 0.65, 0.83, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, paint);
 
-      // Subtle bevel on the top face, followed by a dark lower bevel.
-      final topBevel = Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = selected ? 1.35 : 1.0
-        ..strokeCap = StrokeCap.round
-        ..color = Colors.white.withValues(alpha: selected ? 0.18 : 0.11);
-      canvas.drawArc(
-        Rect.fromCircle(center: center, radius: outerRadius - 1.2),
-        start + 0.035,
-        sweep - 0.07,
-        false,
-        topBevel,
-      );
+      // Metallic volume is produced with soft light fields rather than
+      // circular stroke lines. This keeps the outer edge clean.
+      final upperSpecular = Paint()
+        ..shader = RadialGradient(
+          center: const Alignment(-0.58, -0.62),
+          radius: 0.92,
+          colors: [
+            Colors.white.withValues(alpha: selected ? 0.24 : 0.18),
+            Colors.white.withValues(alpha: selected ? 0.08 : 0.055),
+            Colors.transparent,
+          ],
+          stops: const [0.0, 0.20, 0.62],
+        ).createShader(
+          Rect.fromCircle(center: center, radius: outerRadius),
+        );
+      canvas.drawPath(path, upperSpecular);
 
-      final lowerFaceBevel = Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = selected ? 1.2 : 0.9
-        ..strokeCap = StrokeCap.round
-        ..color = Colors.black.withValues(alpha: selected ? 0.34 : 0.26);
-      canvas.drawArc(
-        Rect.fromCircle(center: center, radius: outerRadius - 1.7),
-        start + 0.04,
-        sweep - 0.08,
-        false,
-        lowerFaceBevel,
-      );
-
-      // Narrow specular reflection band: the bright hit stays inside the face
-      // so the metallic finish reads without creating a hard underside lip.
-      final specularPaint = Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = selected ? 1.15 : 0.9
-        ..strokeCap = StrokeCap.round
-        ..color = Colors.white.withValues(alpha: selected ? 0.20 : 0.14);
-      canvas.drawArc(
-        Rect.fromCircle(center: center, radius: outerRadius - 2.6),
-        start + 0.07,
-        sweep * 0.29,
-        false,
-        specularPaint,
-      );
-
-      if (selected) {
-        final selectedEdge = Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.0
-          ..color = Colors.white.withValues(alpha: 0.16);
-        canvas.drawPath(path, selectedEdge);
-      }
+      final lowerDepth = Paint()
+        ..shader = RadialGradient(
+          center: const Alignment(0.72, 0.74),
+          radius: 0.98,
+          colors: [
+            Colors.black.withValues(alpha: selected ? 0.34 : 0.40),
+            Colors.black.withValues(alpha: selected ? 0.16 : 0.20),
+            Colors.transparent,
+          ],
+          stops: const [0.0, 0.34, 0.82],
+        ).createShader(
+          Rect.fromCircle(center: center, radius: outerRadius),
+        );
+      canvas.drawPath(path, lowerDepth);
     }
 
-    // Fine separators keep the five modules crisp while the wheel remains
-    // a single face with metallic depth.
+    // Keep only the radial module separators; the circular outer contour
+    // stays completely free of decorative lines.
     final seamPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.8
