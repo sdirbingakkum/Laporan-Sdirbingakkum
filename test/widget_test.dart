@@ -19,9 +19,7 @@ void main() {
 
   testWidgets('sign in page renders mobile-first form', (tester) async {
     await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(home: SignInPage()),
-      ),
+      const ProviderScope(child: MaterialApp(home: SignInPage())),
     );
 
     expect(find.text('Selamat datang kembali'), findsOneWidget);
@@ -32,9 +30,7 @@ void main() {
 
   testWidgets('sign in form validates required fields', (tester) async {
     await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(home: SignInPage()),
-      ),
+      const ProviderScope(child: MaterialApp(home: SignInPage())),
     );
 
     await tester.tap(find.text('Masuk'));

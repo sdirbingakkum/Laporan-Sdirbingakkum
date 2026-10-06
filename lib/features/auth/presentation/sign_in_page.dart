@@ -45,7 +45,9 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     });
 
     try {
-      await ref.read(authRepositoryProvider).signIn(
+      await ref
+          .read(authRepositoryProvider)
+          .signIn(
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );
@@ -94,8 +96,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
       return 'Email Anda belum dikonfirmasi.';
     }
 
-    if (code == 'over_request_rate_limit' ||
-        message.contains('rate limit')) {
+    if (code == 'over_request_rate_limit' || message.contains('rate limit')) {
       return 'Terlalu banyak percobaan. Coba lagi beberapa saat.';
     }
 
@@ -113,10 +114,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              colorScheme.primaryContainer,
-              colorScheme.surface,
-            ],
+            colors: [colorScheme.primaryContainer, colorScheme.surface],
             stops: const [0, 0.42],
           ),
         ),
@@ -137,7 +135,9 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                           borderRadius: BorderRadius.circular(40),
                           boxShadow: [
                             BoxShadow(
-                              color: colorScheme.primary.withValues(alpha: 0.16),
+                              color: colorScheme.primary.withValues(
+                                alpha: 0.16,
+                              ),
                               blurRadius: 30,
                               offset: const Offset(0, 14),
                             ),

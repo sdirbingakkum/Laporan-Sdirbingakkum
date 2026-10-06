@@ -42,14 +42,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       return onSignIn ? '/' : null;
     },
     routes: [
-      GoRoute(
-        path: '/signin',
-        builder: (context, state) => const SignInPage(),
-      ),
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const HomePage(),
-      ),
+      GoRoute(path: '/signin', builder: (context, state) => const SignInPage()),
+      GoRoute(path: '/', builder: (context, state) => const HomePage()),
     ],
   );
 });
