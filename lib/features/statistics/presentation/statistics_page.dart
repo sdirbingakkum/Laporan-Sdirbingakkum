@@ -241,7 +241,7 @@ class _ContentBody extends StatelessWidget {
           const SizedBox(height: 14),
         ],
         if (columns.length == 1)
-          _StatsColumnView(column: columns.first, accent: accent)
+          _StatsColumnView(column: columns.first)
         else
           Row(
             key: const ValueKey('report-period-columns'),
@@ -252,7 +252,6 @@ class _ContentBody extends StatelessWidget {
                 Expanded(
                   child: _StatsColumnView(
                     column: columns[index],
-                    accent: accent,
                   ),
                 ),
               ],
@@ -549,7 +548,6 @@ String _moduleTitleForSheet(StatisticsModule module) {
   }
 }
 
-
 class _AnalysisButton extends StatelessWidget {
   const _AnalysisButton({required this.onPressed, required this.accent});
 
@@ -597,10 +595,9 @@ class _AnalysisButton extends StatelessWidget {
 }
 
 class _StatsColumnView extends StatelessWidget {
-  const _StatsColumnView({required this.column, required this.accent});
+  const _StatsColumnView({required this.column});
 
   final _StatColumn column;
-  final Color accent;
 
   @override
   Widget build(BuildContext context) {
