@@ -32,21 +32,21 @@ class _HomePageState extends ConsumerState<HomePage> {
     _MenuItemData(
       label: 'PELANGGARAN',
       description: 'RINGKASAN DAN TREN PELANGGARAN HUKUM.',
-      icon: Icons.gavel_rounded,
+      icon: Icons.policy_rounded,
       lightColor: Color(0xFFF09A4A),
       route: '/statistik/pelanggaran',
     ),
     _MenuItemData(
       label: 'LAKA-LALIN',
       description: 'RINGKASAN DAN TREN KECELAKAAN LALU LINTAS.',
-      icon: Icons.directions_car_filled_outlined,
+      icon: Icons.car_crash_rounded,
       lightColor: Color(0xFFE15B5B),
       route: '/statistik/laka-lalin',
     ),
     _MenuItemData(
       label: 'SIM TNI',
       description: 'RINGKASAN PENERBITAN DAN DATA SIM TNI.',
-      icon: Icons.badge_outlined,
+      icon: Icons.badge_rounded,
       lightColor: Color(0xFF5D8FE0),
       route: '/statistik/sim-tni',
     ),
@@ -60,7 +60,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     _MenuItemData(
       label: 'PROVOS TNI-AD',
       description: 'RINGKASAN DATA DAN KINERJA PROVOS TNI-AD.',
-      icon: Icons.military_tech_rounded,
+      icon: Icons.shield_rounded,
       lightColor: Color(0xFF49A86B),
       route: '/statistik/provos',
     ),
@@ -604,16 +604,96 @@ class _MenuItemData {
   final String route;
 }
 
-class _MenuBackdrop extends StatelessWidget {
+class _MenuBackdrop extends StatefulWidget {
   const _MenuBackdrop();
 
   @override
+  State<_MenuBackdrop> createState() => _MenuBackdropState();
+}
+
+class _MenuBackdropState extends State<_MenuBackdrop>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 9),
+  )..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return CustomPaint(painter: _MenuBackdropPainter());
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) => CustomPaint(
+        painter: _MenuBackdropPainter(_controller.value),
+      ),
+    );
   }
 }
 
 class _MenuBackdropPainter extends CustomPainter {
+  const _MenuBackdropPainter(this.phase);
+
+  final double phase;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final pulse = 0.55 + (math.sin(phase * math.pi) + 1) * 0.10;
+    final glow = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          _gold.withValues(alpha: 0.14 * pulse),
+          _gold.withValues(alpha: 0.025),
+          Colors.transparent,
+        ],
+      ).createShader(
+        Rect.fromCircle(
+          center: Offset(
+            size.width * (0.18 + phase * 0.14),
+            size.height * 0.18,
+          ),
+          radius: size.width * 0.62,
+        ),
+      );
+    canvas.drawRect(Offset.zero & size, glow);
+
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 1
+      ..color = _gold.withValues(alpha: 0.10 * pulse);
+
+    final large = Rect.fromCircle(
+      center: Offset(size.width * 0.10, size.height * 0.88),
+      radius: size.width * 0.70,
+    );
+    canvas.drawArc(large, -0.8, 1.5, false, paint);
+
+    final second = Rect.fromCircle(
+      center: Offset(size.width * 0.94, size.height * 0.18),
+      radius: size.width * 0.58,
+    );
+    canvas.drawArc(second, 1.9, 1.0, false, paint);
+
+    paint
+      ..strokeWidth = 0.7
+      ..color = Colors.white.withValues(alpha: 0.035);
+
+    for (var i = 0; i < 7; i++) {
+      final y = size.height * 0.74 + i * 15;
+      canvas.drawLine(Offset(-20, y), Offset(size.width * 0.32, y - 50), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _MenuBackdropPainter oldDelegate) =>
+      oldDelegate.phase != phase;
+}
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
