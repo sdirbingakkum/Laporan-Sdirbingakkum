@@ -121,11 +121,18 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
             PopupMenuItem<String>(
               value: 'signout',
               child: Row(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Icon(Icons.logout_rounded, color: _goldLight),
                   SizedBox(width: 10),
-                  Text('KELUAR / SIGN OUT', style: TextStyle(color: _text)),
+                  Flexible(
+                    child: Text(
+                      'KELUAR / SIGN OUT',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: _text),
+                    ),
+                  ),
                 ],
               ),
             ),
