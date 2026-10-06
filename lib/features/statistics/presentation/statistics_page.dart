@@ -187,7 +187,10 @@ class StatisticsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasContent = module != StatisticsModule.k9;
+    final columns = _columns;
+    assert(columns.isNotEmpty);
+    assert(columns.every((column) => column.cards.isNotEmpty));
+
     return Scaffold(
       key: ValueKey('statistics-${module.name}'),
       backgroundColor: _bg,
@@ -200,29 +203,27 @@ class StatisticsPage extends StatelessWidget {
       body: AppBackground(
         child: SafeArea(
           top: false,
-          child: hasContent
-              ? SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 760),
-                      child: _ContentBody(
-                        columns: _columns,
-                        module: module,
-                        ranking: _ranking,
-                        accent: _moduleAccent(module),
-                        totalSim: module == StatisticsModule.simTni
-                            ? _columns.first.cards.fold<int>(
-                                0,
-                                (sum, card) =>
-                                    sum + (int.tryParse(card.value) ?? 0),
-                              )
-                            : null,
-                      ),
-                    ),
-                  ),
-                )
-              : const SizedBox.expand(),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 760),
+                child: _ContentBody(
+                  columns: columns,
+                  module: module,
+                  ranking: _ranking,
+                  accent: _moduleAccent(module),
+                  totalSim: module == StatisticsModule.simTni
+                      ? columns.first.cards.fold<int>(
+                          0,
+                          (sum, card) =>
+                              sum + (int.tryParse(card.value) ?? 0),
+                        )
+                      : null,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
