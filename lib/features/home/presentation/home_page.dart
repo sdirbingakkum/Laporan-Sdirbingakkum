@@ -227,32 +227,27 @@ class _PieMenu extends StatelessWidget {
                 onSelected(index);
               }
             },
-            child: ClipOval(
-              child: BackdropFilter(
-                filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: CustomPaint(
-                  painter: _PieMenuPainter(
-                    itemCount: items.length,
-                    selectedIndex: selectedIndex,
+            child: CustomPaint(
+              painter: _PieMenuPainter(
+                itemCount: items.length,
+                selectedIndex: selectedIndex,
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                clipBehavior: Clip.none,
+                children: [
+                  for (var i = 0; i < items.length; i++)
+                    _PieMenuLabel(
+                      index: i,
+                      item: items[i],
+                      itemCount: items.length,
+                      selected: i == selectedIndex,
+                      diameter: diameter,
+                    ),
+                  _PieMenuCenter(
+                    item: selectedIndex >= 0 ? items[selectedIndex] : null,
                   ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    clipBehavior: Clip.none,
-                    children: [
-                      for (var i = 0; i < items.length; i++)
-                        _PieMenuLabel(
-                          index: i,
-                          item: items[i],
-                          itemCount: items.length,
-                          selected: i == selectedIndex,
-                          diameter: diameter,
-                        ),
-                      _PieMenuCenter(
-                        item: selectedIndex >= 0 ? items[selectedIndex] : null,
-                      ),
-                    ],
-                  ),
-                ),
+                ],
               ),
             ),
           ),
@@ -279,25 +274,25 @@ class _PieMenuCenter extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.white.withValues(alpha: 0.075),
-              iconColor.withValues(alpha: item == null ? 0.035 : 0.075),
-              const Color(0xFF06120D).withValues(alpha: 0.72),
+              Color(0xFF173428),
+              Color(0xFF0B2118),
+              Color(0xFF06120D),
             ],
-            stops: const [0.0, 0.46, 1.0],
+            stops: [0.0, 0.52, 1.0],
           ),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.16),
-            width: 1,
+            color: Color(0x55F1D37A),
+            width: 1.0,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.22),
+              color: Colors.black45,
               blurRadius: 18,
-              offset: const Offset(0, 7),
+              offset: Offset(0, 7),
             ),
           ],
         ),
@@ -410,53 +405,40 @@ class _PieMenuLabel extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ClipOval(
-                child: BackdropFilter(
-                  filter: ui.ImageFilter.blur(sigmaX: 7, sigmaY: 7),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    width: selected ? iconSize + 2 : iconSize,
-                    height: selected ? iconSize + 2 : iconSize,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Colors.white.withValues(
-                            alpha: selected ? 0.080 : 0.050,
-                          ),
-                          item.lightColor.withValues(
-                            alpha: selected ? 0.14 : 0.085,
-                          ),
-                          const Color(0xFF06120D).withValues(alpha: 0.62),
-                        ],
-                        stops: const [0.0, 0.42, 1.0],
-                      ),
-                      border: Border.all(
-                        color: selected
-                            ? item.lightColor.withValues(alpha: 0.38)
-                            : Colors.white.withValues(alpha: 0.13),
-                        width: selected ? 0.95 : 0.8,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(
-                            alpha: selected ? 0.16 : 0.12,
-                          ),
-                          blurRadius: selected ? 9 : 6,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      item.icon,
-                      color: selected
-                          ? item.lightColor.withValues(alpha: 0.96)
-                          : item.lightColor.withValues(alpha: 0.84),
-                      size: compact ? 15 : 18,
-                    ),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                width: selected ? iconSize + 2 : iconSize,
+                height: selected ? iconSize + 2 : iconSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      item.lightColor.withValues(alpha: selected ? 0.96 : 0.86),
+                      item.lightColor.withValues(alpha: selected ? 0.82 : 0.68),
+                      item.lightColor.withValues(alpha: selected ? 0.56 : 0.46),
+                    ],
+                    stops: const [0.0, 0.48, 1.0],
                   ),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: selected ? 0.28 : 0.16),
+                    width: selected ? 0.9 : 0.7,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: item.lightColor.withValues(
+                        alpha: selected ? 0.18 : 0.10,
+                      ),
+                      blurRadius: selected ? 12 : 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  item.icon,
+                  color: const Color(0xFFF8F5EC),
+                  size: compact ? 15 : 18,
                 ),
               ),
               const SizedBox(height: 5),
@@ -489,8 +471,7 @@ class _PieMenuPainter extends CustomPainter {
   final int itemCount;
   final int selectedIndex;
 
-  // Canonical menu colors: each module keeps its own identity while the
-  // sector treatment remains translucent and glass-like.
+  // Locked module colors, matching the five menu identities.
   static const _lightPalette = <Color>[
     Color(0xFFF09A4A), // PELANGGARAN — orange
     Color(0xFFE15B5B), // LAKA-LALIN — red
@@ -500,11 +481,11 @@ class _PieMenuPainter extends CustomPainter {
   ];
 
   static const _darkPalette = <Color>[
-    Color(0xFF8B4E21),
-    Color(0xFF813237),
-    Color(0xFF315991),
-    Color(0xFF8A691B),
-    Color(0xFF285E40),
+    Color(0xFFC66B27),
+    Color(0xFFB83E45),
+    Color(0xFF3F69AE),
+    Color(0xFFB18A25),
+    Color(0xFF34784F),
   ];
 
   @override
@@ -513,25 +494,11 @@ class _PieMenuPainter extends CustomPainter {
     final outerRadius = size.shortestSide * 0.43;
     final sweep = 2 * math.pi / itemCount;
 
-    // One restrained shadow for the whole glass disc. No extrusion.
+    // Soft global depth; the sectors themselves stay crisp and colorful.
     final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.26)
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 20);
-    canvas.drawCircle(center + const Offset(0, 7), outerRadius, shadowPaint);
-
-    // Translucent glass base lets the shared page background remain visible.
-    final basePaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Colors.white.withValues(alpha: 0.028),
-          Colors.white.withValues(alpha: 0.014),
-          const Color(0xFF020A07).withValues(alpha: 0.18),
-        ],
-        stops: const [0.0, 0.46, 1.0],
-      ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
-    canvas.drawCircle(center, outerRadius, basePaint);
+      ..color = Colors.black.withValues(alpha: 0.22)
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 14);
+    canvas.drawCircle(center + const Offset(0, 5), outerRadius, shadowPaint);
 
     for (var i = 0; i < itemCount; i++) {
       final start = -math.pi / 2 + i * sweep;
@@ -553,37 +520,36 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      // Thin, sophisticated color glazing: the module color is unmistakable,
-      // but the page background still shows through the glass.
+      // The requested look: one unmistakable color per sector, with a
+      // narrow, polished gradient rather than a flat fill or glass overlay.
       final paint = Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withValues(alpha: selected ? 0.075 : 0.045),
-            light.withValues(alpha: selected ? 0.28 : 0.20),
-            dark.withValues(alpha: selected ? 0.16 : 0.105),
-            const Color(0xFF020A07).withValues(alpha: 0.24),
+            Colors.white.withValues(alpha: selected ? 0.10 : 0.055),
+            light.withValues(alpha: selected ? 0.98 : 0.90),
+            dark.withValues(alpha: selected ? 0.84 : 0.70),
           ],
-          stops: const [0.0, 0.30, 0.68, 1.0],
+          stops: const [0.0, 0.20, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, paint);
 
-      // A very fine chromatic rim reinforces the five-color system without
-      // turning the wheel into a flat, heavily outlined graphic.
-      final rim = Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = selected ? 0.95 : 0.70
-        ..color = light.withValues(alpha: selected ? 0.50 : 0.34);
-      canvas.drawPath(path, rim);
+      if (selected) {
+        final selectedEdge = Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.0
+          ..color = Colors.white.withValues(alpha: 0.20);
+        canvas.drawPath(path, selectedEdge);
+      }
     }
 
-    // Fine glass seams.
+    // Fine separators and a restrained outer edge preserve the clean wheel geometry.
     final seamPaint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.7
+      ..strokeWidth = 0.8
       ..strokeCap = StrokeCap.butt
-      ..color = Colors.white.withValues(alpha: 0.075);
+      ..color = const Color(0xFF09231A).withValues(alpha: 0.80);
 
     for (var i = 0; i < itemCount; i++) {
       final angle = -math.pi / 2 + i * sweep;
@@ -597,22 +563,21 @@ class _PieMenuPainter extends CustomPainter {
       );
     }
 
-    // Minimal outer rim and a single soft specular arc.
     final rimPaint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.9
-      ..color = Colors.white.withValues(alpha: 0.13);
+      ..strokeWidth = 1.0
+      ..color = Colors.white.withValues(alpha: 0.10);
     canvas.drawCircle(center, outerRadius, rimPaint);
 
     final highlight = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0
+      ..strokeWidth = 0.8
       ..strokeCap = StrokeCap.round
-      ..color = Colors.white.withValues(alpha: 0.075);
+      ..color = Colors.white.withValues(alpha: 0.10);
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: outerRadius - 1),
-      -2.55,
-      1.45,
+      -2.45,
+      1.30,
       false,
       highlight,
     );
