@@ -30,7 +30,20 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     final compact = MediaQuery.sizeOf(context).width < 360;
 
     return AppBar(
-      backgroundColor: _headerBg,
+      backgroundColor: Colors.transparent,
+      flexibleSpace: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF0A2A1F),
+              Color(0xFF061C14),
+              Color(0xFF03150F),
+            ],
+          ),
+        ),
+      ),
       foregroundColor: _text,
       elevation: 0,
       scrolledUnderElevation: 0,
