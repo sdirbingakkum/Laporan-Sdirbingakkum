@@ -566,9 +566,7 @@ class _PieMenuPainter extends CustomPainter {
             Color.lerp(light, Colors.black, 0.94)!,
           ],
           stops: const [0.0, 0.28, 0.62, 1.0],
-        ).createShader(
-          Rect.fromPoints(topStart, bottomEnd),
-        );
+        ).createShader(Rect.fromPoints(topStart, bottomEnd));
       canvas.drawPath(wallPath, wallPaint);
     }
 
