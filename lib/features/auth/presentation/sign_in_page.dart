@@ -29,7 +29,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   }
 
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _emailController;
+  late final TextEditingController _usernameController;
   late final TextEditingController _passwordController;
 
   bool _isLoading = false;
@@ -38,13 +38,13 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   @override
   void initState() {
     super.initState();
-    _emailController = TextEditingController();
+    _usernameController = TextEditingController();
     _passwordController = TextEditingController();
   }
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -64,7 +64,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
       await ref
           .read(authRepositoryProvider)
           .signIn(
-            email: _emailController.text.trim(),
+            username: _usernameController.text.trim(),
             password: _passwordController.text,
           );
     } on AuthException catch (error) {
@@ -104,19 +104,19 @@ class _SignInPageState extends ConsumerState<SignInPage> {
 
     if (code == 'invalid_credentials' ||
         message.contains('invalid login credentials')) {
-      return 'EMAIL ATAU PASSWORD SALAH.';
+      return 'USERNAME ATAU PASSWORD SALAH.';
     }
 
     if (code == 'email_not_confirmed' ||
         message.contains('email not confirmed')) {
-      return 'EMAIL ANDA BELUM DIKONFIRMASI.';
+      return 'AKUN ANDA BELUM DIKONFIRMASI.';
     }
 
     if (code == 'over_request_rate_limit' || message.contains('rate limit')) {
       return 'TERLALU BANYAK PERCOBAAN. COBA LAGI BEBERAPA SAAT.';
     }
 
-    return error.message;
+    return error.message.toUpperCase();
   }
 
   @override
@@ -275,24 +275,23 @@ class _SignInCard extends StatelessWidget {
         children: [
           const SizedBox(height: 4),
           _DarkField(
-            controller: parent._emailController,
-            label: 'EMAIL',
-            hint: 'MASUKKAN EMAIL ANDA',
-            icon: Icons.mail_outline_rounded,
-            keyboardType: TextInputType.emailAddress,
+            controller: parent._usernameController,
+            label: 'USERNAME',
+            hint: 'MASUKKAN USERNAME ANDA',
+            icon: Icons.person_outline_rounded,
+            keyboardType: TextInputType.text,
             textInputAction: TextInputAction.next,
-            autofillHints: const [AutofillHints.username, AutofillHints.email],
+            autofillHints: const [AutofillHints.username],
             enabled: !parent._isLoading,
             dense: false,
             validator: (value) {
-              final email = value?.trim() ?? '';
-              if (email.isEmpty) {
-                return 'EMAIL WAJIB DIISI.';
+              final username = value?.trim() ?? '';
+              if (username.isEmpty) {
+                return 'USERNAME WAJIB DIISI.';
               }
 
-              final emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-              if (!emailPattern.hasMatch(email)) {
-                return 'MASUKKAN ALAMAT EMAIL YANG VALID.';
+              if (username.contains('@')) {
+                return 'MASUKKAN USERNAME TANPA DOMAIN.';
               }
 
               return null;
