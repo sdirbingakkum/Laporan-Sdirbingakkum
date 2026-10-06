@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../features/auth/presentation/sign_in_page.dart';
 import '../features/home/presentation/home_page.dart';
+import '../features/statistics/presentation/statistics_page.dart';
 
 class _AuthRefreshNotifier extends ChangeNotifier {
   _AuthRefreshNotifier(Stream<AuthState> stream) {
@@ -44,6 +45,36 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(path: '/signin', builder: (context, state) => const SignInPage()),
       GoRoute(path: '/', builder: (context, state) => const HomePage()),
+      GoRoute(
+        path: '/statistik/pelanggaran',
+        builder: (context, state) => const StatisticsPage(
+          module: StatisticsModule.pelanggaran,
+        ),
+      ),
+      GoRoute(
+        path: '/statistik/laka-lalin',
+        builder: (context, state) => const StatisticsPage(
+          module: StatisticsModule.lakaLalin,
+        ),
+      ),
+      GoRoute(
+        path: '/statistik/sim-tni',
+        builder: (context, state) => const StatisticsPage(
+          module: StatisticsModule.simTni,
+        ),
+      ),
+      GoRoute(
+        path: '/statistik/k9',
+        builder: (context, state) => const StatisticsPage(
+          module: StatisticsModule.k9,
+        ),
+      ),
+      GoRoute(
+        path: '/statistik/provos',
+        builder: (context, state) => const StatisticsPage(
+          module: StatisticsModule.provos,
+        ),
+      ),
     ],
   );
 });
