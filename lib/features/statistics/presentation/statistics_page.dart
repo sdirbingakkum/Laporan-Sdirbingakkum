@@ -101,10 +101,15 @@ class StatisticsPage extends StatelessWidget {
       case StatisticsModule.k9:
         return const [
           _StatColumn(
-            label: 'AGUSTUS 2026',
+            label: '2026',
             cards: [
               _StatCardData('NYATA', '27', _emerald),
               _StatCardData('SESUAI ORGAS', '30', _gold),
+            ],
+          ),
+          _StatColumn(
+            label: 'AGUSTUS 2026',
+            cards: [
               _StatCardData('KEKURANGAN', '8', Color(0xFFF59E0B)),
               _StatCardData('SATUAN', '2', Color(0xFF7DD3FC)),
             ],
