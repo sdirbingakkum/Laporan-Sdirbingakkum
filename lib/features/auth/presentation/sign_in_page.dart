@@ -123,11 +123,14 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final horizontalPadding =
-                    constraints.maxWidth >= 520 ? 32.0 : 16.0;
-                final contentWidth = (constraints.maxWidth -
-                        horizontalPadding * 2)
-                    .clamp(0.0, 460.0);
+                final horizontalPadding = constraints.maxWidth >= 520
+                    ? 32.0
+                    : 16.0;
+                final contentWidth =
+                    (constraints.maxWidth - horizontalPadding * 2).clamp(
+                      0.0,
+                      460.0,
+                    );
 
                 return Center(
                   child: FittedBox(
@@ -234,10 +237,7 @@ class _SignInContentState extends ConsumerState<_SignInContent> {
             'Profesional • Responsif • Integritas • Modern • Adaptif',
             textAlign: TextAlign.center,
             maxLines: 1,
-            style: textTheme.bodySmall?.copyWith(
-              color: _muted,
-              fontSize: 10,
-            ),
+            style: textTheme.bodySmall?.copyWith(color: _muted, fontSize: 10),
           ),
           const SizedBox(height: 20),
           _SignInCard(parent: parent),
@@ -262,9 +262,7 @@ class _SignInCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: _surface.withValues(alpha: 0.94),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: _gold.withValues(alpha: 0.25),
-        ),
+        border: Border.all(color: _gold.withValues(alpha: 0.25)),
         boxShadow: const [
           BoxShadow(
             color: Colors.black54,
@@ -289,10 +287,7 @@ class _SignInCard extends StatelessWidget {
           const SizedBox(height: 3),
           Text(
             'Masuk menggunakan akun yang terdaftar.',
-            style: textTheme.bodySmall?.copyWith(
-              color: _muted,
-              fontSize: 11,
-            ),
+            style: textTheme.bodySmall?.copyWith(color: _muted, fontSize: 11),
           ),
           const SizedBox(height: 15),
           _DarkField(
@@ -302,10 +297,7 @@ class _SignInCard extends StatelessWidget {
             icon: Icons.mail_outline_rounded,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
-            autofillHints: const [
-              AutofillHints.username,
-              AutofillHints.email,
-            ],
+            autofillHints: const [AutofillHints.username, AutofillHints.email],
             enabled: !parent._isLoading,
             dense: false,
             validator: (value) {
@@ -314,9 +306,7 @@ class _SignInCard extends StatelessWidget {
                 return 'Email wajib diisi.';
               }
 
-              final emailPattern = RegExp(
-                r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
-              );
+              final emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
               if (!emailPattern.hasMatch(email)) {
                 return 'Masukkan alamat email yang valid.';
               }
@@ -384,9 +374,7 @@ class _SignInCard extends StatelessWidget {
                         key: ValueKey('loading'),
                         width: 21,
                         height: 21,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.4,
-                        ),
+                        child: CircularProgressIndicator(strokeWidth: 2.4),
                       )
                     : const Row(
                         key: ValueKey('label'),
@@ -394,15 +382,10 @@ class _SignInCard extends StatelessWidget {
                         children: [
                           Text(
                             'Masuk',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w800,
-                            ),
+                            style: TextStyle(fontWeight: FontWeight.w800),
                           ),
                           SizedBox(width: 8),
-                          Icon(
-                            Icons.arrow_forward_rounded,
-                            size: 20,
-                          ),
+                          Icon(Icons.arrow_forward_rounded, size: 20),
                         ],
                       ),
               ),
@@ -464,16 +447,9 @@ class _DarkField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        prefixIcon: Icon(
-          icon,
-          color: _muted,
-          size: dense ? 19 : 21,
-        ),
+        prefixIcon: Icon(icon, color: _muted, size: dense ? 19 : 21),
         suffixIcon: suffix,
-        labelStyle: TextStyle(
-          color: _muted,
-          fontSize: dense ? 12 : 13,
-        ),
+        labelStyle: TextStyle(color: _muted, fontSize: dense ? 12 : 13),
         floatingLabelStyle: const TextStyle(
           color: _goldLight,
           fontWeight: FontWeight.w700,
@@ -503,10 +479,7 @@ class _DarkField extends StatelessWidget {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(13),
-          borderSide: const BorderSide(
-            color: Color(0xFFE28C80),
-            width: 1.3,
-          ),
+          borderSide: const BorderSide(color: Color(0xFFE28C80), width: 1.3),
         ),
       ),
       validator: validator,
@@ -550,11 +523,7 @@ class _BackdropPainter extends CustomPainter {
 
     for (var i = 0; i < 7; i++) {
       final y = size.height * 0.74 + i * 15;
-      canvas.drawLine(
-        Offset(-20, y),
-        Offset(size.width * 0.32, y - 50),
-        paint,
-      );
+      canvas.drawLine(Offset(-20, y), Offset(size.width * 0.32, y - 50), paint);
     }
   }
 

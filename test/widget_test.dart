@@ -5,15 +5,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:laporan_sdirbingakkum/app/app.dart';
 import 'package:laporan_sdirbingakkum/features/auth/presentation/sign_in_page.dart';
 
-Future<void> _pumpSignInAtSize(
-  WidgetTester tester,
-  Size size,
-) async {
+Future<void> _pumpSignInAtSize(WidgetTester tester, Size size) async {
   await tester.binding.setSurfaceSize(size);
   await tester.pumpWidget(
-    const ProviderScope(
-      child: MaterialApp(home: SignInPage()),
-    ),
+    const ProviderScope(child: MaterialApp(home: SignInPage())),
   );
   await tester.pumpAndSettle();
 }
