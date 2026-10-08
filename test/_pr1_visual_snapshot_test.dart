@@ -140,7 +140,7 @@ StatisticsViewData _data(StatisticsModule module) {
 Future<void> _saveSnapshot(WidgetTester tester, String name) async {
   await expectLater(
     find.byKey(const ValueKey('pr1-visual-root')),
-    matchesGoldenFile('test/goldens/pr1_' + name + '.png'),
+    matchesGoldenFile('goldens/pr1_' + name + '.png'),
   );
 }
 
