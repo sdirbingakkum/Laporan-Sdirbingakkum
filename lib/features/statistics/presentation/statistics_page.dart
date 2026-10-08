@@ -43,10 +43,7 @@ class StatisticsViewData {
 }
 
 class StatisticsColumnData {
-  const StatisticsColumnData({
-    required this.label,
-    required this.cards,
-  });
+  const StatisticsColumnData({required this.label, required this.cards});
 
   final String label;
   final List<StatisticsCardData> cards;
@@ -72,14 +69,11 @@ class StatisticsRankData {
 }
 
 class StatisticsPage extends StatefulWidget {
-  const StatisticsPage({
-    required this.module,
-    this.dataLoader,
-    super.key,
-  });
+  const StatisticsPage({required this.module, this.dataLoader, super.key});
 
   final StatisticsModule module;
-  final Future<StatisticsViewData> Function(StatisticsModule module)? dataLoader;
+  final Future<StatisticsViewData> Function(StatisticsModule module)?
+  dataLoader;
 
   @override
   State<StatisticsPage> createState() => _StatisticsPageState();
@@ -195,9 +189,7 @@ class _SupabaseReportRepository {
 
   static Future<_ReportPeriodIndex> _periods(SupabaseClient client) async {
     final rows = List<Map<String, dynamic>>.from(
-      await client.from('report_periods').select(
-            'id,report_year,report_month',
-          ),
+      await client.from('report_periods').select('id,report_year,report_month'),
     );
     return _ReportPeriodIndex({
       for (final row in rows) row['id'].toString(): row,
@@ -267,9 +259,9 @@ class _SupabaseReportRepository {
     final periods = await _periods(client);
     final pomdams = await _pomdams(client);
     final rows = List<Map<String, dynamic>>.from(
-      await client.from('violation_records').select(
-            'period_id,pomdam_id,violation_id,value',
-          ),
+      await client
+          .from('violation_records')
+          .select('period_id,pomdam_id,violation_id,value'),
     );
     final violations = List<Map<String, dynamic>>.from(
       await client.from('violations').select('id,category'),
@@ -286,7 +278,8 @@ class _SupabaseReportRepository {
         if (period == null || period['report_year'] != 2026) continue;
         if (month != null && period['report_month'] != month) continue;
         if (category != null &&
-            categoryByViolationId[row['violation_id']?.toString()] != category) {
+            categoryByViolationId[row['violation_id']?.toString()] !=
+                category) {
           continue;
         }
         total += _toInt(row['value']);
@@ -335,9 +328,9 @@ class _SupabaseReportRepository {
     final periods = await _periods(client);
     final pomdams = await _pomdams(client);
     final rows = List<Map<String, dynamic>>.from(
-      await client.from('laka_accident_records').select(
-            'period_id,pomdam_id,accident_type_id,value',
-          ),
+      await client
+          .from('laka_accident_records')
+          .select('period_id,pomdam_id,accident_type_id,value'),
     );
     final types = List<Map<String, dynamic>>.from(
       await client.from('accident_types').select('id,code'),
@@ -422,9 +415,9 @@ class _SupabaseReportRepository {
     final periods = await _periods(client);
     final pomdams = await _pomdams(client);
     final rows = List<Map<String, dynamic>>.from(
-      await client.from('sim_records').select(
-            'period_id,pomdam_id,sim_type_id,value',
-          ),
+      await client
+          .from('sim_records')
+          .select('period_id,pomdam_id,sim_type_id,value'),
     );
     final types = List<Map<String, dynamic>>.from(
       await client.from('sim_types').select('id,code'),
@@ -476,10 +469,7 @@ class _SupabaseReportRepository {
         color: const Color(0xFF6366F1),
       ),
     ];
-    final total = cards.fold<int>(
-      0,
-      (sum, card) => sum + _toInt(card.value),
-    );
+    final total = cards.fold<int>(0, (sum, card) => sum + _toInt(card.value));
 
     return StatisticsViewData(
       columns: [
@@ -557,14 +547,14 @@ class _SupabaseReportRepository {
     final periods = await _periods(client);
     final pomdams = await _pomdams(client);
     final personnelRows = List<Map<String, dynamic>>.from(
-      await client.from('provos_personnel_records').select(
-            'period_id,pomdam_id,value',
-          ),
+      await client
+          .from('provos_personnel_records')
+          .select('period_id,pomdam_id,value'),
     );
     final educationRows = List<Map<String, dynamic>>.from(
-      await client.from('provos_education_records').select(
-            'period_id,pomdam_id,education_status_id,value',
-          ),
+      await client
+          .from('provos_education_records')
+          .select('period_id,pomdam_id,education_status_id,value'),
     );
     final statuses = List<Map<String, dynamic>>.from(
       await client.from('education_statuses').select('id,code'),
