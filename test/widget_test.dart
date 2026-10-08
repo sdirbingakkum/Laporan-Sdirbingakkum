@@ -50,6 +50,202 @@ String _routeFor(StatisticsModule module) {
   }
 }
 
+
+Future<StatisticsViewData> _testStatisticsData(StatisticsModule module) async {
+  switch (module) {
+    case StatisticsModule.pelanggaran:
+      return StatisticsViewData(
+        columns: [
+          StatisticsColumnData(
+            label: '2026',
+            cards: const [
+              StatisticsCardData(
+                label: 'TATIB',
+                value: '0',
+                color: Color(0xFFF59E0B),
+              ),
+              StatisticsCardData(
+                label: 'LALIN',
+                value: '0',
+                color: Color(0xFF38BDF8),
+              ),
+            ],
+          ),
+          StatisticsColumnData(
+            label: 'SEPT',
+            cards: const [
+              StatisticsCardData(
+                label: 'TATIB',
+                value: '0',
+                color: Color(0xFFF59E0B),
+              ),
+              StatisticsCardData(
+                label: 'LALIN',
+                value: '0',
+                color: Color(0xFF38BDF8),
+              ),
+            ],
+          ),
+        ],
+        ranking: const [],
+      );
+    case StatisticsModule.lakaLalin:
+      return StatisticsViewData(
+        columns: [
+          StatisticsColumnData(
+            label: '2026',
+            cards: const [
+              StatisticsCardData(
+                label: 'JUMLAH KASUS',
+                value: '0',
+                color: Color(0xFF38BDF8),
+              ),
+              StatisticsCardData(
+                label: 'LAKA GANDA',
+                value: '0',
+                color: Color(0xFFF97316),
+              ),
+              StatisticsCardData(
+                label: 'TUNGGAL',
+                value: '0',
+                color: Color(0xFFF59E0B),
+              ),
+              StatisticsCardData(
+                label: 'TABRAK LARI',
+                value: '0',
+                color: Color(0xFFEF4444),
+              ),
+            ],
+          ),
+          StatisticsColumnData(
+            label: 'SEPT',
+            cards: const [
+              StatisticsCardData(
+                label: 'JUMLAH KASUS',
+                value: '0',
+                color: Color(0xFF38BDF8),
+              ),
+              StatisticsCardData(
+                label: 'LAKA GANDA',
+                value: '0',
+                color: Color(0xFFF97316),
+              ),
+              StatisticsCardData(
+                label: 'TUNGGAL',
+                value: '0',
+                color: Color(0xFFF59E0B),
+              ),
+              StatisticsCardData(
+                label: 'TABRAK LARI',
+                value: '0',
+                color: Color(0xFFEF4444),
+              ),
+            ],
+          ),
+        ],
+        ranking: const [],
+      );
+    case StatisticsModule.simTni:
+      const cards = [
+        StatisticsCardData(
+          label: 'A',
+          value: '0',
+          color: Color(0xFF3B82F6),
+        ),
+        StatisticsCardData(
+          label: 'BI',
+          value: '0',
+          color: Color(0xFF06B6D4),
+        ),
+        StatisticsCardData(
+          label: 'BII',
+          value: '0',
+          color: Color(0xFF10B981),
+        ),
+        StatisticsCardData(
+          label: 'BII SUS',
+          value: '0',
+          color: Color(0xFF8B5CF6),
+        ),
+        StatisticsCardData(
+          label: 'C',
+          value: '0',
+          color: Color(0xFF6366F1),
+        ),
+      ];
+      return StatisticsViewData(
+        columns: [
+          StatisticsColumnData(label: '2026', cards: cards),
+          StatisticsColumnData(label: 'JUL', cards: cards),
+        ],
+        ranking: const [],
+        totalSim: 400,
+      );
+    case StatisticsModule.k9:
+      return StatisticsViewData(
+        columns: [
+          StatisticsColumnData(
+            label: '2026',
+            cards: const [
+              StatisticsCardData(
+                label: 'NYATA',
+                value: '51',
+                color: Color(0xFF34D399),
+              ),
+              StatisticsCardData(
+                label: 'SESUAI ORGAS',
+                value: '33',
+                color: Color(0xFFD7A93C),
+              ),
+              StatisticsCardData(
+                label: 'KEKURANGAN',
+                value: '8',
+                color: Color(0xFFF59E0B),
+              ),
+              StatisticsCardData(
+                label: 'SATUAN',
+                value: '4',
+                color: Color(0xFF7DD3FC),
+              ),
+            ],
+          ),
+        ],
+        ranking: const [
+          StatisticsRankData('POMDAM V/BRW', 19),
+          StatisticsRankData('YONPOMAD PUSPOMAD', 17),
+          StatisticsRankData('POMDAM JAYA', 10),
+          StatisticsRankData('POMDAM XII/TPR', 5),
+        ],
+      );
+    case StatisticsModule.provos:
+      return StatisticsViewData(
+        columns: [
+          StatisticsColumnData(
+            label: DateTime.now().year.toString(),
+            cards: const [
+              StatisticsCardData(
+                label: 'JUMLAH',
+                value: '4833',
+                color: Color(0xFF3B82F6),
+              ),
+              StatisticsCardData(
+                label: 'SUDAH DIK/TAR',
+                value: '1304',
+                color: Color(0xFF10B981),
+              ),
+              StatisticsCardData(
+                label: 'BELUM DIK/TAR',
+                value: '3488',
+                color: Color(0xFFEF4444),
+              ),
+            ],
+          ),
+        ],
+        ranking: const [],
+      );
+  }
+}
+
 void main() {
   test('standalone build has embedded Supabase configuration fallback', () {
     final config = AppConfig.fromEnvironment();
@@ -167,7 +363,8 @@ void main() {
         for (final module in modules)
           GoRoute(
             path: _routeFor(module),
-            builder: (context, state) => StatisticsPage(module: module),
+            builder: (context, state) =>
+              StatisticsPage(module: module, dataLoader: _testStatisticsData),
           ),
       ],
     );
@@ -248,7 +445,12 @@ void main() {
   ) async {
     await _setSurfaceSize(tester, const Size(390, 844));
     await tester.pumpWidget(
-      const MaterialApp(home: StatisticsPage(module: StatisticsModule.simTni)),
+      MaterialApp(
+        home: StatisticsPage(
+          module: StatisticsModule.simTni,
+          dataLoader: _testStatisticsData,
+        ),
+      ),
     );
     await tester.pumpAndSettle();
 
@@ -263,7 +465,12 @@ void main() {
   testWidgets('PROVOS shows only the current year period', (tester) async {
     await _setSurfaceSize(tester, const Size(390, 844));
     await tester.pumpWidget(
-      const MaterialApp(home: StatisticsPage(module: StatisticsModule.provos)),
+      MaterialApp(
+        home: StatisticsPage(
+          module: StatisticsModule.provos,
+          dataLoader: _testStatisticsData,
+        ),
+      ),
     );
     await tester.pumpAndSettle();
 
@@ -277,7 +484,12 @@ void main() {
   ) async {
     await _setSurfaceSize(tester, const Size(390, 844));
     await tester.pumpWidget(
-      const MaterialApp(home: StatisticsPage(module: StatisticsModule.k9)),
+      MaterialApp(
+        home: StatisticsPage(
+          module: StatisticsModule.k9,
+          dataLoader: _testStatisticsData,
+        ),
+      ),
     );
     await tester.pumpAndSettle();
 
