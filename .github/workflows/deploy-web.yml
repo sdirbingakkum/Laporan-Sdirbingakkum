@@ -2,7 +2,9 @@ name: Flutter Web Preview
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - feat/supabase-report-data-v2
   workflow_dispatch:
 
 permissions:
