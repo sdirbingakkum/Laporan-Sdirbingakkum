@@ -22,6 +22,8 @@ jobs:
           pub-cache: true
       - name: Dependencies
         run: flutter pub get
+      - name: Prepare golden directory
+        run: mkdir -p test/goldens
       - name: Render snapshots
         run: flutter test --update-goldens test/_pr1_visual_snapshot_test.dart
       - name: Upload snapshots
