@@ -139,7 +139,7 @@ StatisticsViewData _data(StatisticsModule module) {
 
 Future<void> _saveSnapshot(WidgetTester tester, String name) async {
   await expectLater(
-    find.byType(RepaintBoundary),
+    find.byKey(const ValueKey('pr1-visual-root')),
     matchesGoldenFile('test/goldens/pr1_' + name + '.png'),
   );
 }
@@ -163,6 +163,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: RepaintBoundary(
+            key: const ValueKey('pr1-visual-root'),
             child: StatisticsPage(
               module: module,
               dataLoader: (value) async => _data(value),
