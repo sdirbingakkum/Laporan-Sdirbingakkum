@@ -676,9 +676,7 @@ class _ContentBody extends StatelessWidget {
         if (ranking.isNotEmpty)
           _AnalysisButton(
             accent: accent,
-            label: module == StatisticsModule.k9
-                ? 'ANALISIS STATISTIK'
-                : 'STATISTIK',
+            label: 'STATISTIK',
             onPressed: () => _showRankingSheet(
               context,
               module,
