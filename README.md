@@ -82,3 +82,5 @@ The release path does not require a developer machine.
 4. Keep database concerns out of presentation.
 5. Never ship Supabase service-role credentials.
 6. Do not modify Supabase schema from this application repository unless explicitly required.
+
+<!-- production-deploy: 2026-10-09 / PR #1 merged -->
