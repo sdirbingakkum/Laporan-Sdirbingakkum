@@ -491,7 +491,7 @@ void main() {
     expect(find.text('8'), findsOneWidget);
     expect(find.text('SATUAN'), findsOneWidget);
     expect(find.text('4'), findsOneWidget);
-    expect(find.text('ANALISIS STATISTIK'), findsOneWidget);
+    expect(find.text('STATISTIK'), findsOneWidget);
     expect(find.byIcon(Icons.arrow_back_rounded), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
