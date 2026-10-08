@@ -161,7 +161,9 @@ Future<StatisticsViewData> _testStatisticsData(StatisticsModule module) async {
           StatisticsColumnData(label: '2026', cards: cards),
           StatisticsColumnData(label: 'JUL', cards: cards),
         ],
-        ranking: const [],
+        ranking: const [
+          StatisticsRankData('POMDAM TEST', 0),
+        ],
         totalSim: 400,
       );
     case StatisticsModule.k9:
