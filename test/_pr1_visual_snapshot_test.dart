@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -141,13 +138,9 @@ StatisticsViewData _data(StatisticsModule module) {
 }
 
 Future<void> _saveSnapshot(WidgetTester tester, String name) async {
-  final boundary = tester.firstElement(find.byType(RepaintBoundary))
-      .renderObject! as RenderRepaintBoundary;
-  final image = await boundary.toImage(pixelRatio: 1.0);
-  final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-  await image.dispose();
-  File('build/pr1_visual_' + name + '.png').writeAsBytesSync(
-    bytes!.buffer.asUint8List(),
+  await expectLater(
+    find.byType(RepaintBoundary),
+    matchesGoldenFile('test/goldens/pr1_' + name + '.png'),
   );
 }
 
@@ -179,7 +172,6 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await Directory('build').create(recursive: true);
       await _saveSnapshot(tester, module.name);
     });
   }
