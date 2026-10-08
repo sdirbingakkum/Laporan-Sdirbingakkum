@@ -3,6 +3,8 @@ name: Flutter Web Preview
 on:
   push:
     branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 permissions:
@@ -42,7 +44,44 @@ jobs:
       - name: Dependencies
         run: flutter pub get
 
-      - name: Build Web
+      - name: Build PR web
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          flutter build web --release \
+            --pwa-strategy=none \
+            --base-href "/Laporan-Sdirbingakkum/pr1/" \
+            --dart-define=SUPABASE_URL=https://ybepaqmrrgsaeqnqrsrf.supabase.co \
+            --dart-define=SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY"
+          mkdir -p build/pr1
+          cp -R build/web/. build/pr1/
+          cp build/pr1/index.html build/pr1/404.html
+
+      - name: Build main web alongside PR preview
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          git fetch origin main
+          git worktree add --detach ../main-build origin/main
+          cd ../main-build
+          flutter create . --platforms=web
+          flutter pub get
+          flutter build web --release \
+            --pwa-strategy=none \
+            --base-href "/Laporan-Sdirbingakkum/" \
+            --dart-define=SUPABASE_URL=https://ybepaqmrrgsaeqnqrsrf.supabase.co \
+            --dart-define=SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY"
+          cp index.html 404.html 2>/dev/null || true
+          cd -
+          rm -rf build/site
+          mkdir -p build/site
+          cp -R ../main-build/build/web/. build/site/
+          rm -rf ../main-build
+
+      - name: Build main web
+        if: ${{ github.event_name != 'pull_request' }}
         env:
           SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
         run: |
@@ -52,13 +91,20 @@ jobs:
             --dart-define=SUPABASE_URL=https://ybepaqmrrgsaeqnqrsrf.supabase.co \
             --dart-define=SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY"
 
+      - name: Assemble PR preview under /pr1
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          cp -R build/pr1 build/site/pr1
+          cp build/site/index.html build/site/404.html
+
       - name: SPA fallback
-        run: cp build/web/index.html build/web/404.html
+        run: |
+          cp build/site/index.html build/site/404.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: build/web
+          path: build/site
 
   deploy:
     name: Deploy Browser Preview
