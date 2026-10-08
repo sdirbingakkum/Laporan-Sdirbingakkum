@@ -485,7 +485,7 @@ class _SupabaseReportRepository {
           ],
         ),
         StatisticsColumnData(
-          label: 'JUL',
+          label: 'SEPT',
           cards: [
             for (final card in cards)
               StatisticsCardData(
