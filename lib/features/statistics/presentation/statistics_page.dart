@@ -294,12 +294,12 @@ class _SupabaseReportRepository {
           cards: [
             StatisticsCardData(
               label: 'TATIB',
-              value: sum(month: 7, category: 'B').toString(),
+              value: sum(month: 9, category: 'B').toString(),
               color: const Color(0xFFF59E0B),
             ),
             StatisticsCardData(
               label: 'LALIN',
-              value: sum(month: 7, category: 'C').toString(),
+              value: sum(month: 9, category: 'C').toString(),
               color: const Color(0xFF38BDF8),
             ),
           ],
@@ -320,7 +320,7 @@ class _SupabaseReportRepository {
           ],
         ),
       ],
-      ranking: _topFive(rows, periods, pomdams, month: 7),
+      ranking: _topFive(rows, periods, pomdams, month: 9),
     );
   }
 
@@ -426,7 +426,7 @@ class _SupabaseReportRepository {
       for (final row in types) row['id'].toString(): row['code'].toString(),
     };
 
-    const month = 7;
+    const month = 9;
     int sum(String code) {
       var total = 0;
       for (final row in rows) {
