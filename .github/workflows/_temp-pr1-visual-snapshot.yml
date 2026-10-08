@@ -23,10 +23,10 @@ jobs:
       - name: Dependencies
         run: flutter pub get
       - name: Render snapshots
-        run: flutter test test/_pr1_visual_snapshot_test.dart
+        run: flutter test --update-goldens test/_pr1_visual_snapshot_test.dart
       - name: Upload snapshots
         uses: actions/upload-artifact@v4
         with:
           name: pr1-visual-snapshots
-          path: build/pr1_visual_*.png
+          path: test/goldens/pr1_*.png
           if-no-files-found: error
