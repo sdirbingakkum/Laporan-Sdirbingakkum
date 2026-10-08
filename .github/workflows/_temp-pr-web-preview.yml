@@ -28,6 +28,28 @@ jobs:
       - name: Dependencies
         run: flutter pub get
 
+      - name: Prepare visual-only route preview
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("lib/app/router.dart")
+          s = p.read_text()
+          old = """    redirect: (context, state) {
+      final session = auth.currentSession;
+      final onSignIn = state.matchedLocation == '/signin';
+
+      if (session == null) {
+        return onSignIn ? null : '/signin';
+      }
+
+      return onSignIn ? '/' : null;
+    },
+"""
+          if old not in s:
+              raise SystemExit("router redirect block not found")
+          p.write_text(s.replace(old, "    redirect: (context, state) => null,\n"))
+          PY
+
       - name: Build Web
         run: |
           flutter build web --release             --pwa-strategy=none             --base-href "/"             --dart-define=SUPABASE_URL=https://ybepaqmrrgsaeqnqrsrf.supabase.co             --dart-define=SUPABASE_PUBLISHABLE_KEY="sb_publishable_2G1L_dvjx5o99fTwcgvwYw_zDrzc0N-"
