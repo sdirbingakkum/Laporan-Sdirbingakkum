@@ -30,146 +30,72 @@ Color _moduleAccent(StatisticsModule module) {
   }
 }
 
-class StatisticsPage extends StatelessWidget {
-  const StatisticsPage({required this.module, super.key});
+class StatisticsViewData {
+  const StatisticsViewData({
+    required this.columns,
+    required this.ranking,
+    this.totalSim,
+  });
+
+  final List<StatisticsColumnData> columns;
+  final List<StatisticsRankData> ranking;
+  final int? totalSim;
+}
+
+class StatisticsColumnData {
+  const StatisticsColumnData({required this.label, required this.cards});
+
+  final String label;
+  final List<StatisticsCardData> cards;
+}
+
+class StatisticsCardData {
+  const StatisticsCardData({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final String label;
+  final String value;
+  final Color color;
+}
+
+class StatisticsRankData {
+  const StatisticsRankData(this.name, this.value);
+
+  final String name;
+  final int value;
+}
+
+class StatisticsPage extends StatefulWidget {
+  const StatisticsPage({required this.module, this.dataLoader, super.key});
 
   final StatisticsModule module;
+  final Future<StatisticsViewData> Function(StatisticsModule module)?
+  dataLoader;
 
-  List<_StatColumn> get _columns {
-    switch (module) {
-      case StatisticsModule.pelanggaran:
-        return const [
-          _StatColumn(
-            label: '2026',
-            cards: [
-              _StatCardData('TATIB', '25', Color(0xFFF59E0B)),
-              _StatCardData('LALIN', '70', Color(0xFF38BDF8)),
-            ],
-          ),
-          _StatColumn(
-            label: 'SEPT',
-            cards: [
-              _StatCardData('TATIB', '5', Color(0xFFF59E0B)),
-              _StatCardData('LALIN', '10', Color(0xFF38BDF8)),
-            ],
-          ),
-        ];
-      case StatisticsModule.lakaLalin:
-        return const [
-          _StatColumn(
-            label: '2026',
-            cards: [
-              _StatCardData('JUMLAH KASUS', '200', Color(0xFF38BDF8)),
-              _StatCardData('LAKA GANDA', '100', Color(0xFFF97316)),
-              _StatCardData('TUNGGAL', '50', Color(0xFFF59E0B)),
-              _StatCardData('TABRAK LARI', '50', Color(0xFFEF4444)),
-            ],
-          ),
-          _StatColumn(
-            label: 'SEPT',
-            cards: [
-              _StatCardData('JUMLAH KASUS', '30', Color(0xFF38BDF8)),
-              _StatCardData('LAKA GANDA', '20', Color(0xFFF97316)),
-              _StatCardData('TUNGGAL', '5', Color(0xFFF59E0B)),
-              _StatCardData('TABRAK LARI', '5', Color(0xFFEF4444)),
-            ],
-          ),
-        ];
-      case StatisticsModule.simTni:
-        return const [
-          _StatColumn(
-            label: '2026',
-            cards: [
-              _StatCardData('A', '200', Color(0xFF3B82F6)),
-              _StatCardData('BI', '100', Color(0xFF06B6D4)),
-              _StatCardData('BII', '50', Color(0xFF10B981)),
-              _StatCardData('BII SUS', '25', Color(0xFF8B5CF6)),
-              _StatCardData('C', '25', Color(0xFF6366F1)),
-            ],
-          ),
-          _StatColumn(
-            label: 'SEPT',
-            cards: [
-              _StatCardData('A', '20', Color(0xFF3B82F6)),
-              _StatCardData('BI', '10', Color(0xFF06B6D4)),
-              _StatCardData('BII', '5', Color(0xFF10B981)),
-              _StatCardData('BII SUS', '5', Color(0xFF8B5CF6)),
-              _StatCardData('C', '5', Color(0xFF6366F1)),
-            ],
-          ),
-        ];
-      case StatisticsModule.k9:
-        return const [
-          _StatColumn(
-            label: '2026',
-            cards: [
-              _StatCardData('NYATA', '51', _emerald),
-              _StatCardData('SESUAI ORGAS', '33', _gold),
-              _StatCardData('KEKURANGAN', '8', Color(0xFFF59E0B)),
-              _StatCardData('SATUAN', '4', Color(0xFF7DD3FC)),
-            ],
-          ),
-        ];
-      case StatisticsModule.provos:
-        return [
-          _StatColumn(
-            label: DateTime.now().year.toString(),
-            cards: [
-              _StatCardData('JUMLAH', '2000', Color(0xFF94A3B8)),
-              _StatCardData('SUDAH DIK/TAR', '500', Color(0xFF10B981)),
-              _StatCardData('BELUM DIK/TAR', '1500', Color(0xFFF59E0B)),
-            ],
-          ),
-        ];
-    }
+  @override
+  State<StatisticsPage> createState() => _StatisticsPageState();
+}
+
+class _StatisticsPageState extends State<StatisticsPage> {
+  late Future<StatisticsViewData> _dataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _dataFuture = (widget.dataLoader ?? _SupabaseReportRepository.load)(
+      widget.module,
+    );
   }
 
-  List<_RankData> get _ranking {
-    switch (module) {
-      case StatisticsModule.pelanggaran:
-        return const [
-          _RankData('POMDAM V/BRW', 130),
-          _RankData('POMDAM III/SLW', 85),
-          _RankData('POMDAM I/BB', 64),
-          _RankData('POMDAM JAYA', 42),
-          _RankData('POMDAM IV/DIP', 30),
-        ];
-      case StatisticsModule.lakaLalin:
-        return const [
-          _RankData('POMDAM V/BRW', 45),
-          _RankData('POMDAM JAYA', 38),
-          _RankData('POMDAM I/BB', 30),
-          _RankData('POMDAM XII/TPR', 25),
-          _RankData('POMDAM III/SLW', 18),
-        ];
-      case StatisticsModule.simTni:
-        return const [
-          _RankData('POMDAM JAYA', 450),
-          _RankData('POMDAM II/SWJ', 320),
-          _RankData('POMDAM V/BRW', 210),
-          _RankData('POMDAM I/BB', 190),
-          _RankData('POMDAM IM', 110),
-        ];
-      case StatisticsModule.k9:
-        return const [
-          _RankData('POMDAM V/BRW', 19),
-          _RankData('YONPOMAD PUSPOMAD', 17),
-          _RankData('POMDAM JAYA', 10),
-          _RankData('POMDAM XII/TPR', 5),
-        ];
-      case StatisticsModule.provos:
-        return const [
-          _RankData('POMDAM III/SLW', 624),
-          _RankData('POMDAM V/BRW', 617),
-          _RankData('POMDAM I/BB', 535),
-          _RankData('POMDAM JAYA', 511),
-          _RankData('POMDAM IV/DIP', 463),
-        ];
-    }
+  Future<void> _signOut(BuildContext context) async {
+    await Supabase.instance.client.auth.signOut();
   }
 
   String get _title {
-    switch (module) {
+    switch (widget.module) {
       case StatisticsModule.pelanggaran:
         return 'PELANGGARAN';
       case StatisticsModule.lakaLalin:
@@ -183,18 +109,10 @@ class StatisticsPage extends StatelessWidget {
     }
   }
 
-  Future<void> _signOut(BuildContext context) async {
-    await Supabase.instance.client.auth.signOut();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final columns = _columns;
-    assert(columns.isNotEmpty);
-    assert(columns.every((column) => column.cards.isNotEmpty));
-
     return Scaffold(
-      key: ValueKey('statistics-${module.name}'),
+      key: ValueKey('statistics-${widget.module.name}'),
       backgroundColor: _bg,
       appBar: AppHeader(
         title: _title,
@@ -205,27 +123,508 @@ class StatisticsPage extends StatelessWidget {
       body: AppBackground(
         child: SafeArea(
           top: false,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 760),
-                child: _ContentBody(
-                  columns: columns,
-                  module: module,
-                  ranking: _ranking,
-                  accent: _moduleAccent(module),
-                  totalSim: module == StatisticsModule.simTni
-                      ? columns.first.cards.fold<int>(
-                          0,
-                          (sum, card) => sum + (int.tryParse(card.value) ?? 0),
-                        )
-                      : null,
+          child: FutureBuilder<StatisticsViewData>(
+            future: _dataFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError || snapshot.data == null) {
+                return const _ReportDataError();
+              }
+
+              final data = snapshot.data!;
+              return SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 760),
+                    child: _ContentBody(
+                      columns: data.columns
+                          .map(
+                            (column) => _StatColumn(
+                              label: column.label,
+                              cards: column.cards
+                                  .map(
+                                    (card) => _StatCardData(
+                                      card.label,
+                                      card.value,
+                                      card.color,
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          )
+                          .toList(),
+                      module: widget.module,
+                      ranking: data.ranking
+                          .map((item) => _RankData(item.name, item.value))
+                          .toList(),
+                      accent: _moduleAccent(widget.module),
+                      totalSim: data.totalSim,
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ReportPeriodIndex {
+  const _ReportPeriodIndex(this.byId);
+
+  final Map<String, Map<String, dynamic>> byId;
+}
+
+class _SupabaseReportRepository {
+  static int _toInt(dynamic value) {
+    return value is num
+        ? value.toInt()
+        : int.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
+  static Future<_ReportPeriodIndex> _periods(SupabaseClient client) async {
+    final rows = List<Map<String, dynamic>>.from(
+      await client.from('report_periods').select('id,report_year,report_month'),
+    );
+    return _ReportPeriodIndex({
+      for (final row in rows) row['id'].toString(): row,
+    });
+  }
+
+  static Future<Map<String, String>> _pomdams(SupabaseClient client) async {
+    final rows = List<Map<String, dynamic>>.from(
+      await client.from('pomdams').select('id,code'),
+    );
+    return {
+      for (final row in rows) row['id'].toString(): row['code'].toString(),
+    };
+  }
+
+  static List<StatisticsRankData> _topFive(
+    List<Map<String, dynamic>> rows,
+    _ReportPeriodIndex periods,
+    Map<String, String> pomdams, {
+    int? month,
+  }) {
+    final totals = <String, int>{};
+
+    for (final row in rows) {
+      final period = periods.byId[row['period_id']?.toString()];
+      if (period == null || period['report_year'] != 2026) continue;
+      if (month != null && period['report_month'] != month) continue;
+
+      final code = pomdams[row['pomdam_id']?.toString()];
+      if (code == null || code.isEmpty) continue;
+
+      totals[code] = (totals[code] ?? 0) + _toInt(row['value']);
+    }
+
+    final ranked = totals.entries.toList()
+      ..sort((a, b) {
+        final result = b.value.compareTo(a.value);
+        return result != 0 ? result : a.key.compareTo(b.key);
+      });
+
+    return [
+      for (final entry in ranked.take(5))
+        StatisticsRankData(entry.key, entry.value),
+    ];
+  }
+
+  static Future<StatisticsViewData> load(StatisticsModule module) async {
+    final client = Supabase.instance.client;
+
+    switch (module) {
+      case StatisticsModule.pelanggaran:
+        return _loadPelanggaran(client);
+      case StatisticsModule.lakaLalin:
+        return _loadLaka(client);
+      case StatisticsModule.simTni:
+        return _loadSim(client);
+      case StatisticsModule.k9:
+        return _loadK9();
+      case StatisticsModule.provos:
+        return _loadProvos(client);
+    }
+  }
+
+  static Future<StatisticsViewData> _loadPelanggaran(
+    SupabaseClient client,
+  ) async {
+    final periods = await _periods(client);
+    final pomdams = await _pomdams(client);
+    final rows = List<Map<String, dynamic>>.from(
+      await client
+          .from('violation_records')
+          .select('period_id,pomdam_id,violation_id,value'),
+    );
+    final violations = List<Map<String, dynamic>>.from(
+      await client.from('violations').select('id,category'),
+    );
+    final categoryByViolationId = <String, String>{
+      for (final row in violations)
+        row['id'].toString(): row['category']?.toString().toUpperCase() ?? '',
+    };
+
+    int sum({int? month, String? category}) {
+      var total = 0;
+      for (final row in rows) {
+        final period = periods.byId[row['period_id']?.toString()];
+        if (period == null || period['report_year'] != 2026) continue;
+        if (month != null && period['report_month'] != month) continue;
+        if (category != null &&
+            categoryByViolationId[row['violation_id']?.toString()] !=
+                category) {
+          continue;
+        }
+        total += _toInt(row['value']);
+      }
+      return total;
+    }
+
+    return StatisticsViewData(
+      columns: [
+        StatisticsColumnData(
+          label: '2026',
+          cards: [
+            StatisticsCardData(
+              label: 'TATIB',
+              value: sum(month: 9, category: 'B').toString(),
+              color: const Color(0xFFF59E0B),
+            ),
+            StatisticsCardData(
+              label: 'LALIN',
+              value: sum(month: 9, category: 'C').toString(),
+              color: const Color(0xFF38BDF8),
+            ),
+          ],
+        ),
+        StatisticsColumnData(
+          label: 'SEPT',
+          cards: [
+            StatisticsCardData(
+              label: 'TATIB',
+              value: sum(month: 9, category: 'B').toString(),
+              color: const Color(0xFFF59E0B),
+            ),
+            StatisticsCardData(
+              label: 'LALIN',
+              value: sum(month: 9, category: 'C').toString(),
+              color: const Color(0xFF38BDF8),
+            ),
+          ],
+        ),
+      ],
+      ranking: _topFive(rows, periods, pomdams, month: 9),
+    );
+  }
+
+  static Future<StatisticsViewData> _loadLaka(SupabaseClient client) async {
+    final periods = await _periods(client);
+    final pomdams = await _pomdams(client);
+    final rows = List<Map<String, dynamic>>.from(
+      await client
+          .from('laka_accident_records')
+          .select('period_id,pomdam_id,accident_type_id,value'),
+    );
+    final types = List<Map<String, dynamic>>.from(
+      await client.from('accident_types').select('id,code'),
+    );
+    final typeById = <String, String>{
+      for (final row in types) row['id'].toString(): row['code'].toString(),
+    };
+
+    int sum({int? month, String? type}) {
+      var total = 0;
+      for (final row in rows) {
+        final period = periods.byId[row['period_id']?.toString()];
+        if (period == null || period['report_year'] != 2026) continue;
+        if (month != null && period['report_month'] != month) continue;
+        if (type != null &&
+            typeById[row['accident_type_id']?.toString()] != type) {
+          continue;
+        }
+        total += _toInt(row['value']);
+      }
+      return total;
+    }
+
+    return StatisticsViewData(
+      columns: [
+        StatisticsColumnData(
+          label: '2026',
+          cards: [
+            StatisticsCardData(
+              label: 'JUMLAH KASUS',
+              value: sum().toString(),
+              color: const Color(0xFF38BDF8),
+            ),
+            StatisticsCardData(
+              label: 'LAKA GANDA',
+              value: sum(type: 'GANDA').toString(),
+              color: const Color(0xFFF97316),
+            ),
+            StatisticsCardData(
+              label: 'TUNGGAL',
+              value: sum(type: 'TUNGGAL').toString(),
+              color: const Color(0xFFF59E0B),
+            ),
+            StatisticsCardData(
+              label: 'TABRAK LARI',
+              value: sum(type: 'TABRAK_LARI').toString(),
+              color: const Color(0xFFEF4444),
+            ),
+          ],
+        ),
+        StatisticsColumnData(
+          label: 'SEPT',
+          cards: [
+            StatisticsCardData(
+              label: 'JUMLAH KASUS',
+              value: sum(month: 9).toString(),
+              color: const Color(0xFF38BDF8),
+            ),
+            StatisticsCardData(
+              label: 'LAKA GANDA',
+              value: sum(month: 9, type: 'GANDA').toString(),
+              color: const Color(0xFFF97316),
+            ),
+            StatisticsCardData(
+              label: 'TUNGGAL',
+              value: sum(month: 9, type: 'TUNGGAL').toString(),
+              color: const Color(0xFFF59E0B),
+            ),
+            StatisticsCardData(
+              label: 'TABRAK LARI',
+              value: sum(month: 9, type: 'TABRAK_LARI').toString(),
+              color: const Color(0xFFEF4444),
+            ),
+          ],
+        ),
+      ],
+      ranking: _topFive(rows, periods, pomdams, month: 9),
+    );
+  }
+
+  static Future<StatisticsViewData> _loadSim(SupabaseClient client) async {
+    final periods = await _periods(client);
+    final pomdams = await _pomdams(client);
+    final rows = List<Map<String, dynamic>>.from(
+      await client
+          .from('sim_records')
+          .select('period_id,pomdam_id,sim_type_id,value'),
+    );
+    final types = List<Map<String, dynamic>>.from(
+      await client.from('sim_types').select('id,code'),
+    );
+    final typeById = <String, String>{
+      for (final row in types) row['id'].toString(): row['code'].toString(),
+    };
+
+    const month = 9;
+    int sum(String code) {
+      var total = 0;
+      for (final row in rows) {
+        final period = periods.byId[row['period_id']?.toString()];
+        if (period == null ||
+            period['report_year'] != 2026 ||
+            period['report_month'] != month) {
+          continue;
+        }
+        if (typeById[row['sim_type_id']?.toString()] != code) continue;
+        total += _toInt(row['value']);
+      }
+      return total;
+    }
+
+    final cards = [
+      StatisticsCardData(
+        label: 'A',
+        value: sum('A').toString(),
+        color: const Color(0xFF3B82F6),
+      ),
+      StatisticsCardData(
+        label: 'BI',
+        value: sum('BI').toString(),
+        color: const Color(0xFF06B6D4),
+      ),
+      StatisticsCardData(
+        label: 'BII',
+        value: sum('BII').toString(),
+        color: const Color(0xFF10B981),
+      ),
+      StatisticsCardData(
+        label: 'BII SUS',
+        value: sum('BII_KHUSUS').toString(),
+        color: const Color(0xFF8B5CF6),
+      ),
+      StatisticsCardData(
+        label: 'C',
+        value: sum('C').toString(),
+        color: const Color(0xFF6366F1),
+      ),
+    ];
+    final total = cards.fold<int>(0, (sum, card) => sum + _toInt(card.value));
+
+    return StatisticsViewData(
+      columns: [
+        StatisticsColumnData(
+          label: '2026',
+          cards: [
+            for (final card in cards)
+              StatisticsCardData(
+                label: card.label,
+                value: card.value,
+                color: card.color,
+              ),
+          ],
+        ),
+        StatisticsColumnData(
+          label: 'SEPTEMBER 2026',
+          cards: [
+            for (final card in cards)
+              StatisticsCardData(
+                label: card.label,
+                value: card.value,
+                color: card.color,
+              ),
+          ],
+        ),
+      ],
+      ranking: _topFive(rows, periods, pomdams, month: month),
+      totalSim: total,
+    );
+  }
+
+  static Future<StatisticsViewData> _loadK9() async {
+    const units = _k9Units;
+    final cards = [
+      StatisticsCardData(
+        label: 'NYATA',
+        value: units.fold<int>(0, (sum, unit) => sum + unit.actual).toString(),
+        color: _emerald,
+      ),
+      StatisticsCardData(
+        label: 'SESUAI ORGAS',
+        value: units
+            .where((unit) => unit.org != null)
+            .fold<int>(0, (sum, unit) => sum + unit.org!)
+            .toString(),
+        color: _gold,
+      ),
+      StatisticsCardData(
+        label: 'KEKURANGAN',
+        value: units
+            .where((unit) => unit.shortage != null)
+            .fold<int>(0, (sum, unit) => sum + unit.shortage!)
+            .toString(),
+        color: const Color(0xFFF59E0B),
+      ),
+      StatisticsCardData(
+        label: 'SATUAN',
+        value: units.length.toString(),
+        color: const Color(0xFF7DD3FC),
+      ),
+    ];
+
+    return StatisticsViewData(
+      columns: [StatisticsColumnData(label: '2026', cards: cards)],
+      ranking: const [
+        StatisticsRankData('POMDAM V/BRW', 19),
+        StatisticsRankData('YONPOMAD PUSPOMAD', 17),
+        StatisticsRankData('POMDAM JAYA', 10),
+        StatisticsRankData('POMDAM XII/TPR', 5),
+      ],
+    );
+  }
+
+  static Future<StatisticsViewData> _loadProvos(SupabaseClient client) async {
+    final periods = await _periods(client);
+    final pomdams = await _pomdams(client);
+    final personnelRows = List<Map<String, dynamic>>.from(
+      await client
+          .from('provos_personnel_records')
+          .select('period_id,pomdam_id,value'),
+    );
+    final educationRows = List<Map<String, dynamic>>.from(
+      await client
+          .from('provos_education_records')
+          .select('period_id,pomdam_id,education_status_id,value'),
+    );
+    final statuses = List<Map<String, dynamic>>.from(
+      await client.from('education_statuses').select('id,code'),
+    );
+    final statusById = <String, String>{
+      for (final row in statuses)
+        row['id'].toString(): row['code'].toString().toUpperCase(),
+    };
+
+    int personnelTotal() {
+      var total = 0;
+      for (final row in personnelRows) {
+        final period = periods.byId[row['period_id']?.toString()];
+        if (period != null && period['report_year'] == 2026) {
+          total += _toInt(row['value']);
+        }
+      }
+      return total;
+    }
+
+    int educationTotal(String status) {
+      var total = 0;
+      for (final row in educationRows) {
+        final period = periods.byId[row['period_id']?.toString()];
+        if (period == null || period['report_year'] != 2026) continue;
+        if (statusById[row['education_status_id']?.toString()] != status) {
+          continue;
+        }
+        total += _toInt(row['value']);
+      }
+      return total;
+    }
+
+    return StatisticsViewData(
+      columns: [
+        StatisticsColumnData(
+          label: '2026',
+          cards: [
+            StatisticsCardData(
+              label: 'JUMLAH',
+              value: personnelTotal().toString(),
+              color: const Color(0xFF94A3B8),
+            ),
+            StatisticsCardData(
+              label: 'SUDAH DIK/TAR',
+              value: educationTotal('SUDAH').toString(),
+              color: const Color(0xFF10B981),
+            ),
+            StatisticsCardData(
+              label: 'BELUM DIK/TAR',
+              value: educationTotal('BELUM').toString(),
+              color: const Color(0xFFF59E0B),
+            ),
+          ],
+        ),
+      ],
+      ranking: _topFive(personnelRows, periods, pomdams),
+    );
+  }
+}
+
+class _ReportDataError extends StatelessWidget {
+  const _ReportDataError();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text(
+        'DATA LAPORAN TIDAK DAPAT DIMUAT.',
+        style: TextStyle(color: _muted),
       ),
     );
   }
@@ -277,9 +676,7 @@ class _ContentBody extends StatelessWidget {
         if (ranking.isNotEmpty)
           _AnalysisButton(
             accent: accent,
-            label: module == StatisticsModule.k9
-                ? 'ANALISIS STATISTIK'
-                : 'STATISTIK',
+            label: 'STATISTIK',
             onPressed: () => _showRankingSheet(
               context,
               module,
@@ -742,8 +1139,6 @@ class _GlassStatCard extends StatelessWidget {
               ],
               stops: const [0.0, 0.34, 1.0],
             ),
-            // The accent remains the actual left edge of the card. It is not
-            // a floating/translated overlay, so it cannot drift from position.
             border: Border(
               top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
               right: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
