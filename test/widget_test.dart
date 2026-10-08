@@ -50,7 +50,6 @@ String _routeFor(StatisticsModule module) {
   }
 }
 
-
 Future<StatisticsViewData> _testStatisticsData(StatisticsModule module) async {
   switch (module) {
     case StatisticsModule.pelanggaran:
@@ -147,31 +146,15 @@ Future<StatisticsViewData> _testStatisticsData(StatisticsModule module) async {
       );
     case StatisticsModule.simTni:
       const cards = [
-        StatisticsCardData(
-          label: 'A',
-          value: '0',
-          color: Color(0xFF3B82F6),
-        ),
-        StatisticsCardData(
-          label: 'BI',
-          value: '0',
-          color: Color(0xFF06B6D4),
-        ),
-        StatisticsCardData(
-          label: 'BII',
-          value: '0',
-          color: Color(0xFF10B981),
-        ),
+        StatisticsCardData(label: 'A', value: '0', color: Color(0xFF3B82F6)),
+        StatisticsCardData(label: 'BI', value: '0', color: Color(0xFF06B6D4)),
+        StatisticsCardData(label: 'BII', value: '0', color: Color(0xFF10B981)),
         StatisticsCardData(
           label: 'BII SUS',
           value: '0',
           color: Color(0xFF8B5CF6),
         ),
-        StatisticsCardData(
-          label: 'C',
-          value: '0',
-          color: Color(0xFF6366F1),
-        ),
+        StatisticsCardData(label: 'C', value: '0', color: Color(0xFF6366F1)),
       ];
       return StatisticsViewData(
         columns: [
@@ -364,7 +347,7 @@ void main() {
           GoRoute(
             path: _routeFor(module),
             builder: (context, state) =>
-              StatisticsPage(module: module, dataLoader: _testStatisticsData),
+                StatisticsPage(module: module, dataLoader: _testStatisticsData),
           ),
       ],
     );
