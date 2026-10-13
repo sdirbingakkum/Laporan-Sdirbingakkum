@@ -63,9 +63,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     });
 
     try {
-      await ref
-          .read(authRepositoryProvider)
-          .signIn(
+      await ref.read(authRepositoryProvider).signIn(
             username: _usernameController.text.trim(),
             password: _passwordController.text,
           );
@@ -129,14 +127,13 @@ class _SignInPageState extends ConsumerState<SignInPage> {
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final horizontalPadding = constraints.maxWidth >= 520
-                  ? 32.0
-                  : 16.0;
+              final horizontalPadding =
+                  constraints.maxWidth >= 520 ? 32.0 : 16.0;
               final contentWidth =
                   (constraints.maxWidth - horizontalPadding * 2).clamp(
-                    0.0,
-                    460.0,
-                  );
+                0.0,
+                460.0,
+              );
 
               return Center(
                 child: FittedBox(
@@ -188,15 +185,20 @@ class _SignInContentState extends ConsumerState<_SignInContent> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: _gold.withValues(alpha: 0.6),
-                  width: 1.2,
+                  color: _goldLight.withValues(alpha: 0.75),
+                  width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: _gold.withValues(alpha: 0.22),
-                    blurRadius: 34,
-                    spreadRadius: 1,
+                    color: _gold.withValues(alpha: 0.30),
+                    blurRadius: 36,
+                    spreadRadius: 2,
                     offset: const Offset(0, 14),
+                  ),
+                  const BoxShadow(
+                    color: Colors.black87,
+                    blurRadius: 26,
+                    offset: Offset(0, 12),
                   ),
                 ],
               ),
@@ -219,6 +221,13 @@ class _SignInContentState extends ConsumerState<_SignInContent> {
               fontSize: 30,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
+              shadows: [
+                Shadow(
+                  color: _gold.withValues(alpha: 0.35),
+                  blurRadius: 16,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 4),
@@ -343,42 +352,97 @@ class _SignInCard extends StatelessWidget {
               const SizedBox(height: 17),
               SizedBox(
                 height: 52,
-                child: FilledButton(
-                  onPressed: parent._isLoading ? null : parent._signIn,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: _goldLight,
-                    foregroundColor: const Color(0xFF10140F),
-                    disabledBackgroundColor: _goldDark.withValues(alpha: 0.58),
-                    disabledForegroundColor: Colors.black54,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 180),
-                    child: parent._isLoading
-                        ? const SizedBox(
-                            key: ValueKey('loading'),
-                            width: 21,
-                            height: 21,
-                            child: CircularProgressIndicator(strokeWidth: 2.4),
-                          )
-                        : const Row(
-                            key: ValueKey('label'),
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'MASUK',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 1.6,
-                                ),
-                              ),
-                              SizedBox(width: 8),
-                              Icon(Icons.arrow_forward_rounded, size: 20),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
+                    gradient: parent._isLoading
+                        ? LinearGradient(
+                            colors: [
+                              _goldDark.withValues(alpha: 0.58),
+                              _goldDark.withValues(alpha: 0.45),
                             ],
+                          )
+                        : const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Color(0xFFFFF1BD),
+                              Color(0xFFF3CE5E),
+                              Color(0xFFD6A02B),
+                              Color(0xFFA67417),
+                            ],
+                            stops: [0.0, 0.32, 0.74, 1.0],
                           ),
+                    border: Border.all(
+                      color: const Color(0xFFFFFAEB).withValues(alpha: 0.55),
+                      width: 1.0,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: _gold.withValues(alpha: 0.32),
+                        blurRadius: 22,
+                        offset: const Offset(0, 6),
+                      ),
+                      const BoxShadow(
+                        color: Colors.black54,
+                        blurRadius: 14,
+                        offset: Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: FilledButton(
+                    onPressed: parent._isLoading ? null : parent._signIn,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      foregroundColor: const Color(0xFF1B1202),
+                      disabledBackgroundColor: Colors.transparent,
+                      disabledForegroundColor: Colors.black54,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 180),
+                      child: parent._isLoading
+                          ? const SizedBox(
+                              key: ValueKey('loading'),
+                              width: 21,
+                              height: 21,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.4,
+                                color: Color(0xFF1B1202),
+                              ),
+                            )
+                          : const Row(
+                              key: ValueKey('label'),
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'MASUK',
+                                  style: TextStyle(
+                                    color: Color(0xFF1B1202),
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 1.8,
+                                    shadows: [
+                                      Shadow(
+                                        color: Color(0x66FFF7DB),
+                                        offset: Offset(0, 1),
+                                        blurRadius: 0,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                Icon(
+                                  Icons.arrow_forward_rounded,
+                                  size: 20,
+                                  color: Color(0xFF1B1202),
+                                ),
+                              ],
+                            ),
+                    ),
                   ),
                 ),
               ),
@@ -452,7 +516,7 @@ class _DarkField extends StatelessWidget {
           fontSize: dense ? 12 : 13,
         ),
         filled: true,
-        fillColor: _surfaceSoft,
+        fillColor: const Color(0xFF071F17),
         isDense: dense,
         contentPadding: EdgeInsets.symmetric(
           horizontal: 14,
@@ -460,11 +524,11 @@ class _DarkField extends StatelessWidget {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(13),
-          borderSide: const BorderSide(color: _line),
+          borderSide: BorderSide(color: _gold.withValues(alpha: 0.24)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(13),
-          borderSide: const BorderSide(color: _goldLight, width: 1.3),
+          borderSide: const BorderSide(color: _goldLight, width: 1.4),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(13),

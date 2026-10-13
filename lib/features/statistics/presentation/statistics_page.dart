@@ -73,7 +73,7 @@ class StatisticsPage extends StatefulWidget {
 
   final StatisticsModule module;
   final Future<StatisticsViewData> Function(StatisticsModule module)?
-  dataLoader;
+      dataLoader;
 
   @override
   State<StatisticsPage> createState() => _StatisticsPageState();
@@ -770,6 +770,13 @@ class _TotalSimCard extends StatelessWidget {
               fontSize: 34,
               fontWeight: FontWeight.w900,
               letterSpacing: -1.0,
+              shadows: [
+                Shadow(
+                  color: accent.withValues(alpha: 0.45),
+                  blurRadius: 16,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
           ),
         ],
@@ -1034,15 +1041,34 @@ class _AnalysisButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(6.4),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            accent.withValues(alpha: 0.12),
+            Colors.white.withValues(alpha: 0.025),
+            accent.withValues(alpha: 0.06),
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: accent.withValues(alpha: 0.10),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          backgroundColor: Colors.white.withValues(alpha: 0.03),
+          backgroundColor: Colors.transparent,
           foregroundColor: accent,
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-          side: BorderSide(color: accent.withValues(alpha: 0.32)),
+          side: BorderSide(color: accent.withValues(alpha: 0.38)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6.4),
           ),
@@ -1063,7 +1089,7 @@ class _AnalysisButton extends StatelessWidget {
             Icon(
               Icons.chevron_right_rounded,
               size: 18,
-              color: accent.withValues(alpha: 0.52),
+              color: accent.withValues(alpha: 0.65),
             ),
           ],
         ),
@@ -1178,16 +1204,21 @@ class _GlassStatCard extends StatelessWidget {
               stops: const [0.0, 0.34, 1.0],
             ),
             border: Border(
-              top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+              top: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
               right: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
-              bottom: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
-              left: BorderSide(color: lineAccent, width: 3),
+              bottom: BorderSide(color: Colors.white.withValues(alpha: 0.06)),
+              left: BorderSide(color: lineAccent, width: 3.2),
             ),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
-                color: Colors.black12,
-                blurRadius: 30,
-                offset: Offset(0, 4),
+                color: lineAccent.withValues(alpha: 0.07),
+                blurRadius: 22,
+                offset: const Offset(-2, 4),
+              ),
+              const BoxShadow(
+                color: Colors.black26,
+                blurRadius: 26,
+                offset: Offset(0, 6),
               ),
             ],
           ),
@@ -1239,6 +1270,13 @@ class _GlassStatCard extends StatelessWidget {
                       fontWeight: FontWeight.w900,
                       letterSpacing: -0.6,
                       height: 1.0,
+                      shadows: [
+                        Shadow(
+                          color: cardAccent.withValues(alpha: 0.38),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                   ),
                 ],

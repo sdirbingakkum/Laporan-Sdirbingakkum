@@ -92,6 +92,13 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                     fontSize: compact ? 17 : 19,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.7,
+                    shadows: [
+                      Shadow(
+                        color: _gold.withValues(alpha: 0.35),
+                        blurRadius: 10,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -116,6 +123,11 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
           tooltip: 'MENU AKUN',
           icon: const Icon(Icons.more_vert_rounded),
           color: _surface,
+          elevation: 12,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: _gold.withValues(alpha: 0.28)),
+          ),
           onSelected: (value) {
             if (value == 'signout') {
               onSignOut();

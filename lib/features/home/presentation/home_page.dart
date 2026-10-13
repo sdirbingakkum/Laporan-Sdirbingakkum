@@ -97,27 +97,47 @@ class _HomePageState extends ConsumerState<HomePage> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          backgroundColor: _surface,
+          backgroundColor: const Color(0xFF071F17),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: _gold.withValues(alpha: 0.35)),
+          ),
           title: const Text(
             'KELUAR',
-            style: TextStyle(color: _text, fontWeight: FontWeight.w800),
+            style: TextStyle(
+              color: _goldLight,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.2,
+            ),
           ),
           content: const Text(
             'SESI ANDA AKAN DIAKHIRI DAN ANDA AKAN KEMBALI KE HALAMAN SIGN IN.',
-            style: TextStyle(color: _muted),
+            style: TextStyle(color: _muted, height: 1.4),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
+              style: TextButton.styleFrom(
+                foregroundColor: _muted,
+              ),
               child: const Text('BATAL'),
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
               style: FilledButton.styleFrom(
                 backgroundColor: _goldLight,
-                foregroundColor: const Color(0xFF10140F),
+                foregroundColor: const Color(0xFF1B1202),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-              child: const Text('KELUAR'),
+              child: const Text(
+                'KELUAR',
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.0,
+                ),
+              ),
             ),
           ],
         );
@@ -226,9 +246,8 @@ class _PieMenu extends StatelessWidget {
         final maxWidth = constraints.hasBoundedWidth
             ? constraints.maxWidth
             : double.infinity;
-        final maxHeight = constraints.hasBoundedHeight
-            ? constraints.maxHeight
-            : maxWidth;
+        final maxHeight =
+            constraints.hasBoundedHeight ? constraints.maxHeight : maxWidth;
         final diameter = math.min(maxWidth, maxHeight);
 
         if (!diameter.isFinite || diameter <= 0) {
@@ -315,12 +334,17 @@ class _PieMenuCenter extends StatelessWidget {
                 stops: const [0.0, 0.45, 1.0],
               ),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.20),
-                width: 1.0,
+                color: const Color(0xFFE5B842).withValues(alpha: 0.38),
+                width: 1.2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.60),
+                  color: _gold.withValues(alpha: 0.16),
+                  blurRadius: 28,
+                  spreadRadius: 1,
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.70),
                   blurRadius: 24,
                   offset: const Offset(0, 8),
                 ),
@@ -430,9 +454,8 @@ class _PieMenuCenter extends StatelessWidget {
                                       centerKey,
                                     ),
                                     fontWeight: FontWeight.w900,
-                                    letterSpacing: centerKey.length > 18
-                                        ? 0.2
-                                        : 0.6,
+                                    letterSpacing:
+                                        centerKey.length > 18 ? 0.2 : 0.6,
                                     height: 1.05,
                                     shadows: [
                                       Shadow(
@@ -468,9 +491,8 @@ class _PieMenuCenter extends StatelessWidget {
                                       centerKey,
                                     ),
                                     fontWeight: FontWeight.w900,
-                                    letterSpacing: centerKey.length > 18
-                                        ? 0.2
-                                        : 0.6,
+                                    letterSpacing:
+                                        centerKey.length > 18 ? 0.2 : 0.6,
                                     height: 1.05,
                                   ),
                                 ),
@@ -609,11 +631,10 @@ class _PieMenuLabel extends StatelessWidget {
                     // Polished 3D liquid gold face with specular gleam
                     ShaderMask(
                       blendMode: BlendMode.srcIn,
-                      shaderCallback: (bounds) =>
-                          (selected
-                                  ? _goldGradientSelected
-                                  : _goldGradientUnselected)
-                              .createShader(bounds),
+                      shaderCallback: (bounds) => (selected
+                              ? _goldGradientSelected
+                              : _goldGradientUnselected)
+                          .createShader(bounds),
                       child: Icon(
                         item.icon,
                         color: Colors.white,
@@ -673,11 +694,10 @@ class _PieMenuLabel extends StatelessWidget {
                   // Polished 3D liquid gold lettering
                   ShaderMask(
                     blendMode: BlendMode.srcIn,
-                    shaderCallback: (bounds) =>
-                        (selected
-                                ? _goldGradientSelected
-                                : _goldGradientUnselected)
-                            .createShader(bounds),
+                    shaderCallback: (bounds) => (selected
+                            ? _goldGradientSelected
+                            : _goldGradientUnselected)
+                        .createShader(bounds),
                     child: Text(
                       item.label,
                       textAlign: TextAlign.center,
