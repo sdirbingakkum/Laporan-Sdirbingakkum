@@ -63,9 +63,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     });
 
     try {
-      await ref
-          .read(authRepositoryProvider)
-          .signIn(
+      await ref.read(authRepositoryProvider).signIn(
             username: _usernameController.text.trim(),
             password: _passwordController.text,
           );
@@ -129,14 +127,13 @@ class _SignInPageState extends ConsumerState<SignInPage> {
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final horizontalPadding = constraints.maxWidth >= 520
-                  ? 32.0
-                  : 16.0;
+              final horizontalPadding =
+                  constraints.maxWidth >= 520 ? 32.0 : 16.0;
               final contentWidth =
                   (constraints.maxWidth - horizontalPadding * 2).clamp(
-                    0.0,
-                    460.0,
-                  );
+                0.0,
+                460.0,
+              );
 
               return Center(
                 child: FittedBox(
@@ -216,22 +213,21 @@ class _SignInContentState extends ConsumerState<_SignInContent> {
             maxLines: 1,
             style: textTheme.headlineMedium?.copyWith(
               color: _goldLight,
-              fontFamily: 'serif',
               fontSize: 30,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           Text(
             'PUSPOMAD',
             textAlign: TextAlign.center,
             maxLines: 1,
             style: textTheme.titleMedium?.copyWith(
               color: _text,
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.8,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 2.5,
             ),
           ),
           const SizedBox(height: 20),
@@ -278,7 +274,7 @@ class _SignInCard extends StatelessWidget {
               ),
             ],
           ),
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -371,7 +367,10 @@ class _SignInCard extends StatelessWidget {
                             children: [
                               Text(
                                 'MASUK',
-                                style: TextStyle(fontWeight: FontWeight.w800),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 1.6,
+                                ),
                               ),
                               SizedBox(width: 8),
                               Icon(Icons.arrow_forward_rounded, size: 20),

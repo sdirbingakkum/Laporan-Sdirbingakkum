@@ -41,7 +41,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       surfaceTintColor: Colors.transparent,
       toolbarHeight: 68,
       shape: Border(
-        bottom: BorderSide(color: _gold.withValues(alpha: 0.16), width: 1),
+        bottom: BorderSide(color: _gold.withValues(alpha: 0.24), width: 1),
       ),
       leadingWidth: onBack == null ? (compact ? 52 : 60) : 52,
       leading: onBack == null
@@ -131,7 +131,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                   SizedBox(width: 10),
                   Flexible(
                     child: Text(
-                      'KELUAR / SIGN OUT',
+                      'KELUAR',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(color: _text),

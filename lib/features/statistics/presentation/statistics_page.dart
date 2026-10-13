@@ -73,7 +73,7 @@ class StatisticsPage extends StatefulWidget {
 
   final StatisticsModule module;
   final Future<StatisticsViewData> Function(StatisticsModule module)?
-  dataLoader;
+      dataLoader;
 
   @override
   State<StatisticsPage> createState() => _StatisticsPageState();
@@ -127,7 +127,12 @@ class _StatisticsPageState extends State<StatisticsPage> {
             future: _dataFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xFFF1D37A),
+                    strokeWidth: 2.2,
+                  ),
+                );
               }
               if (snapshot.hasError || snapshot.data == null) {
                 return const _ReportDataError();
@@ -621,10 +626,30 @@ class _ReportDataError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'DATA LAPORAN TIDAK DAPAT DIMUAT.',
-        style: TextStyle(color: _muted),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(
+              Icons.wifi_off_rounded,
+              color: Color(0xFF4A5C53),
+              size: 40,
+            ),
+            SizedBox(height: 14),
+            Text(
+              'DATA LAPORAN TIDAK DAPAT DIMUAT.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: _muted,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -746,8 +771,9 @@ class _TotalSimCard extends StatelessWidget {
             total.toString(),
             style: TextStyle(
               color: accent,
-              fontSize: 30,
+              fontSize: 34,
               fontWeight: FontWeight.w900,
+              letterSpacing: -1.0,
             ),
           ),
         ],
@@ -807,6 +833,19 @@ Future<void> _showRankingSheet(
             ),
             child: Column(
               children: [
+                Container(
+                  height: 1,
+                  margin: const EdgeInsets.only(bottom: 4),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        Color(0x33FFFFFF),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
                 Container(
                   width: 48,
                   height: 6,
@@ -929,9 +968,12 @@ Future<void> _showRankingSheet(
                                     child: DecoratedBox(
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
                                           colors: [
                                             fill.withValues(alpha: 0.95),
-                                            accent.withValues(alpha: 0.75),
+                                            fill,
+                                            fill.withValues(alpha: 0.80),
                                           ],
                                         ),
                                       ),
@@ -1003,7 +1045,7 @@ class _AnalysisButton extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           backgroundColor: Colors.white.withValues(alpha: 0.03),
           foregroundColor: accent,
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
           side: BorderSide(color: accent.withValues(alpha: 0.32)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6.4),
@@ -1062,7 +1104,7 @@ class _StatsColumnView extends StatelessWidget {
             accent: accent,
             delay: Duration(milliseconds: index * 75),
           ),
-          if (index != column.cards.length - 1) const SizedBox(height: 12),
+          if (index != column.cards.length - 1) const SizedBox(height: 14),
         ],
       ],
     );
@@ -1133,7 +1175,7 @@ class _GlassStatCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withValues(alpha: 0.032),
+                Colors.white.withValues(alpha: 0.065),
                 cardAccent.withValues(alpha: 0.045),
                 _surface.withValues(alpha: 0.72),
               ],
@@ -1187,8 +1229,8 @@ class _GlassStatCard extends StatelessWidget {
                     style: const TextStyle(
                       color: _muted,
                       fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.45,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.6,
                       height: 1.15,
                     ),
                   ),
@@ -1198,7 +1240,7 @@ class _GlassStatCard extends StatelessWidget {
                     style: TextStyle(
                       color: cardAccent,
                       fontSize: 30,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w900,
                       letterSpacing: -0.6,
                       height: 1.0,
                     ),
@@ -1287,6 +1329,19 @@ Future<void> _showK9UnitSheet(BuildContext context, _K9UnitData unit) async {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Container(
+                  height: 1,
+                  margin: const EdgeInsets.only(bottom: 4),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        Color(0x33FFFFFF),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
                 Center(
                   child: Container(
                     width: 48,
