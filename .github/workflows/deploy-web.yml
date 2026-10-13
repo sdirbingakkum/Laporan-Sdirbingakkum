@@ -90,6 +90,13 @@ jobs:
             --base-href "/Laporan-Sdirbingakkum/" \
             --dart-define=SUPABASE_URL=https://ybepaqmrrgsaeqnqrsrf.supabase.co \
             --dart-define=SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY"
+          rm -rf build/site
+          mkdir -p build/site
+          cp -R build/web/. build/site/
+          mkdir -p build/site/pr1
+          cp -R build/web/. build/site/pr1/
+          sed -i 's|href="/Laporan-Sdirbingakkum/"|href="/Laporan-Sdirbingakkum/pr1/"|g' build/site/pr1/index.html
+          cp build/site/pr1/index.html build/site/pr1/404.html
 
       - name: Assemble PR preview under /pr1
         if: ${{ github.event_name == 'pull_request' }}
