@@ -240,6 +240,20 @@ class _StatisticsPageState extends State<StatisticsPage> {
   }
 }
 
+class _PelanggaranSourceData {
+  const _PelanggaranSourceData({
+    required this.periods,
+    required this.pomdams,
+    required this.rows,
+    required this.categoryByViolationId,
+  });
+
+  final _ReportPeriodIndex periods;
+  final Map<String, String> pomdams;
+  final List<Map<String, dynamic>> rows;
+  final Map<String, String> categoryByViolationId;
+}
+
 class _ReportPeriodIndex {
   const _ReportPeriodIndex(this.byId);
 
@@ -269,6 +283,57 @@ class _SupabaseReportRepository {
     return {
       for (final row in rows) row['id'].toString(): row['code'].toString(),
     };
+  }
+
+  static Future<_PelanggaranSourceData>? _pelanggaranSourceFuture;
+
+  static Future<_PelanggaranSourceData> _loadPelanggaranSource(
+    SupabaseClient client,
+  ) async {
+    try {
+      return await (_pelanggaranSourceFuture ??= _fetchPelanggaranSource(client));
+    } catch (_) {
+      _pelanggaranSourceFuture = null;
+      rethrow;
+    }
+  }
+
+  static Future<_PelanggaranSourceData> _fetchPelanggaranSource(
+    SupabaseClient client,
+  ) async {
+    final periods = await _periods(client);
+    final pomdams = await _pomdams(client);
+    const pageSize = 1000;
+    final rows = <Map<String, dynamic>>[];
+
+    // PostgREST may cap a response at 1,000 rows. Fetch stable, ordered pages
+    // so totals and rankings include every record, not only the first page.
+    for (var start = 0; ; start += pageSize) {
+      final page = List<Map<String, dynamic>>.from(
+        await client
+            .from('violation_records')
+            .select('id,period_id,pomdam_id,violation_id,value,data_status')
+            .order('id')
+            .range(start, start + pageSize - 1),
+      );
+      rows.addAll(page);
+      if (page.length < pageSize) break;
+    }
+
+    final violations = List<Map<String, dynamic>>.from(
+      await client.from('violations').select('id,category'),
+    );
+    final categoryByViolationId = <String, String>{
+      for (final row in violations)
+        row['id'].toString(): row['category']?.toString().toUpperCase() ?? '',
+    };
+
+    return _PelanggaranSourceData(
+      periods: periods,
+      pomdams: pomdams,
+      rows: rows,
+      categoryByViolationId: categoryByViolationId,
+    );
   }
 
   static List<StatisticsRankData> _topFive(
@@ -414,20 +479,11 @@ class _SupabaseReportRepository {
     SupabaseClient client, {
     String? selectedPeriodKey,
   }) async {
-    final periods = await _periods(client);
-    final pomdams = await _pomdams(client);
-    final rows = List<Map<String, dynamic>>.from(
-      await client
-          .from('violation_records')
-          .select('period_id,pomdam_id,violation_id,value,data_status'),
-    );
-    final violations = List<Map<String, dynamic>>.from(
-      await client.from('violations').select('id,category'),
-    );
-    final categoryByViolationId = <String, String>{
-      for (final row in violations)
-        row['id'].toString(): row['category']?.toString().toUpperCase() ?? '',
-    };
+    final source = await _loadPelanggaranSource(client);
+    final periods = source.periods;
+    final pomdams = source.pomdams;
+    final rows = source.rows;
+    final categoryByViolationId = source.categoryByViolationId;
 
     int? latestYear;
     int? latestMonth;
