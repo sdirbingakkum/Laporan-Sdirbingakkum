@@ -266,45 +266,59 @@ class _PieMenu extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        return SizedBox.square(
-          dimension: diameter,
-          child: GestureDetector(
-            key: const ValueKey('main-pie-menu'),
-            behavior: HitTestBehavior.opaque,
-            onTapUp: (details) {
-              final box = context.findRenderObject() as RenderBox;
-              final localPosition = box.globalToLocal(details.globalPosition);
-              final index = _PieMenuPainter.indexAt(
-                localPosition,
-                box.size,
-                itemCount: items.length,
-              );
-
-              if (index != null) {
-                onSelected(index);
-              }
-            },
-            child: CustomPaint(
-              painter: _PieMenuPainter(
-                itemCount: items.length,
-                selectedIndex: selectedIndex,
+        return TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0.0, end: 1.0),
+          duration: const Duration(milliseconds: 650),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, child) {
+            return Opacity(
+              opacity: value.clamp(0.0, 1.0),
+              child: Transform.scale(
+                scale: 0.93 + value * 0.07,
+                child: child,
               ),
-              child: Stack(
-                alignment: Alignment.center,
-                clipBehavior: Clip.none,
-                children: [
-                  for (var i = 0; i < items.length; i++)
-                    _PieMenuLabel(
-                      index: i,
-                      item: items[i],
-                      itemCount: items.length,
-                      selected: i == selectedIndex,
-                      diameter: diameter,
+            );
+          },
+          child: SizedBox.square(
+            dimension: diameter,
+            child: GestureDetector(
+              key: const ValueKey('main-pie-menu'),
+              behavior: HitTestBehavior.opaque,
+              onTapUp: (details) {
+                final box = context.findRenderObject() as RenderBox;
+                final localPosition = box.globalToLocal(details.globalPosition);
+                final index = _PieMenuPainter.indexAt(
+                  localPosition,
+                  box.size,
+                  itemCount: items.length,
+                );
+
+                if (index != null) {
+                  onSelected(index);
+                }
+              },
+              child: CustomPaint(
+                painter: _PieMenuPainter(
+                  itemCount: items.length,
+                  selectedIndex: selectedIndex,
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  clipBehavior: Clip.none,
+                  children: [
+                    for (var i = 0; i < items.length; i++)
+                      _PieMenuLabel(
+                        index: i,
+                        item: items[i],
+                        itemCount: items.length,
+                        selected: i == selectedIndex,
+                        diameter: diameter,
+                      ),
+                    _PieMenuCenter(
+                      item: selectedIndex >= 0 ? items[selectedIndex] : null,
                     ),
-                  _PieMenuCenter(
-                    item: selectedIndex >= 0 ? items[selectedIndex] : null,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

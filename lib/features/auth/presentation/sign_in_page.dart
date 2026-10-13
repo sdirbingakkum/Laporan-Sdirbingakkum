@@ -61,9 +61,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     });
 
     try {
-      await ref
-          .read(authRepositoryProvider)
-          .signIn(
+      await ref.read(authRepositoryProvider).signIn(
             username: _usernameController.text.trim(),
             password: _passwordController.text,
           );
@@ -155,14 +153,13 @@ class _SignInPageState extends ConsumerState<SignInPage> {
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final horizontalPadding = constraints.maxWidth >= 520
-                  ? 32.0
-                  : 16.0;
+              final horizontalPadding =
+                  constraints.maxWidth >= 520 ? 32.0 : 16.0;
               final contentWidth =
                   (constraints.maxWidth - horizontalPadding * 2).clamp(
-                    0.0,
-                    460.0,
-                  );
+                0.0,
+                460.0,
+              );
 
               return Center(
                 child: FittedBox(
@@ -197,84 +194,116 @@ class _SignInContentState extends ConsumerState<_SignInContent> {
 
     return Form(
       key: parent._formKey,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 10),
-          TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0.86, end: 1),
-            duration: const Duration(milliseconds: 900),
-            curve: Curves.easeOutBack,
-            builder: (context, scale, child) {
-              return Transform.scale(scale: scale, child: child);
-            },
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: _goldLight.withValues(alpha: 0.75),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: _gold.withValues(alpha: 0.30),
-                    blurRadius: 36,
-                    spreadRadius: 2,
-                    offset: const Offset(0, 14),
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0.0, end: 1.0),
+        duration: const Duration(milliseconds: 750),
+        curve: Curves.easeOutCubic,
+        builder: (context, value, _) {
+          final logoScale = 0.88 + value * 0.12;
+          final titleProgress = ((value - 0.15) / 0.85).clamp(0.0, 1.0);
+          final cardProgress = ((value - 0.30) / 0.70).clamp(0.0, 1.0);
+
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 10),
+              Transform.scale(
+                scale: logoScale,
+                child: Opacity(
+                  opacity: value.clamp(0.0, 1.0),
+                  child: Container(
+                    width: 150,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: _goldLight.withValues(alpha: 0.75),
+                        width: 1.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: _gold.withValues(alpha: 0.30),
+                          blurRadius: 36,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 14),
+                        ),
+                        const BoxShadow(
+                          color: Colors.black87,
+                          blurRadius: 26,
+                          offset: Offset(0, 12),
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/pomad_prima.webp',
+                        fit: BoxFit.cover,
+                        semanticLabel: 'LOGO POMAD PRIMA',
+                      ),
+                    ),
                   ),
-                  const BoxShadow(
-                    color: Colors.black87,
-                    blurRadius: 26,
-                    offset: Offset(0, 12),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Transform.translate(
+                offset: Offset(
+                  0,
+                  (1 - Curves.easeOutCubic.transform(titleProgress)) * 10,
+                ),
+                child: Opacity(
+                  opacity: titleProgress,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'SDIRBINGAKKUM',
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        style: textTheme.headlineMedium?.copyWith(
+                          color: _goldLight,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
+                          shadows: [
+                            Shadow(
+                              color: _gold.withValues(alpha: 0.35),
+                              blurRadius: 16,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'PUSPOMAD',
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        style: textTheme.titleMedium?.copyWith(
+                          color: _text,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2.5,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: ClipOval(
-                child: Image.asset(
-                  'assets/images/pomad_prima.webp',
-                  fit: BoxFit.cover,
-                  semanticLabel: 'LOGO POMAD PRIMA',
                 ),
               ),
-            ),
-          ),
-          const SizedBox(height: 14),
-          Text(
-            'SDIRBINGAKKUM',
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            style: textTheme.headlineMedium?.copyWith(
-              color: _goldLight,
-              fontSize: 30,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.5,
-              shadows: [
-                Shadow(
-                  color: _gold.withValues(alpha: 0.35),
-                  blurRadius: 16,
-                  offset: const Offset(0, 2),
+              const SizedBox(height: 20),
+              Transform.translate(
+                offset: Offset(
+                  0,
+                  (1 - Curves.easeOutCubic.transform(cardProgress)) * 14,
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'PUSPOMAD',
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            style: textTheme.titleMedium?.copyWith(
-              color: _text,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 2.5,
-            ),
-          ),
-          const SizedBox(height: 20),
-          _SignInCard(parent: parent),
-          const SizedBox(height: 8),
-        ],
+                child: Opacity(
+                  opacity: cardProgress,
+                  child: _SignInCard(parent: parent),
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+          );
+        },
       ),
     );
   }

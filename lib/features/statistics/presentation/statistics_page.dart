@@ -73,7 +73,7 @@ class StatisticsPage extends StatefulWidget {
 
   final StatisticsModule module;
   final Future<StatisticsViewData> Function(StatisticsModule module)?
-  dataLoader;
+      dataLoader;
 
   @override
   State<StatisticsPage> createState() => _StatisticsPageState();
@@ -126,50 +126,61 @@ class _StatisticsPageState extends State<StatisticsPage> {
           child: FutureBuilder<StatisticsViewData>(
             future: _dataFuture,
             builder: (context, snapshot) {
+              Widget content;
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
+                content = const Center(
+                  key: ValueKey('statistics-loading'),
                   child: CircularProgressIndicator(
                     color: Color(0xFFF1D37A),
                     strokeWidth: 2.2,
                   ),
                 );
-              }
-              if (snapshot.hasError || snapshot.data == null) {
-                return const _ReportDataError();
-              }
-
-              final data = snapshot.data!;
-              return SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 760),
-                    child: _ContentBody(
-                      columns: data.columns
-                          .map(
-                            (column) => _StatColumn(
-                              label: column.label,
-                              cards: column.cards
-                                  .map(
-                                    (card) => _StatCardData(
-                                      card.label,
-                                      card.value,
-                                      card.color,
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                          )
-                          .toList(),
-                      module: widget.module,
-                      ranking: data.ranking
-                          .map((item) => _RankData(item.name, item.value))
-                          .toList(),
-                      accent: _moduleAccent(widget.module),
-                      totalSim: data.totalSim,
+              } else if (snapshot.hasError || snapshot.data == null) {
+                content = const _ReportDataError(
+                  key: ValueKey('statistics-error'),
+                );
+              } else {
+                final data = snapshot.data!;
+                content = SingleChildScrollView(
+                  key: const ValueKey('statistics-content'),
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 760),
+                      child: _ContentBody(
+                        columns: data.columns
+                            .map(
+                              (column) => _StatColumn(
+                                label: column.label,
+                                cards: column.cards
+                                    .map(
+                                      (card) => _StatCardData(
+                                        card.label,
+                                        card.value,
+                                        card.color,
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            )
+                            .toList(),
+                        module: widget.module,
+                        ranking: data.ranking
+                            .map((item) => _RankData(item.name, item.value))
+                            .toList(),
+                        accent: _moduleAccent(widget.module),
+                        totalSim: data.totalSim,
+                      ),
                     ),
                   ),
-                ),
+                );
+              }
+
+              return AnimatedSwitcher(
+                duration: const Duration(milliseconds: 320),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                child: content,
               );
             },
           ),
@@ -622,7 +633,7 @@ class _SupabaseReportRepository {
 }
 
 class _ReportDataError extends StatelessWidget {
-  const _ReportDataError();
+  const _ReportDataError({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -672,7 +683,21 @@ class _ContentBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (totalSim != null) ...[
-          _TotalSimCard(total: totalSim!, accent: accent),
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.0, end: 1.0),
+            duration: const Duration(milliseconds: 550),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, child) {
+              return Opacity(
+                opacity: value.clamp(0.0, 1.0),
+                child: Transform.translate(
+                  offset: Offset(0, (1 - value) * -10),
+                  child: child,
+                ),
+              );
+            },
+            child: _TotalSimCard(total: totalSim!, accent: accent),
+          ),
           const SizedBox(height: 14),
         ],
         if (columns.length == 1)
@@ -695,17 +720,31 @@ class _ContentBody extends StatelessWidget {
           ),
         const SizedBox(height: 16),
         if (ranking.isNotEmpty)
-          _AnalysisButton(
-            accent: accent,
-            label: 'STATISTIK',
-            onPressed: () => _showRankingSheet(
-              context,
-              module,
-              ranking,
-              accent,
-              onItemTap: module == StatisticsModule.k9
-                  ? (index) => _showK9UnitSheet(context, _k9Units[index])
-                  : null,
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.0, end: 1.0),
+            duration: const Duration(milliseconds: 650),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, child) {
+              return Opacity(
+                opacity: value.clamp(0.0, 1.0),
+                child: Transform.translate(
+                  offset: Offset(0, (1 - value) * 12),
+                  child: child,
+                ),
+              );
+            },
+            child: _AnalysisButton(
+              accent: accent,
+              label: 'STATISTIK',
+              onPressed: () => _showRankingSheet(
+                context,
+                module,
+                ranking,
+                accent,
+                onItemTap: module == StatisticsModule.k9
+                    ? (index) => _showK9UnitSheet(context, _k9Units[index])
+                    : null,
+              ),
             ),
           ),
       ],
