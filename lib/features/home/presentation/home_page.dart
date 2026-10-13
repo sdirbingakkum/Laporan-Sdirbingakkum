@@ -49,9 +49,13 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
+class _HomePageState extends ConsumerState<HomePage>
+    with SingleTickerProviderStateMixin {
   bool _navigationInProgress = false;
   int _selectedIndex = -1;
+
+  late final AnimationController _pieController;
+  late final Animation<double> _pieAnimation;
 
   static const _items = <_MenuItemData>[
     _MenuItemData(
@@ -90,6 +94,26 @@ class _HomePageState extends ConsumerState<HomePage> {
       route: '/statistik/provos',
     ),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _pieController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 650),
+    );
+    _pieAnimation = CurvedAnimation(
+      parent: _pieController,
+      curve: Curves.easeOutCubic,
+    );
+    _pieController.forward();
+  }
+
+  @override
+  void dispose() {
+    _pieController.dispose();
+    super.dispose();
+  }
 
   Future<void> _confirmSignOut() async {
     final confirmed = await showDialog<bool>(
@@ -199,7 +223,9 @@ class _HomePageState extends ConsumerState<HomePage> {
 
     setState(() {
       _navigationInProgress = false;
+      _selectedIndex = -1;
     });
+    _pieController.forward(from: 0);
   }
 
   @override
@@ -222,10 +248,23 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(12, 0, 12, 14),
-                      child: _PieMenu(
-                        items: _items,
-                        selectedIndex: _selectedIndex,
-                        onSelected: _selectMenu,
+                      child: AnimatedBuilder(
+                        animation: _pieAnimation,
+                        builder: (context, child) {
+                          final v = _pieAnimation.value;
+                          return Opacity(
+                            opacity: v.clamp(0.0, 1.0),
+                            child: Transform.scale(
+                              scale: 0.93 + v * 0.07,
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: _PieMenu(
+                          items: _items,
+                          selectedIndex: _selectedIndex,
+                          onSelected: _selectMenu,
+                        ),
                       ),
                     ),
                   ),
@@ -257,65 +296,53 @@ class _PieMenu extends StatelessWidget {
         final maxWidth = constraints.hasBoundedWidth
             ? constraints.maxWidth
             : double.infinity;
-        final maxHeight = constraints.hasBoundedHeight
-            ? constraints.maxHeight
-            : maxWidth;
+        final maxHeight =
+            constraints.hasBoundedHeight ? constraints.maxHeight : maxWidth;
         final diameter = math.min(maxWidth, maxHeight);
 
         if (!diameter.isFinite || diameter <= 0) {
           return const SizedBox.shrink();
         }
 
-        return TweenAnimationBuilder<double>(
-          tween: Tween(begin: 0.0, end: 1.0),
-          duration: const Duration(milliseconds: 650),
-          curve: Curves.easeOutCubic,
-          builder: (context, value, child) {
-            return Opacity(
-              opacity: value.clamp(0.0, 1.0),
-              child: Transform.scale(scale: 0.93 + value * 0.07, child: child),
-            );
-          },
-          child: SizedBox.square(
-            dimension: diameter,
-            child: GestureDetector(
-              key: const ValueKey('main-pie-menu'),
-              behavior: HitTestBehavior.opaque,
-              onTapUp: (details) {
-                final box = context.findRenderObject() as RenderBox;
-                final localPosition = box.globalToLocal(details.globalPosition);
-                final index = _PieMenuPainter.indexAt(
-                  localPosition,
-                  box.size,
-                  itemCount: items.length,
-                );
+        return SizedBox.square(
+          dimension: diameter,
+          child: GestureDetector(
+            key: const ValueKey('main-pie-menu'),
+            behavior: HitTestBehavior.opaque,
+            onTapUp: (details) {
+              final box = context.findRenderObject() as RenderBox;
+              final localPosition = box.globalToLocal(details.globalPosition);
+              final index = _PieMenuPainter.indexAt(
+                localPosition,
+                box.size,
+                itemCount: items.length,
+              );
 
-                if (index != null) {
-                  onSelected(index);
-                }
-              },
-              child: CustomPaint(
-                painter: _PieMenuPainter(
-                  itemCount: items.length,
-                  selectedIndex: selectedIndex,
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  clipBehavior: Clip.none,
-                  children: [
-                    for (var i = 0; i < items.length; i++)
-                      _PieMenuLabel(
-                        index: i,
-                        item: items[i],
-                        itemCount: items.length,
-                        selected: i == selectedIndex,
-                        diameter: diameter,
-                      ),
-                    _PieMenuCenter(
-                      item: selectedIndex >= 0 ? items[selectedIndex] : null,
+              if (index != null) {
+                onSelected(index);
+              }
+            },
+            child: CustomPaint(
+              painter: _PieMenuPainter(
+                itemCount: items.length,
+                selectedIndex: selectedIndex,
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                clipBehavior: Clip.none,
+                children: [
+                  for (var i = 0; i < items.length; i++)
+                    _PieMenuLabel(
+                      index: i,
+                      item: items[i],
+                      itemCount: items.length,
+                      selected: i == selectedIndex,
+                      diameter: diameter,
                     ),
-                  ],
-                ),
+                  _PieMenuCenter(
+                    item: selectedIndex >= 0 ? items[selectedIndex] : null,
+                  ),
+                ],
               ),
             ),
           ),
@@ -477,9 +504,8 @@ class _PieMenuCenter extends StatelessWidget {
                                       centerKey,
                                     ),
                                     fontWeight: FontWeight.w900,
-                                    letterSpacing: centerKey.length > 18
-                                        ? 0.2
-                                        : 0.6,
+                                    letterSpacing:
+                                        centerKey.length > 18 ? 0.2 : 0.6,
                                     height: 1.05,
                                     shadows: [
                                       Shadow(
@@ -515,9 +541,8 @@ class _PieMenuCenter extends StatelessWidget {
                                       centerKey,
                                     ),
                                     fontWeight: FontWeight.w900,
-                                    letterSpacing: centerKey.length > 18
-                                        ? 0.2
-                                        : 0.6,
+                                    letterSpacing:
+                                        centerKey.length > 18 ? 0.2 : 0.6,
                                     height: 1.05,
                                   ),
                                 ),
@@ -656,11 +681,10 @@ class _PieMenuLabel extends StatelessWidget {
                     // Polished 3D liquid gold face with specular gleam
                     ShaderMask(
                       blendMode: BlendMode.srcIn,
-                      shaderCallback: (bounds) =>
-                          (selected
-                                  ? _goldGradientSelected
-                                  : _goldGradientUnselected)
-                              .createShader(bounds),
+                      shaderCallback: (bounds) => (selected
+                              ? _goldGradientSelected
+                              : _goldGradientUnselected)
+                          .createShader(bounds),
                       child: Icon(
                         item.icon,
                         color: Colors.white,
@@ -725,11 +749,10 @@ class _PieMenuLabel extends StatelessWidget {
                   // Polished 3D liquid gold lettering
                   ShaderMask(
                     blendMode: BlendMode.srcIn,
-                    shaderCallback: (bounds) =>
-                        (selected
-                                ? _goldGradientSelected
-                                : _goldGradientUnselected)
-                            .createShader(bounds),
+                    shaderCallback: (bounds) => (selected
+                            ? _goldGradientSelected
+                            : _goldGradientUnselected)
+                        .createShader(bounds),
                     child: Text(
                       item.label,
                       textAlign: TextAlign.center,
