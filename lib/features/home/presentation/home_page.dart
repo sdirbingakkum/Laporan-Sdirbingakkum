@@ -408,35 +408,38 @@ class _PieMenuCenter extends StatelessWidget {
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              Text(
-                                centerKey,
+                              Text.rich(
+                                TextSpan(
+                                  text: centerKey,
+                                  style: TextStyle(
+                                    color: const Color(0xFF1E1302),
+                                    fontSize:
+                                        centerTextSize(context, centerKey),
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: centerKey.length > 18
+                                        ? 0.2
+                                        : 0.6,
+                                    height: 1.05,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.80,
+                                        ),
+                                        offset: const Offset(1.4, 2.0),
+                                        blurRadius: 1,
+                                      ),
+                                      Shadow(
+                                        color: const Color(
+                                          0xFFE5B842,
+                                        ).withValues(alpha: 0.40),
+                                        blurRadius: 10,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 textAlign: TextAlign.center,
                                 maxLines: centerKey == 'MENU UTAMA' ? 2 : 3,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: const Color(0xFF1E1302),
-                                  fontSize: centerTextSize(context, centerKey),
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: centerKey.length > 18
-                                      ? 0.2
-                                      : 0.6,
-                                  height: 1.05,
-                                  shadows: [
-                                    Shadow(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.80,
-                                      ),
-                                      offset: const Offset(1.4, 2.0),
-                                      blurRadius: 1,
-                                    ),
-                                    Shadow(
-                                      color: const Color(
-                                        0xFFE5B842,
-                                      ).withValues(alpha: 0.40),
-                                      blurRadius: 10,
-                                    ),
-                                  ],
-                                ),
                               ),
                               ShaderMask(
                                 blendMode: BlendMode.srcIn,
@@ -612,40 +615,42 @@ class _PieMenuLabel extends StatelessWidget {
                 alignment: Alignment.center,
                 children: [
                   // Deep physical extrusion wall and cast shadow
-                  Text(
-                    item.label,
+                  Text.rich(
+                    TextSpan(
+                      text: item.label,
+                      style: TextStyle(
+                        color: const Color(0xFF1E1302),
+                        fontSize: isLong
+                            ? math.max(labelFontSize - 0.5, 7.6).toDouble()
+                            : labelFontSize,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.45,
+                        height: 1.05,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withValues(
+                              alpha: selected ? 0.95 : 0.85,
+                            ),
+                            offset: const Offset(1.8, 2.6),
+                            blurRadius: 1,
+                          ),
+                          Shadow(
+                            color: const Color(0xFF382305),
+                            offset: const Offset(0.9, 1.3),
+                            blurRadius: 0,
+                          ),
+                          Shadow(
+                            color: const Color(
+                              0xFFE5B842,
+                            ).withValues(alpha: selected ? 0.60 : 0.25),
+                            blurRadius: selected ? 14 : 4,
+                          ),
+                        ],
+                      ),
+                    ),
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: const Color(0xFF1E1302),
-                      fontSize: isLong
-                          ? math.max(labelFontSize - 0.5, 7.6).toDouble()
-                          : labelFontSize,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 0.45,
-                      height: 1.05,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black.withValues(
-                            alpha: selected ? 0.95 : 0.85,
-                          ),
-                          offset: const Offset(1.8, 2.6),
-                          blurRadius: 1,
-                        ),
-                        Shadow(
-                          color: const Color(0xFF382305),
-                          offset: const Offset(0.9, 1.3),
-                          blurRadius: 0,
-                        ),
-                        Shadow(
-                          color: const Color(
-                            0xFFE5B842,
-                          ).withValues(alpha: selected ? 0.60 : 0.25),
-                          blurRadius: selected ? 14 : 4,
-                        ),
-                      ],
-                    ),
                   ),
                   // Polished 3D liquid gold lettering
                   ShaderMask(
