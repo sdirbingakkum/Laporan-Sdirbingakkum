@@ -419,9 +419,7 @@ class _SupabaseReportRepository {
     final rows = List<Map<String, dynamic>>.from(
       await client
           .from('violation_records')
-          .select(
-            'period_id,pomdam_id,violation_id,value,data_status',
-          ),
+          .select('period_id,pomdam_id,violation_id,value,data_status'),
     );
     final violations = List<Map<String, dynamic>>.from(
       await client.from('violations').select('id,category'),
@@ -982,8 +980,7 @@ class _ContentBody extends StatelessWidget {
                   child: _StatsColumnView(
                     column: columns[index],
                     accent: accent,
-                    alignPeriodHeader:
-                        module == StatisticsModule.pelanggaran,
+                    alignPeriodHeader: module == StatisticsModule.pelanggaran,
                     periodOptions:
                         module == StatisticsModule.pelanggaran && index == 1
                         ? periodOptions

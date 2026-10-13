@@ -508,7 +508,6 @@ void main() {
     }
   });
 
-
   testWidgets(
     'Pelanggaran period dropdown defaults to latest month and refreshes values',
     (tester) async {
@@ -525,13 +524,18 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const ValueKey('pelanggaran-period-dropdown')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('pelanggaran-period-dropdown')),
+        findsOneWidget,
+      );
       expect(find.text('55'), findsOneWidget);
       expect(find.text('138'), findsOneWidget);
       expect(find.text('13'), findsOneWidget);
       expect(find.text('12'), findsOneWidget);
 
-      await tester.tap(find.byKey(const ValueKey('pelanggaran-period-dropdown')));
+      await tester.tap(
+        find.byKey(const ValueKey('pelanggaran-period-dropdown')),
+      );
       await tester.pumpAndSettle();
       expect(find.text('TRIWULAN III'), findsOneWidget);
       await tester.tap(find.text('TRIWULAN III'));
