@@ -408,8 +408,11 @@ class _PieMenuCenter extends StatelessWidget {
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              Text.rich(
-                                TextSpan(
+                              RichText(
+                                textAlign: TextAlign.center,
+                                maxLines: centerKey == 'MENU UTAMA' ? 2 : 3,
+                                overflow: TextOverflow.ellipsis,
+                                text: TextSpan(
                                   text: centerKey,
                                   style: TextStyle(
                                     color: const Color(0xFF1E1302),
@@ -439,9 +442,6 @@ class _PieMenuCenter extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                textAlign: TextAlign.center,
-                                maxLines: centerKey == 'MENU UTAMA' ? 2 : 3,
-                                overflow: TextOverflow.ellipsis,
                               ),
                               ShaderMask(
                                 blendMode: BlendMode.srcIn,
@@ -617,8 +617,11 @@ class _PieMenuLabel extends StatelessWidget {
                 alignment: Alignment.center,
                 children: [
                   // Deep physical extrusion wall and cast shadow
-                  Text.rich(
-                    TextSpan(
+                  RichText(
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    text: TextSpan(
                       text: item.label,
                       style: TextStyle(
                         color: const Color(0xFF1E1302),
@@ -650,9 +653,6 @@ class _PieMenuLabel extends StatelessWidget {
                         ],
                       ),
                     ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                   // Polished 3D liquid gold lettering
                   ShaderMask(
