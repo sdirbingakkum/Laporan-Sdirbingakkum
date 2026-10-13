@@ -63,7 +63,9 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     });
 
     try {
-      await ref.read(authRepositoryProvider).signIn(
+      await ref
+          .read(authRepositoryProvider)
+          .signIn(
             username: _usernameController.text.trim(),
             password: _passwordController.text,
           );
@@ -127,13 +129,14 @@ class _SignInPageState extends ConsumerState<SignInPage> {
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final horizontalPadding =
-                  constraints.maxWidth >= 520 ? 32.0 : 16.0;
+              final horizontalPadding = constraints.maxWidth >= 520
+                  ? 32.0
+                  : 16.0;
               final contentWidth =
                   (constraints.maxWidth - horizontalPadding * 2).clamp(
-                0.0,
-                460.0,
-              );
+                    0.0,
+                    460.0,
+                  );
 
               return Center(
                 child: FittedBox(

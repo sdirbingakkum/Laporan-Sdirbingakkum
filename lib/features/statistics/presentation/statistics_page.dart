@@ -73,7 +73,7 @@ class StatisticsPage extends StatefulWidget {
 
   final StatisticsModule module;
   final Future<StatisticsViewData> Function(StatisticsModule module)?
-      dataLoader;
+  dataLoader;
 
   @override
   State<StatisticsPage> createState() => _StatisticsPageState();
