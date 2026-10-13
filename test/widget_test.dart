@@ -543,6 +543,9 @@ void main() {
 
       expect(find.text('20'), findsOneWidget);
       expect(find.text('38'), findsOneWidget);
+      // Selecting a comparison period must not change the year-to-date column.
+      expect(find.text('55'), findsOneWidget);
+      expect(find.text('138'), findsOneWidget);
       expect(find.text('13'), findsNothing);
       expect(find.text('12'), findsNothing);
       expect(tester.takeException(), isNull);
