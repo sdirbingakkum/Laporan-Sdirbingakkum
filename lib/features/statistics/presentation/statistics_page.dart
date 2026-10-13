@@ -1052,9 +1052,7 @@ class _SupabaseReportRepository {
     );
   }
 
-  static Future<StatisticsViewData> _loadProvos(
-    SupabaseClient client,
-  ) async {
+  static Future<StatisticsViewData> _loadProvos(SupabaseClient client) async {
     final periods = await _periods(client);
     final pomdams = await _pomdams(client);
     final personnelRows = await _fetchAllRows(
@@ -1075,10 +1073,10 @@ class _SupabaseReportRepository {
         row['id'].toString(): row['code'].toString().toUpperCase(),
     };
 
-    final latest = _latestReportingMonth(
-      [...personnelRows, ...educationRows],
-      periods,
-    );
+    final latest = _latestReportingMonth([
+      ...personnelRows,
+      ...educationRows,
+    ], periods);
     if (latest == null) {
       return const StatisticsViewData(
         columns: [
