@@ -229,6 +229,91 @@ Future<StatisticsViewData> _testStatisticsData(StatisticsModule module) async {
   }
 }
 
+const _testPelanggaranPeriodOptions = <StatisticsPeriodOption>[
+  StatisticsPeriodOption(
+    key: 'month:9',
+    label: 'SEPTEMBER 2026',
+    startMonth: 9,
+    endMonth: 9,
+  ),
+  StatisticsPeriodOption(
+    key: 'quarter:3',
+    label: 'TRIWULAN III',
+    startMonth: 7,
+    endMonth: 9,
+  ),
+  StatisticsPeriodOption(
+    key: 'quarter:2',
+    label: 'TRIWULAN II',
+    startMonth: 4,
+    endMonth: 6,
+  ),
+  StatisticsPeriodOption(
+    key: 'quarter:1',
+    label: 'TRIWULAN I',
+    startMonth: 1,
+    endMonth: 3,
+  ),
+  StatisticsPeriodOption(
+    key: 'semester:1',
+    label: 'SEMESTER I',
+    startMonth: 1,
+    endMonth: 6,
+  ),
+];
+
+Future<StatisticsViewData> _testPelanggaranPeriodData(
+  StatisticsModule module,
+  String periodKey,
+) async {
+  if (module != StatisticsModule.pelanggaran) {
+    return _testStatisticsData(module);
+  }
+
+  final option = _testPelanggaranPeriodOptions.firstWhere(
+    (item) => item.key == periodKey,
+  );
+  final isQuarterThree = periodKey == 'quarter:3';
+
+  return StatisticsViewData(
+    columns: [
+      StatisticsColumnData(
+        label: '2026 · JAN–SEP',
+        cards: const [
+          StatisticsCardData(
+            label: 'TATIB',
+            value: '55',
+            color: Color(0xFFF59E0B),
+          ),
+          StatisticsCardData(
+            label: 'LALIN',
+            value: '138',
+            color: Color(0xFF38BDF8),
+          ),
+        ],
+      ),
+      StatisticsColumnData(
+        label: option.label,
+        cards: [
+          StatisticsCardData(
+            label: 'TATIB',
+            value: isQuarterThree ? '20' : '13',
+            color: const Color(0xFFF59E0B),
+          ),
+          StatisticsCardData(
+            label: 'LALIN',
+            value: isQuarterThree ? '38' : '12',
+            color: const Color(0xFF38BDF8),
+          ),
+        ],
+      ),
+    ],
+    ranking: const [],
+    periodOptions: _testPelanggaranPeriodOptions,
+    selectedPeriodKey: option.key,
+  );
+}
+
 void main() {
   test('standalone build has embedded Supabase configuration fallback', () {
     final config = AppConfig.fromEnvironment();
@@ -422,6 +507,50 @@ void main() {
       expect(pieSize.height, lessThanOrEqualTo(size.height));
     }
   });
+
+  testWidgets(
+    'Pelanggaran period dropdown defaults to latest month and refreshes values',
+    (tester) async {
+      await _setSurfaceSize(tester, const Size(390, 844));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatisticsPage(
+            module: StatisticsModule.pelanggaran,
+            dataLoader: (module) =>
+                _testPelanggaranPeriodData(module, 'month:9'),
+            periodDataLoader: _testPelanggaranPeriodData,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey('pelanggaran-period-dropdown')),
+        findsOneWidget,
+      );
+      expect(find.text('55'), findsOneWidget);
+      expect(find.text('138'), findsOneWidget);
+      expect(find.text('13'), findsOneWidget);
+      expect(find.text('12'), findsOneWidget);
+
+      await tester.tap(
+        find.byKey(const ValueKey('pelanggaran-period-dropdown')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('TRIWULAN III'), findsOneWidget);
+      await tester.tap(find.text('TRIWULAN III'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('20'), findsOneWidget);
+      expect(find.text('38'), findsOneWidget);
+      // Selecting a comparison period must not change the year-to-date column.
+      expect(find.text('55'), findsOneWidget);
+      expect(find.text('138'), findsOneWidget);
+      expect(find.text('13'), findsNothing);
+      expect(find.text('12'), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('SIM TNI shows total SIM above aligned period columns', (
     tester,
