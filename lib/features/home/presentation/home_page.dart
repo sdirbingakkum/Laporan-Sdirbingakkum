@@ -277,7 +277,8 @@ class _PieMenuCenter extends StatelessWidget {
         child: DecoratedBox(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            // POMAD PRIMA central medallion: deep obsidian metal base with rich gold rim
+            // POMAD PRIMA central medallion: deep obsidian metal base
+            // with rich gold rim
             gradient: const RadialGradient(
               center: Alignment(-0.35, -0.40),
               radius: 0.95,
@@ -334,7 +335,8 @@ class _PieMenuCenter extends StatelessWidget {
                 ),
               ),
 
-              // Upper-left curved specular reflection (curved glass/metal dome sheen)
+              // Upper-left curved specular reflection
+              // (curved glass/metal dome sheen)
               Positioned(
                 left: 6,
                 top: 4,
@@ -515,7 +517,8 @@ class _PieMenuLabel extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Extruded Chiseled 3D Metal Icon (like POMAD/PRIMA metal reliefs)
+              // Extruded Chiseled 3D Metal Icon
+              // (like POMAD/PRIMA metal reliefs)
               AnimatedScale(
                 scale: selected ? 1.10 : 1,
                 duration: const Duration(milliseconds: 180),
@@ -541,7 +544,8 @@ class _PieMenuLabel extends StatelessWidget {
                       offset: const Offset(1.1, 1.6),
                       blurRadius: 0,
                     ),
-                    // Crisp specular crest highlight (light shining from top-left)
+                    // Crisp specular crest highlight
+                    // (light shining from top-left)
                     Shadow(
                       color: Colors.white
                           .withValues(alpha: selected ? 0.75 : 0.45),
@@ -612,7 +616,8 @@ class _PieMenuLabel extends StatelessWidget {
 
 /// Custom painter executing the POMAD PRIMA coin-medal aesthetic:
 /// 1. Stepped chamfered gold outer rim with directional specular highlights.
-/// 2. Vitreous enamel module slices with lacquer dome reflections and edge vignettes.
+/// 2. Vitreous enamel module slices with lacquer dome reflections and edge
+///    vignettes.
 /// 3. Machined coin separator ridges with highlight and groove shadows.
 /// 4. Stepped inner gold bezel separating segments from center hub.
 class _PieMenuPainter extends CustomPainter {
@@ -623,11 +628,11 @@ class _PieMenuPainter extends CustomPainter {
 
   // Module identity colors:
   static const _lightPalette = <Color>[
-    Color(0xFFF09A4A), // PELANGGARAN — warm amber/orange
-    Color(0xFFE15B5B), // LAKA-LALIN — ruby crimson
-    Color(0xFF5D8FE0), // SIM TNI — sapphire royal blue
-    Color(0xFFE3BE4F), // K9 — imperial gold
-    Color(0xFF49A86B), // PROVOS TNI-AD — emerald military green
+    Color(0xFFF09A4A), // PELANGGARAN - warm amber/orange
+    Color(0xFFE15B5B), // LAKA-LALIN - ruby crimson
+    Color(0xFF5D8FE0), // SIM TNI - sapphire royal blue
+    Color(0xFFE3BE4F), // K9 - imperial gold
+    Color(0xFF49A86B), // PROVOS TNI-AD - emerald military green
   ];
 
   // Rich POMAD PRIMA coin gold palette
@@ -644,7 +649,7 @@ class _PieMenuPainter extends CustomPainter {
     final innerRadius = size.shortestSide * 0.17;
     final sweep = 2 * math.pi / itemCount;
 
-    // ── STEP 1: PHYSICAL COIN THICKNESS / EXTRUSION RIM ─────────────
+    // -- STEP 1: PHYSICAL COIN THICKNESS / EXTRUSION RIM -------------
     // Multiple offset layers drawing down to produce the physical depth
     // of a heavy minted coin medal resting against the dark backdrop.
     const int rimSteps = 7;
@@ -681,13 +686,13 @@ class _PieMenuPainter extends CustomPainter {
       }
     }
 
-    // ── STEP 2: AMBIENT COIN DROP SHADOW ───────────────────────────
+    // -- STEP 2: AMBIENT COIN DROP SHADOW ---------------------------
     final baseShadow = Paint()
       ..color = Colors.black.withValues(alpha: 0.55)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20);
     canvas.drawCircle(center.translate(0, 5.0), outerRadius + 4.0, baseShadow);
 
-    // ── STEP 3: VITREOUS ENAMEL SLICES (Module Bodies) ──────────────
+    // -- STEP 3: VITREOUS ENAMEL SLICES (Module Bodies) --------------
     // Each slice is rendered with the depth of a polished military enamel badge
     for (var i = 0; i < itemCount; i++) {
       final start = -math.pi / 2 + i * sweep;
@@ -765,7 +770,8 @@ class _PieMenuPainter extends CustomPainter {
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, mirrorHotspot);
 
-      // Deep Edge Vignette (Simulates enamel sitting inside a recessed coin bed)
+      // Deep Edge Vignette
+      // (simulates enamel sitting inside a recessed coin bed)
       final rimRecess = Paint()
         ..shader = RadialGradient(
           center: Alignment.center,
@@ -794,7 +800,7 @@ class _PieMenuPainter extends CustomPainter {
       canvas.drawPath(path, lowerBevel);
     }
 
-    // ── STEP 4: MACHINED COIN SEPARATOR RIBS ───────────────────────
+    // -- STEP 4: MACHINED COIN SEPARATOR RIBS -----------------------
     // Embossed gold dividers between slices, like minted coin partitions
     for (var i = 0; i < itemCount; i++) {
       final angle = -math.pi / 2 + i * sweep;
@@ -850,7 +856,7 @@ class _PieMenuPainter extends CustomPainter {
       );
     }
 
-    // ── STEP 5: OUTER MULTI-STEPPED GOLD COIN BEZEL ────────────────
+    // -- STEP 5: OUTER MULTI-STEPPED GOLD COIN BEZEL ----------------
     // Exactly like the heavy chamfered gold rim on POMAD PRIMA!
 
     // Layer 5A: Outermost bronze edge bevel
@@ -913,8 +919,9 @@ class _PieMenuPainter extends CustomPainter {
       ..color = _goldDark.withValues(alpha: 0.90);
     canvas.drawCircle(center, outerRadius - 0.2, insetGroove);
 
-    // ── STEP 6: INNER STEPPED GOLD COIN BEZEL ──────────────────────
-    // The inner gold ring enclosing the center hub, matching POMAD PRIMA inner coin circle
+    // -- STEP 6: INNER STEPPED GOLD COIN BEZEL ----------------------
+    // The inner gold ring enclosing the center hub,
+    // matching POMAD PRIMA inner coin circle
 
     // Layer 6A: Inner Groove / Recess
     final innerGroove = Paint()
