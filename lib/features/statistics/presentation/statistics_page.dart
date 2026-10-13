@@ -222,8 +222,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         totalSim: data.totalSim,
                         periodOptions: data.periodOptions,
                         selectedPeriodKey: data.selectedPeriodKey,
-                        onPeriodChanged:
-                            _supportsPeriodSelector(widget.module)
+                        onPeriodChanged: _supportsPeriodSelector(widget.module)
                             ? _changeComparisonPeriod
                             : null,
                       ),
@@ -696,8 +695,7 @@ class _SupabaseReportRepository {
       return await (_lakaSourceFuture ??= _fetchPeriodSource(
         client,
         table: 'laka_accident_records',
-        columns:
-            'id,period_id,pomdam_id,accident_type_id,value,data_status',
+        columns: 'id,period_id,pomdam_id,accident_type_id,value,data_status',
         typeTable: 'accident_types',
       ));
     } catch (_) {
@@ -706,9 +704,7 @@ class _SupabaseReportRepository {
     }
   }
 
-  static Future<_PeriodSourceData> _loadSimSource(
-    SupabaseClient client,
-  ) async {
+  static Future<_PeriodSourceData> _loadSimSource(SupabaseClient client) async {
     try {
       return await (_simSourceFuture ??= _fetchPeriodSource(
         client,
@@ -808,17 +804,12 @@ class _SupabaseReportRepository {
       selectedPeriodKey,
     );
 
-    int sum({
-      required int startMonth,
-      required int endMonth,
-      String? type,
-    }) {
+    int sum({required int startMonth, required int endMonth, String? type}) {
       var total = 0;
       for (final row in rows) {
         if (row['data_status'] != 'VALID') continue;
         final period = periods.byId[row['period_id']?.toString()];
-        if (period == null ||
-            _toInt(period['report_year']) != latest.year) {
+        if (period == null || _toInt(period['report_year']) != latest.year) {
           continue;
         }
         final month = _toInt(period['report_month']);
@@ -870,8 +861,7 @@ class _SupabaseReportRepository {
     return StatisticsViewData(
       columns: [
         StatisticsColumnData(
-          label:
-              '${latest.year} · JAN–${_monthShortNames[latest.month - 1]}',
+          label: '${latest.year} · JAN–${_monthShortNames[latest.month - 1]}',
           cards: cardsForRange(1, latest.month),
         ),
         StatisticsColumnData(
@@ -957,8 +947,7 @@ class _SupabaseReportRepository {
       for (final row in rows) {
         if (row['data_status'] != 'VALID') continue;
         final period = periods.byId[row['period_id']?.toString()];
-        if (period == null ||
-            _toInt(period['report_year']) != latest.year) {
+        if (period == null || _toInt(period['report_year']) != latest.year) {
           continue;
         }
         final month = _toInt(period['report_month']);
@@ -1002,14 +991,10 @@ class _SupabaseReportRepository {
     return StatisticsViewData(
       columns: [
         StatisticsColumnData(
-          label:
-              '${latest.year} · JAN–${_monthShortNames[latest.month - 1]}',
+          label: '${latest.year} · JAN–${_monthShortNames[latest.month - 1]}',
           cards: cardsForRange(1, latest.month),
         ),
-        StatisticsColumnData(
-          label: selected.label,
-          cards: comparisonCards,
-        ),
+        StatisticsColumnData(label: selected.label, cards: comparisonCards),
       ],
       ranking: _topFiveForRange(
         rows,
@@ -1229,8 +1214,7 @@ class _ContentBody extends StatelessWidget {
                     accent: accent,
                     module: module,
                     alignPeriodHeader: _supportsPeriodSelector(module),
-                    periodOptions:
-                        _supportsPeriodSelector(module) && index == 1
+                    periodOptions: _supportsPeriodSelector(module) && index == 1
                         ? periodOptions
                         : const [],
                     selectedPeriodKey:
@@ -1714,15 +1698,13 @@ class _StatsColumnView extends StatelessWidget {
         ),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
-            key: ValueKey(
-              switch (module) {
-                StatisticsModule.pelanggaran => 'pelanggaran-period-dropdown',
-                StatisticsModule.lakaLalin => 'laka-lalin-period-dropdown',
-                StatisticsModule.simTni => 'sim-tni-period-dropdown',
-                StatisticsModule.k9 => 'k9-period-dropdown',
-                StatisticsModule.provos => 'provos-period-dropdown',
-              },
-            ),
+            key: ValueKey(switch (module) {
+              StatisticsModule.pelanggaran => 'pelanggaran-period-dropdown',
+              StatisticsModule.lakaLalin => 'laka-lalin-period-dropdown',
+              StatisticsModule.simTni => 'sim-tni-period-dropdown',
+              StatisticsModule.k9 => 'k9-period-dropdown',
+              StatisticsModule.provos => 'provos-period-dropdown',
+            }),
             value: selectedPeriodKey,
             isExpanded: true,
             isDense: true,

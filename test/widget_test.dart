@@ -314,7 +314,6 @@ Future<StatisticsViewData> _testPelanggaranPeriodData(
   );
 }
 
- 
 Future<StatisticsViewData> _testSelectablePeriodData(
   StatisticsModule module,
   String periodKey,
@@ -420,10 +419,7 @@ Future<StatisticsViewData> _testSelectablePeriodData(
               ),
           ],
         ),
-        StatisticsColumnData(
-          label: option.label,
-          cards: comparisonCards,
-        ),
+        StatisticsColumnData(label: option.label, cards: comparisonCards),
       ],
       ranking: const [StatisticsRankData('POMDAM TEST', 2607)],
       totalSim: comparisonTotal,
@@ -675,16 +671,13 @@ void main() {
     },
   );
 
-  testWidgets('Laka Lalin period dropdown refreshes values', (
-    tester,
-  ) async {
+  testWidgets('Laka Lalin period dropdown refreshes values', (tester) async {
     await _setSurfaceSize(tester, const Size(390, 844));
     await tester.pumpWidget(
       MaterialApp(
         home: StatisticsPage(
           module: StatisticsModule.lakaLalin,
-          dataLoader: (module) =>
-              _testSelectablePeriodData(module, 'month:9'),
+          dataLoader: (module) => _testSelectablePeriodData(module, 'month:9'),
           periodDataLoader: _testSelectablePeriodData,
         ),
       ),
@@ -699,9 +692,7 @@ void main() {
     expect(find.text('42'), findsNothing);
     expect(find.text('9'), findsOneWidget);
 
-    await tester.tap(
-      find.byKey(const ValueKey('laka-lalin-period-dropdown')),
-    );
+    await tester.tap(find.byKey(const ValueKey('laka-lalin-period-dropdown')));
     await tester.pumpAndSettle();
     await tester.tap(find.text('TRIWULAN III'));
     await tester.pumpAndSettle();
@@ -721,8 +712,7 @@ void main() {
       MaterialApp(
         home: StatisticsPage(
           module: StatisticsModule.simTni,
-          dataLoader: (module) =>
-              _testSelectablePeriodData(module, 'month:9'),
+          dataLoader: (module) => _testSelectablePeriodData(module, 'month:9'),
           periodDataLoader: _testSelectablePeriodData,
         ),
       ),
