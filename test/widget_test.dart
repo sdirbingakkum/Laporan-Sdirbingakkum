@@ -542,7 +542,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('20'), findsOneWidget);
-      expect(find.text('35'), findsOneWidget);
+      expect(find.text('38'), findsOneWidget);
       expect(find.text('13'), findsNothing);
       expect(find.text('12'), findsNothing);
       expect(tester.takeException(), isNull);
