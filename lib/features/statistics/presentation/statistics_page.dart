@@ -1089,12 +1089,12 @@ class _SupabaseReportRepository {
     final personnelRows = List<Map<String, dynamic>>.from(
       await client
           .from('provos_personnel_records')
-          .select('period_id,pomdam_id,value'),
+          .select('period_id,pomdam_id,value,data_status'),
     );
     final educationRows = List<Map<String, dynamic>>.from(
       await client
           .from('provos_education_records')
-          .select('period_id,pomdam_id,education_status_id,value'),
+          .select('period_id,pomdam_id,education_status_id,value,data_status'),
     );
     final statuses = List<Map<String, dynamic>>.from(
       await client.from('education_statuses').select('id,code'),
@@ -1104,22 +1104,35 @@ class _SupabaseReportRepository {
         row['id'].toString(): row['code'].toString().toUpperCase(),
     };
 
-    int personnelTotal() {
-      var total = 0;
-      for (final row in personnelRows) {
-        final period = periods.byId[row['period_id']?.toString()];
-        if (period != null && period['report_year'] == 2026) {
-          total += _toInt(row['value']);
-        }
-      }
-      return total;
+    // Provos figures describe a personnel-strength snapshot, not a cumulative
+    // flow. Historical MONTH and SEMESTER snapshots must not be added together.
+    // Use the latest month that has valid Provos personnel facts; SEMESTER rows
+    // have no report_month and are therefore excluded from this selection.
+    final latest = _latestReportingMonth(personnelRows, periods);
+
+    bool belongsToLatestMonth(Map<String, dynamic> row) {
+      if (row['data_status'] != 'VALID' || latest == null) return false;
+      final period = periods.byId[row['period_id']?.toString()];
+      if (period == null) return false;
+      return _toInt(period['report_year']) == latest.year &&
+          _toInt(period['report_month']) == latest.month;
     }
+
+    final latestPersonnelRows = personnelRows
+        .where(belongsToLatestMonth)
+        .toList();
+    final latestEducationRows = educationRows
+        .where(belongsToLatestMonth)
+        .toList();
+
+    int personnelTotal() => latestPersonnelRows.fold<int>(
+      0,
+      (total, row) => total + _toInt(row['value']),
+    );
 
     int educationTotal(String status) {
       var total = 0;
-      for (final row in educationRows) {
-        final period = periods.byId[row['period_id']?.toString()];
-        if (period == null || period['report_year'] != 2026) continue;
+      for (final row in latestEducationRows) {
         if (statusById[row['education_status_id']?.toString()] != status) {
           continue;
         }
@@ -1131,7 +1144,7 @@ class _SupabaseReportRepository {
     return StatisticsViewData(
       columns: [
         StatisticsColumnData(
-          label: '2026',
+          label: '${latest?.year ?? 2026}',
           cards: [
             StatisticsCardData(
               label: 'JUMLAH',
@@ -1151,9 +1164,15 @@ class _SupabaseReportRepository {
           ],
         ),
       ],
-      ranking: _topFive(personnelRows, periods, pomdams),
+      ranking: _topFive(
+        latestPersonnelRows,
+        periods,
+        pomdams,
+        month: latest?.month,
+      ),
     );
   }
+
 }
 
 class _ReportDataError extends StatelessWidget {
