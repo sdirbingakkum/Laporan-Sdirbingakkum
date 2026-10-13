@@ -281,26 +281,34 @@ class _PieMenuCenter extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withValues(alpha: 0.16),
-                  const Color(0xFF173428).withValues(alpha: 0.36),
-                  const Color(0xFF06120D).withValues(alpha: 0.62),
+                  Colors.white.withValues(alpha: 0.20),
+                  const Color(0xFF173428).withValues(alpha: 0.42),
+                  const Color(0xFF06120D).withValues(alpha: 0.72),
                 ],
                 stops: const [0.0, 0.42, 1.0],
               ),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.24),
-                width: 1.0,
+                color: Colors.white.withValues(alpha: 0.28),
+                width: 1.2,
               ),
               boxShadow: [
+                // Deeper, more dramatic outer shadow for 3D depth
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.34),
-                  blurRadius: 18,
-                  offset: const Offset(0, 7),
+                  color: Colors.black.withValues(alpha: 0.50),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                ),
+                // Subtle gold glow behind center hub
+                BoxShadow(
+                  color: _goldLight.withValues(alpha: 0.10),
+                  blurRadius: 32,
+                  spreadRadius: 2,
                 ),
               ],
             ),
             child: Stack(
               children: [
+                // Upper-left specular highlight orb
                 Positioned(
                   left: -14,
                   top: -16,
@@ -311,7 +319,7 @@ class _PieMenuCenter extends StatelessWidget {
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          Colors.white.withValues(alpha: 0.14),
+                          Colors.white.withValues(alpha: 0.20),
                           Colors.transparent,
                         ],
                         stops: const [0.0, 0.72],
@@ -338,6 +346,13 @@ class _PieMenuCenter extends StatelessWidget {
                           icon,
                           color: iconColor.withValues(alpha: 0.94),
                           size: diameterForCenter(context),
+                          shadows: [
+                            // Glow aura behind center icon
+                            Shadow(
+                              color: iconColor.withValues(alpha: 0.30),
+                              blurRadius: 12,
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 6),
                         Padding(
@@ -443,6 +458,7 @@ class _PieMenuLabel extends StatelessWidget {
             children: [
               // Background-free 3D icon: a compact dark extrusion plus a
               // tiny upper highlight make it feel raised from the colored face.
+              // Enhanced: glow aura when selected for luxurious depth.
               AnimatedScale(
                 scale: selected ? 1.08 : 1,
                 duration: const Duration(milliseconds: 180),
@@ -454,26 +470,36 @@ class _PieMenuLabel extends StatelessWidget {
                       : const Color(0xFFEFECE3),
                   size: compact ? iconSize * 0.78 : iconSize * 0.80,
                   shadows: [
+                    // Primary extrusion shadow — deeper for 3D
                     Shadow(
                       color: Colors.black.withValues(
-                        alpha: selected ? 0.72 : 0.58,
+                        alpha: selected ? 0.80 : 0.62,
                       ),
-                      offset: const Offset(1.5, 2.2),
+                      offset: const Offset(1.8, 2.8),
                       blurRadius: 0,
                     ),
+                    // Secondary colored extrusion layer
                     Shadow(
                       color: item.lightColor.withValues(
-                        alpha: selected ? 0.22 : 0.14,
+                        alpha: selected ? 0.28 : 0.14,
                       ),
                       offset: const Offset(0.7, 1.0),
                       blurRadius: 0,
                     ),
+                    // Upper highlight for raised feel
                     Shadow(
                       color: Colors.white.withValues(
-                        alpha: selected ? 0.14 : 0.08,
+                        alpha: selected ? 0.18 : 0.08,
                       ),
                       offset: const Offset(-0.55, -0.65),
                       blurRadius: 0,
+                    ),
+                    // Glow aura behind icon when selected
+                    Shadow(
+                      color: item.lightColor.withValues(
+                        alpha: selected ? 0.40 : 0.0,
+                      ),
+                      blurRadius: selected ? 16 : 0,
                     ),
                   ],
                 ),
@@ -495,26 +521,36 @@ class _PieMenuLabel extends StatelessWidget {
                   shadows: [
                     // Small stacked offsets create letter extrusion without
                     // introducing any background behind the label.
+                    // Deeper primary shadow for 3D raised text
                     Shadow(
                       color: Colors.black.withValues(
-                        alpha: selected ? 0.72 : 0.58,
+                        alpha: selected ? 0.80 : 0.62,
                       ),
-                      offset: const Offset(1.2, 1.8),
+                      offset: const Offset(1.4, 2.2),
                       blurRadius: 0,
                     ),
+                    // Mid-depth layer
                     Shadow(
                       color: Colors.black.withValues(
-                        alpha: selected ? 0.28 : 0.20,
+                        alpha: selected ? 0.34 : 0.24,
                       ),
-                      offset: const Offset(0.55, 0.9),
+                      offset: const Offset(0.7, 1.1),
                       blurRadius: 0,
                     ),
+                    // Upper highlight
                     Shadow(
                       color: Colors.white.withValues(
-                        alpha: selected ? 0.14 : 0.08,
+                        alpha: selected ? 0.16 : 0.08,
                       ),
                       offset: const Offset(-0.45, -0.5),
                       blurRadius: 0,
+                    ),
+                    // Glow aura behind text when selected
+                    Shadow(
+                      color: item.lightColor.withValues(
+                        alpha: selected ? 0.28 : 0.0,
+                      ),
+                      blurRadius: selected ? 10 : 0,
                     ),
                   ],
                 ),
@@ -542,19 +578,92 @@ class _PieMenuPainter extends CustomPainter {
     Color(0xFF49A86B), // PROVOS TNI-AD — green
   ];
 
+  // Gold tones for metallic rings
+  static const _goldBright = Color(0xFFF1D37A);
+  static const _goldDark = Color(0xFF8B6914);
+  static const _goldMid = Color(0xFFD4A535);
+
   @override
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
     final outerRadius = size.shortestSide * 0.43;
+    final innerRadius = size.shortestSide * 0.17;
     final sweep = 2 * math.pi / itemCount;
 
-    // No physical layer is drawn beneath the wheel. Metallic depth is
-    // carried by the face lighting and restrained edge treatment.
-    final faceShadow = Paint()
-      ..color = Colors.black.withValues(alpha: 0.20)
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 12);
-    canvas.drawCircle(center.translate(0, 2.5), outerRadius + 1, faceShadow);
+    // ── UPGRADE 1: 3D Extruded Rim ──────────────────────────────────
+    // Draw offset copies of the pie from back to front to create the
+    // illusion of a thick coin/medal rim beneath the face.
+    const int rimDepth = 6;
+    for (var layer = rimDepth; layer >= 1; layer--) {
+      final layerOffset = Offset(0, layer * 0.8);
+      final layerAlpha = 0.12 + (layer / rimDepth) * 0.14;
+      final rimPaint = Paint()
+        ..color = Colors.black.withValues(alpha: layerAlpha);
 
+      for (var i = 0; i < itemCount; i++) {
+        final start = -math.pi / 2 + i * sweep;
+        final light = _lightPalette[i];
+
+        final path = Path()
+          ..moveTo(center.dx + layerOffset.dx, center.dy + layerOffset.dy)
+          ..lineTo(
+            center.dx + math.cos(start) * outerRadius + layerOffset.dx,
+            center.dy + math.sin(start) * outerRadius + layerOffset.dy,
+          )
+          ..arcTo(
+            Rect.fromCircle(
+              center: center + layerOffset,
+              radius: outerRadius,
+            ),
+            start,
+            sweep,
+            false,
+          )
+          ..close();
+
+        // Use a very dark version of the module color for the rim
+        final rimColor = Color.lerp(light, Colors.black, 0.82)!;
+        rimPaint.color = rimColor.withValues(alpha: layerAlpha);
+        canvas.drawPath(path, rimPaint);
+      }
+    }
+
+    // ── UPGRADE 2: Ambient Glow per Segment ─────────────────────────
+    // A soft radial glow behind each segment using its module color.
+    for (var i = 0; i < itemCount; i++) {
+      final start = -math.pi / 2 + i * sweep;
+      final midAngle = start + sweep / 2;
+      final selected = i == selectedIndex;
+      final light = _lightPalette[i];
+
+      final glowCenter = Offset(
+        center.dx + math.cos(midAngle) * outerRadius * 0.55,
+        center.dy + math.sin(midAngle) * outerRadius * 0.55,
+      );
+
+      final glowPaint = Paint()
+        ..shader = RadialGradient(
+          colors: [
+            light.withValues(alpha: selected ? 0.18 : 0.04),
+            light.withValues(alpha: selected ? 0.06 : 0.01),
+            Colors.transparent,
+          ],
+          stops: const [0.0, 0.45, 1.0],
+        ).createShader(
+          Rect.fromCircle(center: glowCenter, radius: outerRadius * 0.55),
+        )
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, selected ? 18 : 10);
+
+      canvas.drawCircle(glowCenter, outerRadius * 0.50, glowPaint);
+    }
+
+    // ── Base shadow beneath the main face ────────────────────────────
+    final faceShadow = Paint()
+      ..color = Colors.black.withValues(alpha: 0.28)
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 16);
+    canvas.drawCircle(center.translate(0, 3.5), outerRadius + 2, faceShadow);
+
+    // ── Main pie segments (face) ─────────────────────────────────────
     for (var i = 0; i < itemCount; i++) {
       final start = -math.pi / 2 + i * sweep;
       final selected = i == selectedIndex;
@@ -574,90 +683,102 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      // The wheel uses an embossed, emblem-like depth treatment rather
-      // than an extruded underside. A soft cast shadow around the selected
-      // segment makes the face feel raised without adding a visible lower lip.
+      // Elevated shadow for selected segment
       if (selected) {
         canvas.drawShadow(
           path,
-          Colors.black.withValues(alpha: 0.46),
-          8.0,
+          Colors.black.withValues(alpha: 0.52),
+          10.0,
           true,
         );
       }
 
-      // Polished metallic face: a crisp specular highlight, stable module
-      // color through the midtone, then a long controlled falloff into shadow.
+      // ── UPGRADE 3: Polished metallic face with dramatic specular ──
+      // Enhanced gradient with brighter highlights and deeper shadows.
       final paint = Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color.lerp(light, Colors.white, selected ? 0.36 : 0.30)!,
-            Color.lerp(light, Colors.white, selected ? 0.14 : 0.10)!,
+            Color.lerp(light, Colors.white, selected ? 0.42 : 0.34)!,
+            Color.lerp(light, Colors.white, selected ? 0.22 : 0.16)!,
+            Color.lerp(light, Colors.white, selected ? 0.08 : 0.04)!,
             light,
-            Color.lerp(light, Colors.black, selected ? 0.07 : 0.10)!,
-            Color.lerp(light, Colors.black, selected ? 0.26 : 0.32)!,
-            Color.lerp(light, Colors.black, selected ? 0.48 : 0.56)!,
-            Color.lerp(light, Colors.black, selected ? 0.68 : 0.74)!,
-            Color.lerp(light, Colors.black, selected ? 0.86 : 0.92)!,
+            Color.lerp(light, Colors.black, selected ? 0.06 : 0.10)!,
+            Color.lerp(light, Colors.black, selected ? 0.24 : 0.30)!,
+            Color.lerp(light, Colors.black, selected ? 0.44 : 0.52)!,
+            Color.lerp(light, Colors.black, selected ? 0.62 : 0.70)!,
+            Color.lerp(light, Colors.black, selected ? 0.80 : 0.88)!,
           ],
-          stops: const [0.0, 0.05, 0.13, 0.27, 0.45, 0.65, 0.83, 1.0],
+          stops: const [0.0, 0.04, 0.09, 0.16, 0.30, 0.48, 0.66, 0.82, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, paint);
 
-      // Metallic volume is produced with soft light fields rather than
-      // circular stroke lines. This keeps the outer edge clean.
+      // ── Upper specular highlight — brighter, more focused ─────────
       final upperSpecular = Paint()
         ..shader = RadialGradient(
-          center: const Alignment(-0.58, -0.62),
-          radius: 0.92,
+          center: const Alignment(-0.62, -0.66),
+          radius: 0.80,
           colors: [
-            Colors.white.withValues(alpha: selected ? 0.24 : 0.18),
-            Colors.white.withValues(alpha: selected ? 0.08 : 0.055),
+            Colors.white.withValues(alpha: selected ? 0.34 : 0.24),
+            Colors.white.withValues(alpha: selected ? 0.14 : 0.08),
+            Colors.white.withValues(alpha: selected ? 0.04 : 0.02),
             Colors.transparent,
           ],
-          stops: const [0.0, 0.20, 0.62],
+          stops: const [0.0, 0.14, 0.32, 0.62],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, upperSpecular);
 
+      // ── Tight specular hotspot — chrome-like bright spot ──────────
+      final hotspot = Paint()
+        ..shader = RadialGradient(
+          center: const Alignment(-0.50, -0.54),
+          radius: 0.38,
+          colors: [
+            Colors.white.withValues(alpha: selected ? 0.22 : 0.12),
+            Colors.white.withValues(alpha: selected ? 0.06 : 0.03),
+            Colors.transparent,
+          ],
+          stops: const [0.0, 0.30, 1.0],
+        ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
+      canvas.drawPath(path, hotspot);
+
+      // ── Lower depth shadow — deeper for volume ────────────────────
       final lowerDepth = Paint()
         ..shader = RadialGradient(
           center: const Alignment(0.72, 0.74),
           radius: 0.98,
           colors: [
-            Colors.black.withValues(alpha: selected ? 0.34 : 0.40),
-            Colors.black.withValues(alpha: selected ? 0.16 : 0.20),
+            Colors.black.withValues(alpha: selected ? 0.40 : 0.46),
+            Colors.black.withValues(alpha: selected ? 0.20 : 0.26),
             Colors.transparent,
           ],
           stops: const [0.0, 0.34, 0.82],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, lowerDepth);
 
-      // A narrow specular sweep gives the slice a machined-metal highlight
-      // without introducing an outer ring or decorative contour.
+      // ── Narrow sweep highlight for machined-metal feel ────────────
       final sweepHighlight = Paint()
         ..shader = LinearGradient(
           begin: Alignment(-0.92, -0.88),
           end: Alignment(0.72, 0.70),
           colors: [
-            Colors.white.withValues(alpha: selected ? 0.16 : 0.105),
-            Colors.white.withValues(alpha: selected ? 0.045 : 0.028),
+            Colors.white.withValues(alpha: selected ? 0.20 : 0.12),
+            Colors.white.withValues(alpha: selected ? 0.06 : 0.035),
             Colors.transparent,
           ],
-          stops: const [0.0, 0.12, 0.42],
+          stops: const [0.0, 0.14, 0.42],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
       canvas.drawPath(path, sweepHighlight);
 
-      // A dark reciprocal field creates the soft lower-right bevel seen on
-      // embossed insignia, while the outside contour remains uninterrupted.
+      // ── Lower-right bevel shadow for embossed insignia feel ───────
       final bevelShadow = Paint()
         ..shader = RadialGradient(
           center: const Alignment(0.82, 0.80),
           radius: 1.0,
           colors: [
-            Colors.black.withValues(alpha: selected ? 0.30 : 0.24),
-            Colors.black.withValues(alpha: selected ? 0.075 : 0.055),
+            Colors.black.withValues(alpha: selected ? 0.36 : 0.28),
+            Colors.black.withValues(alpha: selected ? 0.10 : 0.07),
             Colors.transparent,
           ],
           stops: const [0.0, 0.30, 0.72],
@@ -665,9 +786,7 @@ class _PieMenuPainter extends CustomPainter {
       canvas.drawPath(path, bevelShadow);
     }
 
-    // Keep only the radial module separators; the circular outer contour
-    // stays completely free of decorative lines. Each separator is treated
-    // like a shallow embossed joint: dark groove + hairline highlight.
+    // ── Radial module separators — embossed joint lines ──────────────
     for (var i = 0; i < itemCount; i++) {
       final angle = -math.pi / 2 + i * sweep;
       final unit = Offset(math.cos(angle), math.sin(angle));
@@ -682,7 +801,7 @@ class _PieMenuPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.8
         ..strokeCap = StrokeCap.butt
-        ..color = Colors.black.withValues(alpha: 0.26);
+        ..color = Colors.black.withValues(alpha: 0.30);
       canvas.drawLine(
         startPoint + normal * 0.7,
         endPoint + normal * 0.7,
@@ -693,7 +812,7 @@ class _PieMenuPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 0.55
         ..strokeCap = StrokeCap.butt
-        ..color = Colors.white.withValues(alpha: 0.22);
+        ..color = Colors.white.withValues(alpha: 0.24);
       canvas.drawLine(
         startPoint - normal * 0.8,
         endPoint - normal * 0.8,
@@ -701,8 +820,141 @@ class _PieMenuPainter extends CustomPainter {
       );
     }
 
-    // No separate circular outer-lip lines. The 3D read comes from
-    // directional light, embossed seams, and controlled specular response.
+    // ── UPGRADE 5: Outer Metallic Gold Ring ─────────────────────────
+    // A polished gold ring at the outside edge, directional-lit.
+    final outerRingWidth = 2.2;
+
+    // Dark base of the ring (shadow side)
+    final outerRingBase = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = outerRingWidth + 0.6
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          _goldMid.withValues(alpha: 0.50),
+          _goldDark.withValues(alpha: 0.60),
+          Colors.black.withValues(alpha: 0.40),
+        ],
+        stops: const [0.0, 0.45, 1.0],
+      ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
+    canvas.drawCircle(center, outerRadius + 1.5, outerRingBase);
+
+    // Bright highlight on the ring
+    final outerRingHighlight = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = outerRingWidth
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          _goldBright.withValues(alpha: 0.82),
+          _goldMid.withValues(alpha: 0.50),
+          _goldDark.withValues(alpha: 0.30),
+          _goldMid.withValues(alpha: 0.22),
+        ],
+        stops: const [0.0, 0.28, 0.65, 1.0],
+      ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
+    canvas.drawCircle(center, outerRadius + 1.5, outerRingHighlight);
+
+    // Thin specular edge on the outer ring
+    final outerRingSpec = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.5
+      ..color = Colors.white.withValues(alpha: 0.28);
+    canvas.drawCircle(center, outerRadius + 2.6, outerRingSpec);
+
+    // ── UPGRADE 4: Inner Metallic Gold Ring (bezel) ─────────────────
+    // A refined gold bezel separating the segments from the center hub.
+    final innerRingWidth = 1.8;
+
+    // Dark base of inner ring
+    final innerRingBase = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = innerRingWidth + 0.4
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          _goldBright.withValues(alpha: 0.40),
+          _goldDark.withValues(alpha: 0.50),
+          Colors.black.withValues(alpha: 0.30),
+        ],
+        stops: const [0.0, 0.50, 1.0],
+      ).createShader(Rect.fromCircle(center: center, radius: innerRadius));
+    canvas.drawCircle(center, innerRadius, innerRingBase);
+
+    // Bright highlight on inner ring
+    final innerRingHighlight = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = innerRingWidth
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          _goldBright.withValues(alpha: 0.74),
+          _goldMid.withValues(alpha: 0.44),
+          _goldDark.withValues(alpha: 0.24),
+          _goldMid.withValues(alpha: 0.18),
+        ],
+        stops: const [0.0, 0.30, 0.68, 1.0],
+      ).createShader(Rect.fromCircle(center: center, radius: innerRadius));
+    canvas.drawCircle(center, innerRadius, innerRingHighlight);
+
+    // Thin specular edge on inner ring
+    final innerRingSpec = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.4
+      ..color = Colors.white.withValues(alpha: 0.22);
+    canvas.drawCircle(center, innerRadius - 1.0, innerRingSpec);
+
+    // ── UPGRADE 6: Center hub double-bezel rings ────────────────────
+    // Two concentric thin gold rings around the center hub area.
+    final centerRadius = size.shortestSide * 0.17 * 0.92;
+
+    // Outer bezel ring of center hub
+    final centerOuterBezel = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          _goldBright.withValues(alpha: 0.60),
+          _goldDark.withValues(alpha: 0.30),
+        ],
+      ).createShader(Rect.fromCircle(center: center, radius: centerRadius));
+    canvas.drawCircle(center, centerRadius, centerOuterBezel);
+
+    // Inner bezel ring of center hub (slightly smaller)
+    final centerInnerBezel = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.6
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          _goldBright.withValues(alpha: 0.42),
+          _goldDark.withValues(alpha: 0.20),
+        ],
+      ).createShader(
+        Rect.fromCircle(center: center, radius: centerRadius - 3.5),
+      );
+    canvas.drawCircle(center, centerRadius - 3.5, centerInnerBezel);
+
+    // Radial gold glow behind center hub
+    final centerGlow = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          _goldBright.withValues(alpha: 0.08),
+          _goldBright.withValues(alpha: 0.03),
+          Colors.transparent,
+        ],
+        stops: const [0.0, 0.50, 1.0],
+      ).createShader(
+        Rect.fromCircle(center: center, radius: centerRadius + 8),
+      );
+    canvas.drawCircle(center, centerRadius + 8, centerGlow);
   }
 
   static int? indexAt(Offset position, Size size, {required int itemCount}) {
