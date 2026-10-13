@@ -18,7 +18,8 @@ enum StatisticsModule { pelanggaran, lakaLalin, simTni, k9, provos }
 bool _supportsPeriodSelector(StatisticsModule module) {
   return module == StatisticsModule.pelanggaran ||
       module == StatisticsModule.lakaLalin ||
-      module == StatisticsModule.simTni;
+      module == StatisticsModule.simTni ||
+      module == StatisticsModule.provos;
 }
 
 Color _moduleAccent(StatisticsModule module) {
@@ -393,8 +394,9 @@ class _SupabaseReportRepository {
         return _loadLaka(client, selectedPeriodKey: periodKey);
       case StatisticsModule.simTni:
         return _loadSim(client, selectedPeriodKey: periodKey);
-      case StatisticsModule.k9:
       case StatisticsModule.provos:
+        return _loadProvos(client, selectedPeriodKey: periodKey);
+      case StatisticsModule.k9:
         return load(module);
     }
   }
@@ -1083,18 +1085,21 @@ class _SupabaseReportRepository {
     );
   }
 
-  static Future<StatisticsViewData> _loadProvos(SupabaseClient client) async {
+  static Future<StatisticsViewData> _loadProvos(
+    SupabaseClient client, {
+    String? selectedPeriodKey,
+  }) async {
     final periods = await _periods(client);
     final pomdams = await _pomdams(client);
-    final personnelRows = List<Map<String, dynamic>>.from(
-      await client
-          .from('provos_personnel_records')
-          .select('period_id,pomdam_id,value'),
+    final personnelRows = await _fetchAllRows(
+      client,
+      'provos_personnel_records',
+      'id,period_id,pomdam_id,value,data_status',
     );
-    final educationRows = List<Map<String, dynamic>>.from(
-      await client
-          .from('provos_education_records')
-          .select('period_id,pomdam_id,education_status_id,value'),
+    final educationRows = await _fetchAllRows(
+      client,
+      'provos_education_records',
+      'id,period_id,pomdam_id,education_status_id,value,data_status',
     );
     final statuses = List<Map<String, dynamic>>.from(
       await client.from('education_statuses').select('id,code'),
@@ -1104,22 +1109,77 @@ class _SupabaseReportRepository {
         row['id'].toString(): row['code'].toString().toUpperCase(),
     };
 
-    int personnelTotal() {
+    final latest = _latestReportingMonth(
+      [...personnelRows, ...educationRows],
+      periods,
+    );
+    if (latest == null) {
+      return const StatisticsViewData(
+        columns: [
+          StatisticsColumnData(
+            label: 'BELUM ADA DATA',
+            cards: [
+              StatisticsCardData(
+                label: 'JUMLAH',
+                value: '0',
+                color: Color(0xFF94A3B8),
+              ),
+              StatisticsCardData(
+                label: 'SUDAH DIK/TAR',
+                value: '0',
+                color: Color(0xFF10B981),
+              ),
+              StatisticsCardData(
+                label: 'BELUM DIK/TAR',
+                value: '0',
+                color: Color(0xFFF59E0B),
+              ),
+            ],
+          ),
+        ],
+        ranking: [],
+      );
+    }
+
+    final options = _periodOptions(latest.month);
+    final selected = _resolveSelectedPeriod(
+      options,
+      latest.month,
+      selectedPeriodKey,
+    );
+
+    int personnelTotal({
+      required int startMonth,
+      required int endMonth,
+    }) {
       var total = 0;
       for (final row in personnelRows) {
+        if (row['data_status'] != 'VALID') continue;
         final period = periods.byId[row['period_id']?.toString()];
-        if (period != null && period['report_year'] == 2026) {
-          total += _toInt(row['value']);
+        if (period == null || _toInt(period['report_year']) != latest.year) {
+          continue;
         }
+        final month = _toInt(period['report_month']);
+        if (month < startMonth || month > endMonth) continue;
+        total += _toInt(row['value']);
       }
       return total;
     }
 
-    int educationTotal(String status) {
+    int educationTotal(
+      String status, {
+      required int startMonth,
+      required int endMonth,
+    }) {
       var total = 0;
       for (final row in educationRows) {
+        if (row['data_status'] != 'VALID') continue;
         final period = periods.byId[row['period_id']?.toString()];
-        if (period == null || period['report_year'] != 2026) continue;
+        if (period == null || _toInt(period['report_year']) != latest.year) {
+          continue;
+        }
+        final month = _toInt(period['report_month']);
+        if (month < startMonth || month > endMonth) continue;
         if (statusById[row['education_status_id']?.toString()] != status) {
           continue;
         }
@@ -1128,30 +1188,67 @@ class _SupabaseReportRepository {
       return total;
     }
 
+    StatisticsColumnData buildColumn(
+      String label, {
+      required int startMonth,
+      required int endMonth,
+    }) {
+      return StatisticsColumnData(
+        label: label,
+        cards: [
+          StatisticsCardData(
+            label: 'JUMLAH',
+            value: personnelTotal(
+              startMonth: startMonth,
+              endMonth: endMonth,
+            ).toString(),
+            color: const Color(0xFF94A3B8),
+          ),
+          StatisticsCardData(
+            label: 'SUDAH DIK/TAR',
+            value: educationTotal(
+              'SUDAH',
+              startMonth: startMonth,
+              endMonth: endMonth,
+            ).toString(),
+            color: const Color(0xFF10B981),
+          ),
+          StatisticsCardData(
+            label: 'BELUM DIK/TAR',
+            value: educationTotal(
+              'BELUM',
+              startMonth: startMonth,
+              endMonth: endMonth,
+            ).toString(),
+            color: const Color(0xFFF59E0B),
+          ),
+        ],
+      );
+    }
+
     return StatisticsViewData(
       columns: [
-        StatisticsColumnData(
-          label: '2026',
-          cards: [
-            StatisticsCardData(
-              label: 'JUMLAH',
-              value: personnelTotal().toString(),
-              color: const Color(0xFF94A3B8),
-            ),
-            StatisticsCardData(
-              label: 'SUDAH DIK/TAR',
-              value: educationTotal('SUDAH').toString(),
-              color: const Color(0xFF10B981),
-            ),
-            StatisticsCardData(
-              label: 'BELUM DIK/TAR',
-              value: educationTotal('BELUM').toString(),
-              color: const Color(0xFFF59E0B),
-            ),
-          ],
+        buildColumn(
+          '${latest.year} · JAN–${_monthShortNames[latest.month - 1]}',
+          startMonth: 1,
+          endMonth: latest.month,
+        ),
+        buildColumn(
+          selected.label,
+          startMonth: selected.startMonth,
+          endMonth: selected.endMonth,
         ),
       ],
-      ranking: _topFive(personnelRows, periods, pomdams),
+      ranking: _topFiveForRange(
+        personnelRows,
+        periods,
+        pomdams,
+        year: latest.year,
+        startMonth: selected.startMonth,
+        endMonth: selected.endMonth,
+      ),
+      periodOptions: options,
+      selectedPeriodKey: selected.key,
     );
   }
 }
