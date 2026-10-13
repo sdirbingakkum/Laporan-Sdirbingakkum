@@ -99,7 +99,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         return AlertDialog(
           backgroundColor: _surface,
           title: const Text(
-            'KELUAR DARI SISTEM?',
+            'KELUAR',
             style: TextStyle(color: _text, fontWeight: FontWeight.w800),
           ),
           content: const Text(
