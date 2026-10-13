@@ -8,13 +8,11 @@ import '../data/auth_repository.dart';
 import '../../../shared/widgets/app_background.dart';
 
 const _bg = Color(0xFF03150F);
-const _surfaceSoft = Color(0xFF0D2C20);
 const _gold = Color(0xFFD7A93C);
 const _goldLight = Color(0xFFF1D37A);
 const _goldDark = Color(0xFF8D651E);
 const _text = Color(0xFFF8F5EC);
 const _muted = Color(0xFFB7C2BC);
-const _line = Color(0xFF6E7C73);
 
 class SignInPage extends ConsumerStatefulWidget {
   const SignInPage({super.key});
@@ -76,8 +74,22 @@ class _SignInPageState extends ConsumerState<SignInPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_friendlyAuthMessage(error)),
+          content: Text(
+            _friendlyAuthMessage(error),
+            style: const TextStyle(
+              color: Color(0xFFF8F5EC),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.4,
+            ),
+          ),
           behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFF071F17),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(6.4),
+            side: BorderSide(color: _gold.withValues(alpha: 0.30)),
+          ),
+          elevation: 10,
         ),
       );
     } catch (_) {
@@ -86,9 +98,23 @@ class _SignInPageState extends ConsumerState<SignInPage> {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('TERJADI KESALAHAN. SILAKAN COBA LAGI.'),
+        SnackBar(
+          content: const Text(
+            'TERJADI KESALAHAN. SILAKAN COBA LAGI.',
+            style: TextStyle(
+              color: Color(0xFFF8F5EC),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.4,
+            ),
+          ),
           behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFF071F17),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(6.4),
+            side: BorderSide(color: _gold.withValues(alpha: 0.30)),
+          ),
+          elevation: 10,
         ),
       );
     } finally {
@@ -171,73 +197,116 @@ class _SignInContentState extends ConsumerState<_SignInContent> {
 
     return Form(
       key: parent._formKey,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 10),
-          TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0.86, end: 1),
-            duration: const Duration(milliseconds: 900),
-            curve: Curves.easeOutBack,
-            builder: (context, scale, child) {
-              return Transform.scale(scale: scale, child: child);
-            },
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: _gold.withValues(alpha: 0.6),
-                  width: 1.2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: _gold.withValues(alpha: 0.22),
-                    blurRadius: 34,
-                    spreadRadius: 1,
-                    offset: const Offset(0, 14),
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0.0, end: 1.0),
+        duration: const Duration(milliseconds: 750),
+        curve: Curves.easeOutCubic,
+        builder: (context, value, _) {
+          final logoScale = 0.88 + value * 0.12;
+          final titleProgress = ((value - 0.15) / 0.85).clamp(0.0, 1.0);
+          final cardProgress = ((value - 0.30) / 0.70).clamp(0.0, 1.0);
+
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 10),
+              Transform.scale(
+                scale: logoScale,
+                child: Opacity(
+                  opacity: value.clamp(0.0, 1.0),
+                  child: Container(
+                    width: 150,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: _goldLight.withValues(alpha: 0.75),
+                        width: 1.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: _gold.withValues(alpha: 0.30),
+                          blurRadius: 36,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 14),
+                        ),
+                        const BoxShadow(
+                          color: Colors.black87,
+                          blurRadius: 26,
+                          offset: Offset(0, 12),
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/pomad_prima.webp',
+                        fit: BoxFit.cover,
+                        semanticLabel: 'LOGO POMAD PRIMA',
+                      ),
+                    ),
                   ),
-                ],
-              ),
-              child: ClipOval(
-                child: Image.asset(
-                  'assets/images/pomad_prima.webp',
-                  fit: BoxFit.cover,
-                  semanticLabel: 'LOGO POMAD PRIMA',
                 ),
               ),
-            ),
-          ),
-          const SizedBox(height: 14),
-          Text(
-            'SDIRBINGAKKUM',
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            style: textTheme.headlineMedium?.copyWith(
-              color: _goldLight,
-              fontFamily: 'serif',
-              fontSize: 30,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.5,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            'PUSPOMAD',
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            style: textTheme.titleMedium?.copyWith(
-              color: _text,
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.8,
-            ),
-          ),
-          const SizedBox(height: 20),
-          _SignInCard(parent: parent),
-          const SizedBox(height: 8),
-        ],
+              const SizedBox(height: 14),
+              Transform.translate(
+                offset: Offset(
+                  0,
+                  (1 - Curves.easeOutCubic.transform(titleProgress)) * 10,
+                ),
+                child: Opacity(
+                  opacity: titleProgress,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'SDIRBINGAKKUM',
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        style: textTheme.headlineMedium?.copyWith(
+                          color: _goldLight,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
+                          shadows: [
+                            Shadow(
+                              color: _gold.withValues(alpha: 0.35),
+                              blurRadius: 16,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'PUSPOMAD',
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        style: textTheme.titleMedium?.copyWith(
+                          color: _text,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Transform.translate(
+                offset: Offset(
+                  0,
+                  (1 - Curves.easeOutCubic.transform(cardProgress)) * 14,
+                ),
+                child: Opacity(
+                  opacity: cardProgress,
+                  child: _SignInCard(parent: parent),
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+          );
+        },
       ),
     );
   }
@@ -251,7 +320,7 @@ class _SignInCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(6.4),
       child: BackdropFilter(
         filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
         child: Container(
@@ -263,7 +332,7 @@ class _SignInCard extends StatelessWidget {
               colors: [Color(0x9C183B2D), Color(0x72102C20), Color(0x7007130E)],
               stops: [0.0, 0.46, 1.0],
             ),
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(6.4),
             border: Border.all(color: _gold.withValues(alpha: 0.30)),
             boxShadow: [
               BoxShadow(
@@ -278,7 +347,7 @@ class _SignInCard extends StatelessWidget {
               ),
             ],
           ),
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -344,39 +413,97 @@ class _SignInCard extends StatelessWidget {
               const SizedBox(height: 17),
               SizedBox(
                 height: 52,
-                child: FilledButton(
-                  onPressed: parent._isLoading ? null : parent._signIn,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: _goldLight,
-                    foregroundColor: const Color(0xFF10140F),
-                    disabledBackgroundColor: _goldDark.withValues(alpha: 0.58),
-                    disabledForegroundColor: Colors.black54,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 180),
-                    child: parent._isLoading
-                        ? const SizedBox(
-                            key: ValueKey('loading'),
-                            width: 21,
-                            height: 21,
-                            child: CircularProgressIndicator(strokeWidth: 2.4),
-                          )
-                        : const Row(
-                            key: ValueKey('label'),
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'MASUK',
-                                style: TextStyle(fontWeight: FontWeight.w800),
-                              ),
-                              SizedBox(width: 8),
-                              Icon(Icons.arrow_forward_rounded, size: 20),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6.4),
+                    gradient: parent._isLoading
+                        ? LinearGradient(
+                            colors: [
+                              _goldDark.withValues(alpha: 0.58),
+                              _goldDark.withValues(alpha: 0.45),
                             ],
+                          )
+                        : const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Color(0xFFFFF1BD),
+                              Color(0xFFF3CE5E),
+                              Color(0xFFD6A02B),
+                              Color(0xFFA67417),
+                            ],
+                            stops: [0.0, 0.32, 0.74, 1.0],
                           ),
+                    border: Border.all(
+                      color: const Color(0xFFFFFAEB).withValues(alpha: 0.55),
+                      width: 1.0,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: _gold.withValues(alpha: 0.32),
+                        blurRadius: 22,
+                        offset: const Offset(0, 6),
+                      ),
+                      const BoxShadow(
+                        color: Colors.black54,
+                        blurRadius: 14,
+                        offset: Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: FilledButton(
+                    onPressed: parent._isLoading ? null : parent._signIn,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      foregroundColor: const Color(0xFF1B1202),
+                      disabledBackgroundColor: Colors.transparent,
+                      disabledForegroundColor: Colors.black54,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6.4),
+                      ),
+                    ),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 180),
+                      child: parent._isLoading
+                          ? const SizedBox(
+                              key: ValueKey('loading'),
+                              width: 21,
+                              height: 21,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.4,
+                                color: Color(0xFF1B1202),
+                              ),
+                            )
+                          : const Row(
+                              key: ValueKey('label'),
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'MASUK',
+                                  style: TextStyle(
+                                    color: Color(0xFF1B1202),
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 1.8,
+                                    shadows: [
+                                      Shadow(
+                                        color: Color(0x66FFF7DB),
+                                        offset: Offset(0, 1),
+                                        blurRadius: 0,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                Icon(
+                                  Icons.arrow_forward_rounded,
+                                  size: 20,
+                                  color: Color(0xFF1B1202),
+                                ),
+                              ],
+                            ),
+                    ),
                   ),
                 ),
               ),
@@ -450,26 +577,26 @@ class _DarkField extends StatelessWidget {
           fontSize: dense ? 12 : 13,
         ),
         filled: true,
-        fillColor: _surfaceSoft,
+        fillColor: const Color(0xFF071F17),
         isDense: dense,
         contentPadding: EdgeInsets.symmetric(
           horizontal: 14,
           vertical: dense ? 12 : 15,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(13),
-          borderSide: const BorderSide(color: _line),
+          borderRadius: BorderRadius.circular(6.4),
+          borderSide: BorderSide(color: _gold.withValues(alpha: 0.24)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(13),
-          borderSide: const BorderSide(color: _goldLight, width: 1.3),
+          borderRadius: BorderRadius.circular(6.4),
+          borderSide: const BorderSide(color: _goldLight, width: 1.4),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(13),
+          borderRadius: BorderRadius.circular(6.4),
           borderSide: const BorderSide(color: Color(0xFFCC6D61)),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(13),
+          borderRadius: BorderRadius.circular(6.4),
           borderSide: const BorderSide(color: Color(0xFFE28C80), width: 1.3),
         ),
       ),

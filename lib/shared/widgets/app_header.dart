@@ -41,7 +41,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       surfaceTintColor: Colors.transparent,
       toolbarHeight: 68,
       shape: Border(
-        bottom: BorderSide(color: _gold.withValues(alpha: 0.16), width: 1),
+        bottom: BorderSide(color: _gold.withValues(alpha: 0.24), width: 1),
       ),
       leadingWidth: onBack == null ? (compact ? 52 : 60) : 52,
       leading: onBack == null
@@ -92,6 +92,13 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                     fontSize: compact ? 17 : 19,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.7,
+                    shadows: [
+                      Shadow(
+                        color: _gold.withValues(alpha: 0.35),
+                        blurRadius: 10,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -102,8 +109,8 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                   style: TextStyle(
                     color: _muted,
                     fontSize: compact ? 8.5 : 9.5,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.2,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.6,
                   ),
                 ),
               ],
@@ -116,6 +123,11 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
           tooltip: 'MENU AKUN',
           icon: const Icon(Icons.more_vert_rounded),
           color: _surface,
+          elevation: 12,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: _gold.withValues(alpha: 0.28)),
+          ),
           onSelected: (value) {
             if (value == 'signout') {
               onSignOut();
@@ -131,10 +143,15 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                   SizedBox(width: 10),
                   Flexible(
                     child: Text(
-                      'KELUAR / SIGN OUT',
+                      'KELUAR',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: _text),
+                      style: TextStyle(
+                        color: _text,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.0,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
                 ],

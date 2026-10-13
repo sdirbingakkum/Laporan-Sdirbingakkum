@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -23,6 +23,32 @@ class _AuthRefreshNotifier extends ChangeNotifier {
   }
 }
 
+Page<dynamic> _buildExecutivePage({
+  required LocalKey key,
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: key,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 280),
+    reverseTransitionDuration: const Duration(milliseconds: 220),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final curve = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOutCubic,
+        reverseCurve: Curves.easeInCubic,
+      );
+      return FadeTransition(
+        opacity: curve,
+        child: ScaleTransition(
+          scale: Tween<double>(begin: 0.985, end: 1.0).animate(curve),
+          child: child,
+        ),
+      );
+    },
+  );
+}
+
 final appRouterProvider = Provider<GoRouter>((ref) {
   final auth = Supabase.instance.client.auth;
   final refreshNotifier = _AuthRefreshNotifier(auth.onAuthStateChange);
@@ -43,32 +69,50 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       return onSignIn ? '/' : null;
     },
     routes: [
-      GoRoute(path: '/signin', builder: (context, state) => const SignInPage()),
-      GoRoute(path: '/', builder: (context, state) => const HomePage()),
+      GoRoute(
+        path: '/signin',
+        pageBuilder: (context, state) =>
+            _buildExecutivePage(key: state.pageKey, child: const SignInPage()),
+      ),
+      GoRoute(
+        path: '/',
+        pageBuilder: (context, state) =>
+            _buildExecutivePage(key: state.pageKey, child: const HomePage()),
+      ),
       GoRoute(
         path: '/statistik/pelanggaran',
-        builder: (context, state) =>
-            const StatisticsPage(module: StatisticsModule.pelanggaran),
+        pageBuilder: (context, state) => _buildExecutivePage(
+          key: state.pageKey,
+          child: const StatisticsPage(module: StatisticsModule.pelanggaran),
+        ),
       ),
       GoRoute(
         path: '/statistik/laka-lalin',
-        builder: (context, state) =>
-            const StatisticsPage(module: StatisticsModule.lakaLalin),
+        pageBuilder: (context, state) => _buildExecutivePage(
+          key: state.pageKey,
+          child: const StatisticsPage(module: StatisticsModule.lakaLalin),
+        ),
       ),
       GoRoute(
         path: '/statistik/sim-tni',
-        builder: (context, state) =>
-            const StatisticsPage(module: StatisticsModule.simTni),
+        pageBuilder: (context, state) => _buildExecutivePage(
+          key: state.pageKey,
+          child: const StatisticsPage(module: StatisticsModule.simTni),
+        ),
       ),
       GoRoute(
         path: '/statistik/k9',
-        builder: (context, state) =>
-            const StatisticsPage(module: StatisticsModule.k9),
+        pageBuilder: (context, state) => _buildExecutivePage(
+          key: state.pageKey,
+          child: const StatisticsPage(module: StatisticsModule.k9),
+        ),
       ),
       GoRoute(
         path: '/statistik/provos',
-        builder: (context, state) =>
-            const StatisticsPage(module: StatisticsModule.provos),
+        pageBuilder: (context, state) => _buildExecutivePage(
+          key: state.pageKey,
+          child: const StatisticsPage(module: StatisticsModule.provos),
+        ),
       ),
     ],
   );

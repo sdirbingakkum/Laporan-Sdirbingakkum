@@ -126,45 +126,61 @@ class _StatisticsPageState extends State<StatisticsPage> {
           child: FutureBuilder<StatisticsViewData>(
             future: _dataFuture,
             builder: (context, snapshot) {
+              Widget content;
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.hasError || snapshot.data == null) {
-                return const _ReportDataError();
-              }
-
-              final data = snapshot.data!;
-              return SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 760),
-                    child: _ContentBody(
-                      columns: data.columns
-                          .map(
-                            (column) => _StatColumn(
-                              label: column.label,
-                              cards: column.cards
-                                  .map(
-                                    (card) => _StatCardData(
-                                      card.label,
-                                      card.value,
-                                      card.color,
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                          )
-                          .toList(),
-                      module: widget.module,
-                      ranking: data.ranking
-                          .map((item) => _RankData(item.name, item.value))
-                          .toList(),
-                      accent: _moduleAccent(widget.module),
-                      totalSim: data.totalSim,
+                content = const Center(
+                  key: ValueKey('statistics-loading'),
+                  child: CircularProgressIndicator(
+                    color: Color(0xFFF1D37A),
+                    strokeWidth: 2.2,
+                  ),
+                );
+              } else if (snapshot.hasError || snapshot.data == null) {
+                content = const _ReportDataError(
+                  key: ValueKey('statistics-error'),
+                );
+              } else {
+                final data = snapshot.data!;
+                content = SingleChildScrollView(
+                  key: const ValueKey('statistics-content'),
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 760),
+                      child: _ContentBody(
+                        columns: data.columns
+                            .map(
+                              (column) => _StatColumn(
+                                label: column.label,
+                                cards: column.cards
+                                    .map(
+                                      (card) => _StatCardData(
+                                        card.label,
+                                        card.value,
+                                        card.color,
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            )
+                            .toList(),
+                        module: widget.module,
+                        ranking: data.ranking
+                            .map((item) => _RankData(item.name, item.value))
+                            .toList(),
+                        accent: _moduleAccent(widget.module),
+                        totalSim: data.totalSim,
+                      ),
                     ),
                   ),
-                ),
+                );
+              }
+
+              return AnimatedSwitcher(
+                duration: const Duration(milliseconds: 320),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                child: content,
               );
             },
           ),
@@ -617,14 +633,30 @@ class _SupabaseReportRepository {
 }
 
 class _ReportDataError extends StatelessWidget {
-  const _ReportDataError();
+  const _ReportDataError({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'DATA LAPORAN TIDAK DAPAT DIMUAT.',
-        style: TextStyle(color: _muted),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(Icons.wifi_off_rounded, color: Color(0xFF7A6840), size: 40),
+            SizedBox(height: 14),
+            Text(
+              'DATA LAPORAN TIDAK DAPAT DIMUAT.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: _muted,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -651,7 +683,21 @@ class _ContentBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (totalSim != null) ...[
-          _TotalSimCard(total: totalSim!, accent: accent),
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.0, end: 1.0),
+            duration: const Duration(milliseconds: 550),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, child) {
+              return Opacity(
+                opacity: value.clamp(0.0, 1.0),
+                child: Transform.translate(
+                  offset: Offset(0, (1 - value) * -10),
+                  child: child,
+                ),
+              );
+            },
+            child: _TotalSimCard(total: totalSim!, accent: accent),
+          ),
           const SizedBox(height: 14),
         ],
         if (columns.length == 1)
@@ -674,17 +720,31 @@ class _ContentBody extends StatelessWidget {
           ),
         const SizedBox(height: 16),
         if (ranking.isNotEmpty)
-          _AnalysisButton(
-            accent: accent,
-            label: 'STATISTIK',
-            onPressed: () => _showRankingSheet(
-              context,
-              module,
-              ranking,
-              accent,
-              onItemTap: module == StatisticsModule.k9
-                  ? (index) => _showK9UnitSheet(context, _k9Units[index])
-                  : null,
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.0, end: 1.0),
+            duration: const Duration(milliseconds: 650),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, child) {
+              return Opacity(
+                opacity: value.clamp(0.0, 1.0),
+                child: Transform.translate(
+                  offset: Offset(0, (1 - value) * 12),
+                  child: child,
+                ),
+              );
+            },
+            child: _AnalysisButton(
+              accent: accent,
+              label: 'STATISTIK',
+              onPressed: () => _showRankingSheet(
+                context,
+                module,
+                ranking,
+                accent,
+                onItemTap: module == StatisticsModule.k9
+                    ? (index) => _showK9UnitSheet(context, _k9Units[index])
+                    : null,
+              ),
             ),
           ),
       ],
@@ -746,8 +806,16 @@ class _TotalSimCard extends StatelessWidget {
             total.toString(),
             style: TextStyle(
               color: accent,
-              fontSize: 30,
+              fontSize: 34,
               fontWeight: FontWeight.w900,
+              letterSpacing: -1.0,
+              shadows: [
+                Shadow(
+                  color: accent.withValues(alpha: 0.45),
+                  blurRadius: 16,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
           ),
         ],
@@ -808,11 +876,30 @@ Future<void> _showRankingSheet(
             child: Column(
               children: [
                 Container(
+                  height: 1,
+                  margin: const EdgeInsets.only(bottom: 4),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        Color(0x33FFFFFF),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
                   width: 48,
-                  height: 6,
+                  height: 5,
                   margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.16),
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFFD7A93C).withValues(alpha: 0.30),
+                        const Color(0xFFF1D37A).withValues(alpha: 0.55),
+                        const Color(0xFFD7A93C).withValues(alpha: 0.30),
+                      ],
+                    ),
                     borderRadius: BorderRadius.circular(99),
                   ),
                 ),
@@ -831,6 +918,13 @@ Future<void> _showRankingSheet(
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.6,
                               height: 1.05,
+                              shadows: [
+                                Shadow(
+                                  color: accent.withValues(alpha: 0.40),
+                                  blurRadius: 14,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
                             ),
                           ),
                           const SizedBox(height: 5),
@@ -929,9 +1023,12 @@ Future<void> _showRankingSheet(
                                     child: DecoratedBox(
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
                                           colors: [
                                             fill.withValues(alpha: 0.95),
-                                            accent.withValues(alpha: 0.75),
+                                            fill,
+                                            fill.withValues(alpha: 0.80),
                                           ],
                                         ),
                                       ),
@@ -996,15 +1093,34 @@ class _AnalysisButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(6.4),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            accent.withValues(alpha: 0.12),
+            Colors.white.withValues(alpha: 0.025),
+            accent.withValues(alpha: 0.06),
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: accent.withValues(alpha: 0.10),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          backgroundColor: Colors.white.withValues(alpha: 0.03),
+          backgroundColor: Colors.transparent,
           foregroundColor: accent,
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          side: BorderSide(color: accent.withValues(alpha: 0.32)),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+          side: BorderSide(color: accent.withValues(alpha: 0.38)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6.4),
           ),
@@ -1025,7 +1141,7 @@ class _AnalysisButton extends StatelessWidget {
             Icon(
               Icons.chevron_right_rounded,
               size: 18,
-              color: accent.withValues(alpha: 0.52),
+              color: accent.withValues(alpha: 0.65),
             ),
           ],
         ),
@@ -1053,6 +1169,13 @@ class _StatsColumnView extends StatelessWidget {
             fontSize: 14,
             fontWeight: FontWeight.w700,
             letterSpacing: 2.0,
+            shadows: [
+              Shadow(
+                color: _gold.withValues(alpha: 0.40),
+                blurRadius: 12,
+                offset: const Offset(0, 1),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 8),
@@ -1062,7 +1185,7 @@ class _StatsColumnView extends StatelessWidget {
             accent: accent,
             delay: Duration(milliseconds: index * 75),
           ),
-          if (index != column.cards.length - 1) const SizedBox(height: 12),
+          if (index != column.cards.length - 1) const SizedBox(height: 14),
         ],
       ],
     );
@@ -1133,23 +1256,28 @@ class _GlassStatCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withValues(alpha: 0.032),
+                Colors.white.withValues(alpha: 0.065),
                 cardAccent.withValues(alpha: 0.045),
                 _surface.withValues(alpha: 0.72),
               ],
               stops: const [0.0, 0.34, 1.0],
             ),
             border: Border(
-              top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+              top: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
               right: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
-              bottom: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
-              left: BorderSide(color: lineAccent, width: 3),
+              bottom: BorderSide(color: Colors.white.withValues(alpha: 0.06)),
+              left: BorderSide(color: lineAccent, width: 3.2),
             ),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
-                color: Colors.black12,
-                blurRadius: 30,
-                offset: Offset(0, 4),
+                color: lineAccent.withValues(alpha: 0.07),
+                blurRadius: 22,
+                offset: const Offset(-2, 4),
+              ),
+              const BoxShadow(
+                color: Colors.black26,
+                blurRadius: 26,
+                offset: Offset(0, 6),
               ),
             ],
           ),
@@ -1187,8 +1315,8 @@ class _GlassStatCard extends StatelessWidget {
                     style: const TextStyle(
                       color: _muted,
                       fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.45,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.6,
                       height: 1.15,
                     ),
                   ),
@@ -1198,9 +1326,16 @@ class _GlassStatCard extends StatelessWidget {
                     style: TextStyle(
                       color: cardAccent,
                       fontSize: 30,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w900,
                       letterSpacing: -0.6,
                       height: 1.0,
+                      shadows: [
+                        Shadow(
+                          color: cardAccent.withValues(alpha: 0.38),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -1287,13 +1422,32 @@ Future<void> _showK9UnitSheet(BuildContext context, _K9UnitData unit) async {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Container(
+                  height: 1,
+                  margin: const EdgeInsets.only(bottom: 4),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        Color(0x33FFFFFF),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
                 Center(
                   child: Container(
                     width: 48,
-                    height: 6,
+                    height: 5,
                     margin: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.16),
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFFD7A93C).withValues(alpha: 0.30),
+                          const Color(0xFFF1D37A).withValues(alpha: 0.55),
+                          const Color(0xFFD7A93C).withValues(alpha: 0.30),
+                        ],
+                      ),
                       borderRadius: BorderRadius.circular(99),
                     ),
                   ),
@@ -1305,6 +1459,13 @@ Future<void> _showK9UnitSheet(BuildContext context, _K9UnitData unit) async {
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.7,
+                    shadows: [
+                      Shadow(
+                        color: Color(0x66D7A93C),
+                        blurRadius: 12,
+                        offset: Offset(0, 1),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 4),

@@ -12,10 +12,35 @@ import '../../../shared/widgets/app_header.dart';
 // Responsive geometry is derived from the available mobile/web viewport.
 
 const _bg = Color(0xFF03150F);
-const _surface = Color(0xFF09231A);
+const _gold = Color(0xFFD7A93C);
 const _goldLight = Color(0xFFF1D37A);
-const _text = Color(0xFFF8F5EC);
 const _muted = Color(0xFFB7C2BC);
+
+const _goldGradientSelected = LinearGradient(
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  colors: [
+    Color(0xFFFFFFFF),
+    Color(0xFFFFF4BF),
+    Color(0xFFF7DD88),
+    Color(0xFFE5B842),
+    Color(0xFFB8861E),
+  ],
+  stops: [0.0, 0.20, 0.48, 0.75, 1.0],
+);
+
+const _goldGradientUnselected = LinearGradient(
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  colors: [
+    Color(0xFFFFF8D6),
+    Color(0xFFF7E298),
+    Color(0xFFE5B842),
+    Color(0xFFC79222),
+    Color(0xFF8E5E10),
+  ],
+  stops: [0.0, 0.22, 0.50, 0.78, 1.0],
+);
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -24,9 +49,13 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
+class _HomePageState extends ConsumerState<HomePage>
+    with SingleTickerProviderStateMixin {
   bool _navigationInProgress = false;
   int _selectedIndex = -1;
+
+  late final AnimationController _pieController;
+  late final Animation<double> _pieAnimation;
 
   static const _items = <_MenuItemData>[
     _MenuItemData(
@@ -66,32 +95,70 @@ class _HomePageState extends ConsumerState<HomePage> {
     ),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _pieController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 650),
+    );
+    _pieAnimation = CurvedAnimation(
+      parent: _pieController,
+      curve: Curves.easeOutCubic,
+    );
+    _pieController.forward();
+  }
+
+  @override
+  void dispose() {
+    _pieController.dispose();
+    super.dispose();
+  }
+
   Future<void> _confirmSignOut() async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          backgroundColor: _surface,
+          backgroundColor: const Color(0xFF071F17),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: _gold.withValues(alpha: 0.35)),
+          ),
           title: const Text(
-            'KELUAR DARI SISTEM?',
-            style: TextStyle(color: _text, fontWeight: FontWeight.w800),
+            'KELUAR',
+            style: TextStyle(
+              color: _goldLight,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.2,
+            ),
           ),
           content: const Text(
             'SESI ANDA AKAN DIAKHIRI DAN ANDA AKAN KEMBALI KE HALAMAN SIGN IN.',
-            style: TextStyle(color: _muted),
+            style: TextStyle(color: _muted, height: 1.4),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
+              style: TextButton.styleFrom(foregroundColor: _muted),
               child: const Text('BATAL'),
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
               style: FilledButton.styleFrom(
                 backgroundColor: _goldLight,
-                foregroundColor: const Color(0xFF10140F),
+                foregroundColor: const Color(0xFF1B1202),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-              child: const Text('KELUAR'),
+              child: const Text(
+                'KELUAR',
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.0,
+                ),
+              ),
             ),
           ],
         );
@@ -110,9 +177,23 @@ class _HomePageState extends ConsumerState<HomePage> {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('TIDAK DAPAT MENGAKHIRI SESI. COBA LAGI.'),
+        SnackBar(
+          content: const Text(
+            'TIDAK DAPAT MENGAKHIRI SESI. COBA LAGI.',
+            style: TextStyle(
+              color: Color(0xFFF8F5EC),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.4,
+            ),
+          ),
           behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFF071F17),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: _gold.withValues(alpha: 0.30)),
+          ),
+          elevation: 10,
         ),
       );
     }
@@ -142,7 +223,9 @@ class _HomePageState extends ConsumerState<HomePage> {
 
     setState(() {
       _navigationInProgress = false;
+      _selectedIndex = -1;
     });
+    _pieController.forward(from: 0);
   }
 
   @override
@@ -165,10 +248,23 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(12, 0, 12, 14),
-                      child: _PieMenu(
-                        items: _items,
-                        selectedIndex: _selectedIndex,
-                        onSelected: _selectMenu,
+                      child: AnimatedBuilder(
+                        animation: _pieAnimation,
+                        builder: (context, child) {
+                          final v = _pieAnimation.value;
+                          return Opacity(
+                            opacity: v.clamp(0.0, 1.0),
+                            child: Transform.scale(
+                              scale: 0.93 + v * 0.07,
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: _PieMenu(
+                          items: _items,
+                          selectedIndex: _selectedIndex,
+                          onSelected: _selectMenu,
+                        ),
                       ),
                     ),
                   ),
@@ -257,6 +353,8 @@ class _PieMenu extends StatelessWidget {
   }
 }
 
+/// Sleek modern floating center hub with sophisticated depth.
+/// Borderless and minimal, yet distinctly 3D with layered reflections.
 class _PieMenuCenter extends StatelessWidget {
   const _PieMenuCenter({this.item});
 
@@ -265,60 +363,66 @@ class _PieMenuCenter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final icon = item?.icon ?? Icons.apps_rounded;
-    final iconColor = item?.lightColor ?? _goldLight;
     final centerKey = item?.label ?? 'MENU UTAMA';
 
     return FractionallySizedBox(
-      widthFactor: 0.34,
-      heightFactor: 0.34,
+      widthFactor: 0.35,
+      heightFactor: 0.35,
       child: ClipOval(
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
           child: DecoratedBox(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+              gradient: RadialGradient(
+                center: const Alignment(-0.35, -0.40),
+                radius: 1.0,
                 colors: [
-                  Colors.white.withValues(alpha: 0.16),
-                  const Color(0xFF173428).withValues(alpha: 0.36),
-                  const Color(0xFF06120D).withValues(alpha: 0.62),
+                  Colors.white.withValues(alpha: 0.18),
+                  const Color(0xFF0F261C).withValues(alpha: 0.50),
+                  const Color(0xFF040F0A).withValues(alpha: 0.88),
                 ],
-                stops: const [0.0, 0.42, 1.0],
+                stops: const [0.0, 0.45, 1.0],
               ),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.24),
-                width: 1.0,
+                color: const Color(0xFFE5B842).withValues(alpha: 0.38),
+                width: 1.2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.34),
-                  blurRadius: 18,
-                  offset: const Offset(0, 7),
+                  color: _gold.withValues(alpha: 0.16),
+                  blurRadius: 28,
+                  spreadRadius: 1,
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.70),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
                 ),
               ],
             ),
             child: Stack(
               children: [
+                // Top-left curved specular sheen
                 Positioned(
-                  left: -14,
-                  top: -16,
+                  left: -12,
+                  top: -14,
                   child: Container(
-                    width: 78,
-                    height: 78,
+                    width: 82,
+                    height: 82,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          Colors.white.withValues(alpha: 0.14),
+                          Colors.white.withValues(alpha: 0.22),
                           Colors.transparent,
                         ],
-                        stops: const [0.0, 0.72],
+                        stops: const [0.0, 0.70],
                       ),
                     ),
                   ),
                 ),
+
                 Center(
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 220),
@@ -334,35 +438,119 @@ class _PieMenuCenter extends StatelessWidget {
                       key: ValueKey(centerKey),
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          icon,
-                          color: iconColor.withValues(alpha: 0.94),
-                          size: diameterForCenter(context),
+                        // Chiseled 3D Gold metallic icon in center hub
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                text: String.fromCharCode(icon.codePoint),
+                                style: TextStyle(
+                                  inherit: false,
+                                  color: const Color(0xFF1E1302),
+                                  fontSize: diameterForCenter(context),
+                                  fontFamily: icon.fontFamily,
+                                  package: icon.fontPackage,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black.withValues(
+                                        alpha: 0.45,
+                                      ),
+                                      offset: const Offset(1.6, 2.2),
+                                      blurRadius: 7,
+                                    ),
+                                    Shadow(
+                                      color: const Color(0xFF452B05),
+                                      offset: const Offset(0.8, 1.2),
+                                      blurRadius: 3,
+                                    ),
+                                    Shadow(
+                                      color: const Color(
+                                        0xFFE5B842,
+                                      ).withValues(alpha: 0.50),
+                                      blurRadius: 14,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            ShaderMask(
+                              blendMode: BlendMode.srcIn,
+                              shaderCallback: (bounds) =>
+                                  _goldGradientSelected.createShader(bounds),
+                              child: Icon(
+                                icon,
+                                color: Colors.white,
+                                size: diameterForCenter(context),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 6),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            centerKey,
-                            textAlign: TextAlign.center,
-                            maxLines: centerKey == 'MENU UTAMA' ? 2 : 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: item == null ? _text : iconColor,
-                              fontSize: centerTextSize(context, centerKey),
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: centerKey.length > 18
-                                  ? 0.05
-                                  : 0.55,
-                              height: 1.02,
-                              shadows: [
-                                Shadow(
-                                  color: Colors.black.withValues(alpha: 0.48),
-                                  offset: const Offset(0.8, 1.2),
-                                  blurRadius: 0,
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              RichText(
+                                textAlign: TextAlign.center,
+                                maxLines: centerKey == 'MENU UTAMA' ? 2 : 3,
+                                overflow: TextOverflow.ellipsis,
+                                text: TextSpan(
+                                  text: centerKey,
+                                  style: TextStyle(
+                                    color: Colors.transparent,
+                                    fontSize: centerTextSize(
+                                      context,
+                                      centerKey,
+                                    ),
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: centerKey.length > 18
+                                        ? 0.2
+                                        : 0.6,
+                                    height: 1.05,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.35,
+                                        ),
+                                        offset: const Offset(0.0, 1.2),
+                                        blurRadius: 6.0,
+                                      ),
+                                      Shadow(
+                                        color: const Color(
+                                          0xFFE5B842,
+                                        ).withValues(alpha: 0.35),
+                                        blurRadius: 10.0,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ],
-                            ),
+                              ),
+                              ShaderMask(
+                                blendMode: BlendMode.srcIn,
+                                shaderCallback: (bounds) =>
+                                    _goldGradientSelected.createShader(bounds),
+                                child: Text(
+                                  centerKey,
+                                  textAlign: TextAlign.center,
+                                  maxLines: centerKey == 'MENU UTAMA' ? 2 : 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: centerTextSize(
+                                      context,
+                                      centerKey,
+                                    ),
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: centerKey.length > 18
+                                        ? 0.2
+                                        : 0.6,
+                                    height: 1.05,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -379,28 +567,32 @@ class _PieMenuCenter extends StatelessWidget {
 
   double diameterForCenter(BuildContext context) {
     final shortest = MediaQuery.sizeOf(context).shortestSide;
-    return shortest < 300 ? 21 : 26;
+    return shortest < 300 ? 22 : 28;
   }
 
   double centerTextSize(BuildContext context, String text) {
     final shortest = MediaQuery.sizeOf(context).shortestSide;
 
     if (text == 'MENU UTAMA') {
-      return shortest < 300 ? 8.0 : 9.2;
+      return shortest < 300 ? 8.2 : 9.5;
     }
 
     if (text.length >= 22) {
-      return shortest < 300 ? 6.5 : 7.5;
+      return shortest < 300 ? 6.8 : 7.8;
     }
 
     if (text.length >= 18) {
-      return shortest < 300 ? 7.0 : 8.0;
+      return shortest < 300 ? 7.2 : 8.2;
     }
 
-    return shortest < 300 ? 7.6 : 8.6;
+    return shortest < 300 ? 7.8 : 8.8;
   }
 }
 
+/// 3D Sculpted / Chiseled relief labels and icons:
+/// - Distinct physical extrusion depth (multi-step shadow).
+/// - Top-left directional specular rim (catching directional light).
+/// - Anchored directly to the face of the pie slice with realistic drop shadow.
 class _PieMenuLabel extends StatelessWidget {
   const _PieMenuLabel({
     required this.index,
@@ -435,89 +627,154 @@ class _PieMenuLabel extends StatelessWidget {
       child: SizedBox(
         width: labelWidth,
         child: AnimatedScale(
-          scale: selected ? 1.02 : 1,
+          scale: selected ? 1.05 : 1.0,
           duration: const Duration(milliseconds: 180),
           curve: Curves.easeOutCubic,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Background-free 3D icon: a compact dark extrusion plus a
-              // tiny upper highlight make it feel raised from the colored face.
+              // =======================================================
+              // 3D CHISELED GOLD RELIEF ICON
+              // Multi-layered gold extrusion with liquid metallic face
+              // and deep cast shadows into the colored slice.
+              // =======================================================
               AnimatedScale(
-                scale: selected ? 1.08 : 1,
+                scale: selected ? 1.10 : 1.0,
                 duration: const Duration(milliseconds: 180),
                 curve: Curves.easeOutCubic,
-                child: Icon(
-                  item.icon,
-                  color: selected
-                      ? const Color(0xFFF8F5EC)
-                      : const Color(0xFFEFECE3),
-                  size: compact ? iconSize * 0.78 : iconSize * 0.80,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black.withValues(
-                        alpha: selected ? 0.72 : 0.58,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Deep physical extrusion wall and cast shadow
+                    RichText(
+                      text: TextSpan(
+                        text: String.fromCharCode(item.icon.codePoint),
+                        style: TextStyle(
+                          inherit: false,
+                          color: const Color(0xFF1E1302),
+                          fontSize: compact ? iconSize * 0.82 : iconSize * 0.86,
+                          fontFamily: item.icon.fontFamily,
+                          package: item.icon.fontPackage,
+                          shadows: [
+                            // Soft diffused depth shadow
+                            Shadow(
+                              color: Colors.black.withValues(
+                                alpha: selected ? 0.55 : 0.45,
+                              ),
+                              offset: const Offset(1.8, 2.6),
+                              blurRadius: 6,
+                            ),
+                            // Intermediate bronze bevel — softened
+                            Shadow(
+                              color: const Color(0xFF452B05),
+                              offset: const Offset(0.9, 1.4),
+                              blurRadius: 3,
+                            ),
+                            // Golden radiance bloom
+                            Shadow(
+                              color: const Color(
+                                0xFFE5B842,
+                              ).withValues(alpha: selected ? 0.70 : 0.30),
+                              blurRadius: selected ? 18 : 6,
+                            ),
+                          ],
+                        ),
                       ),
-                      offset: const Offset(1.5, 2.2),
-                      blurRadius: 0,
                     ),
-                    Shadow(
-                      color: item.lightColor.withValues(
-                        alpha: selected ? 0.22 : 0.14,
+                    // Polished 3D liquid gold face with specular gleam
+                    ShaderMask(
+                      blendMode: BlendMode.srcIn,
+                      shaderCallback: (bounds) =>
+                          (selected
+                                  ? _goldGradientSelected
+                                  : _goldGradientUnselected)
+                              .createShader(bounds),
+                      child: Icon(
+                        item.icon,
+                        color: Colors.white,
+                        size: compact ? iconSize * 0.82 : iconSize * 0.86,
                       ),
-                      offset: const Offset(0.7, 1.0),
-                      blurRadius: 0,
-                    ),
-                    Shadow(
-                      color: Colors.white.withValues(
-                        alpha: selected ? 0.14 : 0.08,
-                      ),
-                      offset: const Offset(-0.55, -0.65),
-                      blurRadius: 0,
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 6),
-              Text(
-                item.label,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: selected ? item.lightColor : _text,
-                  fontSize: isLong
-                      ? math.max(labelFontSize - 0.5, 7.6).toDouble()
-                      : labelFontSize,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.35,
-                  height: 1.05,
-                  shadows: [
-                    // Small stacked offsets create letter extrusion without
-                    // introducing any background behind the label.
-                    Shadow(
-                      color: Colors.black.withValues(
-                        alpha: selected ? 0.72 : 0.58,
+
+              // =======================================================
+              // 3D CHISELED GOLD TEXT
+              // Raised gold lettering with physical depth and specular bevel.
+              // =======================================================
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Clean soft drop-shadow layer (transparent text fill, pure shadows)
+                  RichText(
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    text: TextSpan(
+                      text: item.label,
+                      style: TextStyle(
+                        color: Colors.transparent,
+                        fontSize: isLong
+                            ? math.max(labelFontSize - 0.5, 7.6).toDouble()
+                            : labelFontSize,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.45,
+                        height: 1.05,
+                        shadows: [
+                          // 1. Soft vertical grounding shadow (crisp natural depth)
+                          Shadow(
+                            color: Colors.black.withValues(
+                              alpha: selected ? 0.40 : 0.28,
+                            ),
+                            offset: const Offset(0.0, 1.2),
+                            blurRadius: 4.0,
+                          ),
+                          // 2. Wide subtle ambient halo (soft spread without muddying)
+                          Shadow(
+                            color: Colors.black.withValues(
+                              alpha: selected ? 0.22 : 0.14,
+                            ),
+                            offset: const Offset(0.0, 2.0),
+                            blurRadius: 8.0,
+                          ),
+                          // 3. Subtle gold radiance bloom
+                          Shadow(
+                            color: const Color(
+                              0xFFE5B842,
+                            ).withValues(alpha: selected ? 0.45 : 0.20),
+                            blurRadius: selected ? 10.0 : 5.0,
+                          ),
+                        ],
                       ),
-                      offset: const Offset(1.2, 1.8),
-                      blurRadius: 0,
                     ),
-                    Shadow(
-                      color: Colors.black.withValues(
-                        alpha: selected ? 0.28 : 0.20,
+                  ),
+                  // Polished 3D liquid gold lettering
+                  ShaderMask(
+                    blendMode: BlendMode.srcIn,
+                    shaderCallback: (bounds) =>
+                        (selected
+                                ? _goldGradientSelected
+                                : _goldGradientUnselected)
+                            .createShader(bounds),
+                    child: Text(
+                      item.label,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: isLong
+                            ? math.max(labelFontSize - 0.5, 7.6).toDouble()
+                            : labelFontSize,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.45,
+                        height: 1.05,
                       ),
-                      offset: const Offset(0.55, 0.9),
-                      blurRadius: 0,
                     ),
-                    Shadow(
-                      color: Colors.white.withValues(
-                        alpha: selected ? 0.14 : 0.08,
-                      ),
-                      offset: const Offset(-0.45, -0.5),
-                      blurRadius: 0,
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -527,19 +784,24 @@ class _PieMenuLabel extends StatelessWidget {
   }
 }
 
+/// Custom painter crafting sleek, sophisticated 3D volumetric pie slices:
+/// - NO outer gold rim or border.
+/// - NO heavy gold separator ribs.
+/// - Pure 3D volume on each slice: curved pillowed surface lighting,
+///   faceted specular shoulder, and micro-groove precision seams.
 class _PieMenuPainter extends CustomPainter {
   const _PieMenuPainter({required this.itemCount, required this.selectedIndex});
 
   final int itemCount;
   final int selectedIndex;
 
-  // Locked module colors, matching the five menu identities.
+  // Module identity colors:
   static const _lightPalette = <Color>[
-    Color(0xFFF09A4A), // PELANGGARAN — orange
-    Color(0xFFE15B5B), // LAKA-LALIN — red
-    Color(0xFF5D8FE0), // SIM TNI — blue
-    Color(0xFFE3BE4F), // K9 — gold
-    Color(0xFF49A86B), // PROVOS TNI-AD — green
+    Color(0xFFF09A4A), // PELANGGARAN - warm amber/orange
+    Color(0xFFE15B5B), // LAKA-LALIN - ruby crimson
+    Color(0xFF5D8FE0), // SIM TNI - sapphire royal blue
+    Color(0xFFE3BE4F), // K9 - imperial gold
+    Color(0xFF49A86B), // PROVOS TNI-AD - emerald military green
   ];
 
   @override
@@ -548,13 +810,19 @@ class _PieMenuPainter extends CustomPainter {
     final outerRadius = size.shortestSide * 0.43;
     final sweep = 2 * math.pi / itemCount;
 
-    // No physical layer is drawn beneath the wheel. Metallic depth is
-    // carried by the face lighting and restrained edge treatment.
-    final faceShadow = Paint()
-      ..color = Colors.black.withValues(alpha: 0.20)
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 12);
-    canvas.drawCircle(center.translate(0, 2.5), outerRadius + 1, faceShadow);
+    // -----------------------------------------------------------------
+    // 1. SOFT AMBIENT BASE SHADOW
+    // Floats the entire sleek 3D wheel cleanly above the dark canvas.
+    // -----------------------------------------------------------------
+    final baseShadow = Paint()
+      ..color = Colors.black.withValues(alpha: 0.40)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18);
+    canvas.drawCircle(center.translate(0, 4.0), outerRadius + 1.0, baseShadow);
 
+    // -----------------------------------------------------------------
+    // 2. 3D VOLUMETRIC PIE SLICES
+    // Each slice is sculpted with rich 3D curvature and lighting.
+    // -----------------------------------------------------------------
     for (var i = 0; i < itemCount; i++) {
       final start = -math.pi / 2 + i * sweep;
       final selected = i == selectedIndex;
@@ -574,100 +842,103 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      // The wheel uses an embossed, emblem-like depth treatment rather
-      // than an extruded underside. A soft cast shadow around the selected
-      // segment makes the face feel raised without adding a visible lower lip.
+      // Selected segment lifts up in 3D space with a deep cast shadow
       if (selected) {
         canvas.drawShadow(
           path,
-          Colors.black.withValues(alpha: 0.46),
-          8.0,
+          Colors.black.withValues(alpha: 0.65),
+          14.0,
           true,
         );
       }
 
-      // Polished metallic face: a crisp specular highlight, stable module
-      // color through the midtone, then a long controlled falloff into shadow.
-      final paint = Paint()
+      // --- Volumetric Face Gradient ---
+      // Sculpted 3D curvature: crisp top-left highlight, rich saturated core,
+      // and deep shadowed falloff toward bottom-right.
+      final faceGradient = Paint()
         ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: const Alignment(-0.85, -0.90),
+          end: const Alignment(0.85, 0.90),
           colors: [
-            Color.lerp(light, Colors.white, selected ? 0.36 : 0.30)!,
-            Color.lerp(light, Colors.white, selected ? 0.14 : 0.10)!,
+            Color.lerp(light, Colors.white, selected ? 0.52 : 0.40)!,
+            Color.lerp(light, Colors.white, selected ? 0.28 : 0.18)!,
+            Color.lerp(light, Colors.white, selected ? 0.10 : 0.05)!,
             light,
-            Color.lerp(light, Colors.black, selected ? 0.07 : 0.10)!,
-            Color.lerp(light, Colors.black, selected ? 0.26 : 0.32)!,
-            Color.lerp(light, Colors.black, selected ? 0.48 : 0.56)!,
-            Color.lerp(light, Colors.black, selected ? 0.68 : 0.74)!,
-            Color.lerp(light, Colors.black, selected ? 0.86 : 0.92)!,
+            Color.lerp(light, Colors.black, selected ? 0.10 : 0.18)!,
+            Color.lerp(light, Colors.black, selected ? 0.32 : 0.44)!,
+            Color.lerp(light, Colors.black, selected ? 0.58 : 0.70)!,
+            Color.lerp(light, Colors.black, selected ? 0.78 : 0.88)!,
           ],
-          stops: const [0.0, 0.05, 0.13, 0.27, 0.45, 0.65, 0.83, 1.0],
+          stops: const [0.0, 0.05, 0.12, 0.28, 0.48, 0.68, 0.85, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
-      canvas.drawPath(path, paint);
+      canvas.drawPath(path, faceGradient);
 
-      // Metallic volume is produced with soft light fields rather than
-      // circular stroke lines. This keeps the outer edge clean.
-      final upperSpecular = Paint()
+      // --- Convex Dome Light Sheen ---
+      // Simulates a smooth pillowed 3D surface reflecting ambient light.
+      final domeLight = Paint()
         ..shader = RadialGradient(
-          center: const Alignment(-0.58, -0.62),
-          radius: 0.92,
+          center: const Alignment(-0.55, -0.60),
+          radius: 0.88,
           colors: [
-            Colors.white.withValues(alpha: selected ? 0.24 : 0.18),
-            Colors.white.withValues(alpha: selected ? 0.08 : 0.055),
+            Colors.white.withValues(alpha: selected ? 0.36 : 0.24),
+            Colors.white.withValues(alpha: selected ? 0.14 : 0.08),
+            Colors.white.withValues(alpha: selected ? 0.03 : 0.015),
             Colors.transparent,
           ],
-          stops: const [0.0, 0.20, 0.62],
+          stops: const [0.0, 0.20, 0.45, 0.80],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
-      canvas.drawPath(path, upperSpecular);
+      canvas.drawPath(path, domeLight);
 
-      final lowerDepth = Paint()
+      // --- Sharp Specular Hotspot ---
+      // A bright point of focused reflection, creating high-gloss depth.
+      final specularSpot = Paint()
         ..shader = RadialGradient(
-          center: const Alignment(0.72, 0.74),
-          radius: 0.98,
+          center: const Alignment(-0.46, -0.50),
+          radius: 0.35,
           colors: [
-            Colors.black.withValues(alpha: selected ? 0.34 : 0.40),
-            Colors.black.withValues(alpha: selected ? 0.16 : 0.20),
+            Colors.white.withValues(alpha: selected ? 0.32 : 0.18),
+            Colors.white.withValues(alpha: selected ? 0.08 : 0.04),
             Colors.transparent,
           ],
-          stops: const [0.0, 0.34, 0.82],
+          stops: const [0.0, 0.30, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
-      canvas.drawPath(path, lowerDepth);
+      canvas.drawPath(path, specularSpot);
 
-      // A narrow specular sweep gives the slice a machined-metal highlight
-      // without introducing an outer ring or decorative contour.
-      final sweepHighlight = Paint()
-        ..shader = LinearGradient(
-          begin: Alignment(-0.92, -0.88),
-          end: Alignment(0.72, 0.70),
-          colors: [
-            Colors.white.withValues(alpha: selected ? 0.16 : 0.105),
-            Colors.white.withValues(alpha: selected ? 0.045 : 0.028),
-            Colors.transparent,
-          ],
-          stops: const [0.0, 0.12, 0.42],
-        ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
-      canvas.drawPath(path, sweepHighlight);
-
-      // A dark reciprocal field creates the soft lower-right bevel seen on
-      // embossed insignia, while the outside contour remains uninterrupted.
-      final bevelShadow = Paint()
+      // --- Edge Chiaroscuro Vignette ---
+      // Darkens the perimeter of each slice, making the center bulge forward.
+      final edgeVignette = Paint()
         ..shader = RadialGradient(
-          center: const Alignment(0.82, 0.80),
+          center: Alignment.center,
           radius: 1.0,
           colors: [
-            Colors.black.withValues(alpha: selected ? 0.30 : 0.24),
-            Colors.black.withValues(alpha: selected ? 0.075 : 0.055),
+            Colors.transparent,
+            Colors.black.withValues(alpha: 0.10),
+            Colors.black.withValues(alpha: selected ? 0.35 : 0.48),
+          ],
+          stops: const [0.65, 0.88, 1.0],
+        ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
+      canvas.drawPath(path, edgeVignette);
+
+      // --- Lower Depth Falloff ---
+      final lowerDepth = Paint()
+        ..shader = RadialGradient(
+          center: const Alignment(0.80, 0.82),
+          radius: 0.95,
+          colors: [
+            Colors.black.withValues(alpha: selected ? 0.36 : 0.45),
+            Colors.black.withValues(alpha: 0.15),
             Colors.transparent,
           ],
-          stops: const [0.0, 0.30, 0.72],
+          stops: const [0.0, 0.40, 0.85],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
-      canvas.drawPath(path, bevelShadow);
+      canvas.drawPath(path, lowerDepth);
     }
 
-    // Keep only the radial module separators; the circular outer contour
-    // stays completely free of decorative lines. Each separator is treated
-    // like a shallow embossed joint: dark groove + hairline highlight.
+    // -----------------------------------------------------------------
+    // 3. PRECISION MICRO-GROOVE SEAMS (NO HEAVY BARS)
+    // Clean, hairline joint between slices: dark groove + hairline light.
+    // Creates seamless 3D facet boundaries without any clunky borders.
+    // -----------------------------------------------------------------
     for (var i = 0; i < itemCount; i++) {
       final angle = -math.pi / 2 + i * sweep;
       final unit = Offset(math.cos(angle), math.sin(angle));
@@ -678,31 +949,51 @@ class _PieMenuPainter extends CustomPainter {
         center.dy + unit.dy * outerRadius,
       );
 
-      final groove = Paint()
+      // Recessed micro-groove (dark shadow line)
+      final darkGroove = Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.8
+        ..strokeWidth = 1.6
         ..strokeCap = StrokeCap.butt
-        ..color = Colors.black.withValues(alpha: 0.26);
+        ..color = Colors.black.withValues(alpha: 0.45);
       canvas.drawLine(
-        startPoint + normal * 0.7,
-        endPoint + normal * 0.7,
-        groove,
+        startPoint + normal * 0.5,
+        endPoint + normal * 0.5,
+        darkGroove,
       );
 
-      final bevelLight = Paint()
+      // Highlighted micro-crest (hairline light reflection on opposite edge)
+      final lightCrest = Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.55
+        ..strokeWidth = 0.6
         ..strokeCap = StrokeCap.butt
-        ..color = Colors.white.withValues(alpha: 0.22);
+        ..color = Colors.white.withValues(alpha: 0.28);
       canvas.drawLine(
-        startPoint - normal * 0.8,
-        endPoint - normal * 0.8,
-        bevelLight,
+        startPoint - normal * 0.6,
+        endPoint - normal * 0.6,
+        lightCrest,
       );
     }
 
-    // No separate circular outer-lip lines. The 3D read comes from
-    // directional light, embossed seams, and controlled specular response.
+    // -----------------------------------------------------------------
+    // 4. NATURAL BEVEL HAIRLINE ON OUTER EDGE (NO GOLD RIM)
+    // A subtle, clean directional catch-light on the top-left outer curve,
+    // creating a polished beveled edge without any colored border.
+    // -----------------------------------------------------------------
+    final outerBevelLight = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.8
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Colors.white.withValues(alpha: 0.35),
+          Colors.white.withValues(alpha: 0.10),
+          Colors.transparent,
+          Colors.black.withValues(alpha: 0.25),
+        ],
+        stops: const [0.0, 0.25, 0.60, 1.0],
+      ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
+    canvas.drawCircle(center, outerRadius - 0.4, outerBevelLight);
   }
 
   static int? indexAt(Offset position, Size size, {required int itemCount}) {
@@ -711,7 +1002,7 @@ class _PieMenuPainter extends CustomPainter {
     final dy = position.dy - center.dy;
     final distance = math.sqrt(dx * dx + dy * dy);
     final outerRadius = size.shortestSide * 0.46;
-    final innerRadius = size.shortestSide * 0.19;
+    final innerRadius = size.shortestSide * 0.17;
 
     if (distance > outerRadius || distance < innerRadius) {
       return null;

@@ -23,6 +23,7 @@ class AppTheme {
 
     return ThemeData(
       colorScheme: scheme,
+      fontFamily: 'Plus Jakarta Sans',
       useMaterial3: true,
       scaffoldBackgroundColor: background,
       visualDensity: VisualDensity.standard,
