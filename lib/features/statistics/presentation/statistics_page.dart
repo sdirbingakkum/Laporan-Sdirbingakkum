@@ -30,16 +30,34 @@ Color _moduleAccent(StatisticsModule module) {
   }
 }
 
+class StatisticsPeriodOption {
+  const StatisticsPeriodOption({
+    required this.key,
+    required this.label,
+    required this.startMonth,
+    required this.endMonth,
+  });
+
+  final String key;
+  final String label;
+  final int startMonth;
+  final int endMonth;
+}
+
 class StatisticsViewData {
   const StatisticsViewData({
     required this.columns,
     required this.ranking,
     this.totalSim,
+    this.periodOptions = const [],
+    this.selectedPeriodKey,
   });
 
   final List<StatisticsColumnData> columns;
   final List<StatisticsRankData> ranking;
   final int? totalSim;
+  final List<StatisticsPeriodOption> periodOptions;
+  final String? selectedPeriodKey;
 }
 
 class StatisticsColumnData {
@@ -69,11 +87,21 @@ class StatisticsRankData {
 }
 
 class StatisticsPage extends StatefulWidget {
-  const StatisticsPage({required this.module, this.dataLoader, super.key});
+  const StatisticsPage({
+    required this.module,
+    this.dataLoader,
+    this.periodDataLoader,
+    super.key,
+  });
 
   final StatisticsModule module;
   final Future<StatisticsViewData> Function(StatisticsModule module)?
   dataLoader;
+  final Future<StatisticsViewData> Function(
+    StatisticsModule module,
+    String periodKey,
+  )?
+  periodDataLoader;
 
   @override
   State<StatisticsPage> createState() => _StatisticsPageState();
@@ -88,6 +116,22 @@ class _StatisticsPageState extends State<StatisticsPage> {
     _dataFuture = (widget.dataLoader ?? _SupabaseReportRepository.load)(
       widget.module,
     );
+  }
+
+  void _changePelanggaranPeriod(String periodKey) {
+    setState(() {
+      final periodDataLoader = widget.periodDataLoader;
+      if (periodDataLoader != null) {
+        _dataFuture = periodDataLoader(widget.module, periodKey);
+      } else if (widget.dataLoader != null) {
+        _dataFuture = widget.dataLoader!(widget.module);
+      } else {
+        _dataFuture = _SupabaseReportRepository.loadForPeriod(
+          widget.module,
+          periodKey,
+        );
+      }
+    });
   }
 
   Future<void> _signOut(BuildContext context) async {
@@ -170,6 +214,12 @@ class _StatisticsPageState extends State<StatisticsPage> {
                             .toList(),
                         accent: _moduleAccent(widget.module),
                         totalSim: data.totalSim,
+                        periodOptions: data.periodOptions,
+                        selectedPeriodKey: data.selectedPeriodKey,
+                        onPeriodChanged:
+                            widget.module == StatisticsModule.pelanggaran
+                            ? _changePelanggaranPeriod
+                            : null,
                       ),
                     ),
                   ),
@@ -269,15 +319,109 @@ class _SupabaseReportRepository {
     }
   }
 
-  static Future<StatisticsViewData> _loadPelanggaran(
-    SupabaseClient client,
+  static Future<StatisticsViewData> loadForPeriod(
+    StatisticsModule module,
+    String periodKey,
   ) async {
+    if (module != StatisticsModule.pelanggaran) {
+      return load(module);
+    }
+    return _loadPelanggaran(
+      Supabase.instance.client,
+      selectedPeriodKey: periodKey,
+    );
+  }
+
+  static const _monthNames = <String>[
+    'JANUARI',
+    'FEBRUARI',
+    'MARET',
+    'APRIL',
+    'MEI',
+    'JUNI',
+    'JULI',
+    'AGUSTUS',
+    'SEPTEMBER',
+    'OKTOBER',
+    'NOVEMBER',
+    'DESEMBER',
+  ];
+
+  static const _monthShortNames = <String>[
+    'JAN',
+    'FEB',
+    'MAR',
+    'APR',
+    'MEI',
+    'JUN',
+    'JUL',
+    'AGU',
+    'SEP',
+    'OKT',
+    'NOV',
+    'DES',
+  ];
+
+  static List<StatisticsPeriodOption> _periodOptions(
+    int year,
+    int latestMonth,
+  ) {
+    final options = <StatisticsPeriodOption>[];
+
+    // The most recent month is shown first so it is easy to return to default.
+    for (var month = latestMonth; month >= 1; month--) {
+      options.add(
+        StatisticsPeriodOption(
+          key: 'month:$month',
+          label: '${_monthNames[month - 1]} $year',
+          startMonth: month,
+          endMonth: month,
+        ),
+      );
+    }
+
+    const roman = <String>['I', 'II', 'III', 'IV'];
+    for (var quarter = latestMonth ~/ 3; quarter >= 1; quarter--) {
+      final startMonth = (quarter - 1) * 3 + 1;
+      final endMonth = quarter * 3;
+      options.add(
+        StatisticsPeriodOption(
+          key: 'quarter:$quarter',
+          label: 'TRIWULAN ${roman[quarter - 1]}',
+          startMonth: startMonth,
+          endMonth: endMonth,
+        ),
+      );
+    }
+
+    for (var semester = latestMonth ~/ 6; semester >= 1; semester--) {
+      final startMonth = (semester - 1) * 6 + 1;
+      final endMonth = semester * 6;
+      options.add(
+        StatisticsPeriodOption(
+          key: 'semester:$semester',
+          label: 'SEMESTER ${semester == 1 ? 'I' : 'II'}',
+          startMonth: startMonth,
+          endMonth: endMonth,
+        ),
+      );
+    }
+
+    return options;
+  }
+
+  static Future<StatisticsViewData> _loadPelanggaran(
+    SupabaseClient client, {
+    String? selectedPeriodKey,
+  }) async {
     final periods = await _periods(client);
     final pomdams = await _pomdams(client);
     final rows = List<Map<String, dynamic>>.from(
       await client
           .from('violation_records')
-          .select('period_id,pomdam_id,violation_id,value'),
+          .select(
+            'period_id,pomdam_id,violation_id,value,data_status',
+          ),
     );
     final violations = List<Map<String, dynamic>>.from(
       await client.from('violations').select('id,category'),
@@ -287,12 +431,70 @@ class _SupabaseReportRepository {
         row['id'].toString(): row['category']?.toString().toUpperCase() ?? '',
     };
 
-    int sum({int? month, String? category}) {
+    int? latestYear;
+    int? latestMonth;
+    for (final row in rows) {
+      final period = periods.byId[row['period_id']?.toString()];
+      if (period == null) continue;
+      final year = _toInt(period['report_year']);
+      final month = _toInt(period['report_month']);
+      if (year <= 0 || month < 1 || month > 12) continue;
+      if (latestYear == null ||
+          year > latestYear ||
+          (year == latestYear && month > latestMonth!)) {
+        latestYear = year;
+        latestMonth = month;
+      }
+    }
+
+    if (latestYear == null || latestMonth == null) {
+      return StatisticsViewData(
+        columns: [
+          StatisticsColumnData(
+            label: 'BELUM ADA DATA',
+            cards: const [
+              StatisticsCardData(
+                label: 'TATIB',
+                value: '0',
+                color: Color(0xFFF59E0B),
+              ),
+              StatisticsCardData(
+                label: 'LALIN',
+                value: '0',
+                color: Color(0xFF38BDF8),
+              ),
+            ],
+          ),
+        ],
+        ranking: const [],
+      );
+    }
+
+    final options = _periodOptions(latestYear, latestMonth);
+    final requestedKey = selectedPeriodKey ?? 'month:$latestMonth';
+    StatisticsPeriodOption? selectedOption;
+    for (final option in options) {
+      if (option.key == requestedKey) {
+        selectedOption = option;
+        break;
+      }
+    }
+    selectedOption ??= options.first;
+
+    int sum({
+      required int startMonth,
+      required int endMonth,
+      String? category,
+    }) {
       var total = 0;
       for (final row in rows) {
+        if (row['data_status'] != 'VALID') continue;
         final period = periods.byId[row['period_id']?.toString()];
-        if (period == null || period['report_year'] != 2026) continue;
-        if (month != null && period['report_month'] != month) continue;
+        if (period == null || _toInt(period['report_year']) != latestYear) {
+          continue;
+        }
+        final month = _toInt(period['report_month']);
+        if (month < startMonth || month > endMonth) continue;
         if (category != null &&
             categoryByViolationId[row['violation_id']?.toString()] !=
                 category) {
@@ -303,41 +505,100 @@ class _SupabaseReportRepository {
       return total;
     }
 
+    final yearToDateLabel =
+        '$latestYear · JAN–${_monthShortNames[latestMonth - 1]}';
     return StatisticsViewData(
       columns: [
         StatisticsColumnData(
-          label: '2026',
+          label: yearToDateLabel,
           cards: [
             StatisticsCardData(
               label: 'TATIB',
-              value: sum(month: 9, category: 'B').toString(),
+              value: sum(
+                startMonth: 1,
+                endMonth: latestMonth,
+                category: 'B',
+              ).toString(),
               color: const Color(0xFFF59E0B),
             ),
             StatisticsCardData(
               label: 'LALIN',
-              value: sum(month: 9, category: 'C').toString(),
+              value: sum(
+                startMonth: 1,
+                endMonth: latestMonth,
+                category: 'C',
+              ).toString(),
               color: const Color(0xFF38BDF8),
             ),
           ],
         ),
         StatisticsColumnData(
-          label: 'SEPT',
+          label: selectedOption.label,
           cards: [
             StatisticsCardData(
               label: 'TATIB',
-              value: sum(month: 9, category: 'B').toString(),
+              value: sum(
+                startMonth: selectedOption.startMonth,
+                endMonth: selectedOption.endMonth,
+                category: 'B',
+              ).toString(),
               color: const Color(0xFFF59E0B),
             ),
             StatisticsCardData(
               label: 'LALIN',
-              value: sum(month: 9, category: 'C').toString(),
+              value: sum(
+                startMonth: selectedOption.startMonth,
+                endMonth: selectedOption.endMonth,
+                category: 'C',
+              ).toString(),
               color: const Color(0xFF38BDF8),
             ),
           ],
         ),
       ],
-      ranking: _topFive(rows, periods, pomdams, month: 9),
+      ranking: _topFiveForRange(
+        rows,
+        periods,
+        pomdams,
+        year: latestYear,
+        startMonth: selectedOption.startMonth,
+        endMonth: selectedOption.endMonth,
+      ),
+      periodOptions: options,
+      selectedPeriodKey: selectedOption.key,
     );
+  }
+
+  static List<StatisticsRankData> _topFiveForRange(
+    List<Map<String, dynamic>> rows,
+    _ReportPeriodIndex periods,
+    Map<String, String> pomdams, {
+    required int year,
+    required int startMonth,
+    required int endMonth,
+  }) {
+    final totals = <String, int>{};
+    for (final row in rows) {
+      if (row['data_status'] != 'VALID') continue;
+      final period = periods.byId[row['period_id']?.toString()];
+      if (period == null || _toInt(period['report_year']) != year) continue;
+      final month = _toInt(period['report_month']);
+      if (month < startMonth || month > endMonth) continue;
+      final code = pomdams[row['pomdam_id']?.toString()];
+      if (code == null || code.isEmpty) continue;
+      totals[code] = (totals[code] ?? 0) + _toInt(row['value']);
+    }
+
+    final ranked = totals.entries.toList()
+      ..sort((a, b) {
+        final result = b.value.compareTo(a.value);
+        return result != 0 ? result : a.key.compareTo(b.key);
+      });
+
+    return [
+      for (final entry in ranked.take(5))
+        StatisticsRankData(entry.key, entry.value),
+    ];
   }
 
   static Future<StatisticsViewData> _loadLaka(SupabaseClient client) async {
@@ -669,6 +930,9 @@ class _ContentBody extends StatelessWidget {
     required this.ranking,
     required this.accent,
     this.totalSim,
+    this.periodOptions = const [],
+    this.selectedPeriodKey,
+    this.onPeriodChanged,
   });
 
   final List<_StatColumn> columns;
@@ -676,6 +940,9 @@ class _ContentBody extends StatelessWidget {
   final List<_RankData> ranking;
   final Color accent;
   final int? totalSim;
+  final List<StatisticsPeriodOption> periodOptions;
+  final String? selectedPeriodKey;
+  final ValueChanged<String>? onPeriodChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -713,6 +980,20 @@ class _ContentBody extends StatelessWidget {
                   child: _StatsColumnView(
                     column: columns[index],
                     accent: accent,
+                    alignPeriodHeader:
+                        module == StatisticsModule.pelanggaran,
+                    periodOptions:
+                        module == StatisticsModule.pelanggaran && index == 1
+                        ? periodOptions
+                        : const [],
+                    selectedPeriodKey:
+                        module == StatisticsModule.pelanggaran && index == 1
+                        ? selectedPeriodKey
+                        : null,
+                    onPeriodChanged:
+                        module == StatisticsModule.pelanggaran && index == 1
+                        ? onPeriodChanged
+                        : null,
                   ),
                 ),
               ],
@@ -1151,33 +1432,100 @@ class _AnalysisButton extends StatelessWidget {
 }
 
 class _StatsColumnView extends StatelessWidget {
-  const _StatsColumnView({required this.column, required this.accent});
+  const _StatsColumnView({
+    required this.column,
+    required this.accent,
+    this.alignPeriodHeader = false,
+    this.periodOptions = const [],
+    this.selectedPeriodKey,
+    this.onPeriodChanged,
+  });
 
   final _StatColumn column;
   final Color accent;
+  final bool alignPeriodHeader;
+  final List<StatisticsPeriodOption> periodOptions;
+  final String? selectedPeriodKey;
+  final ValueChanged<String>? onPeriodChanged;
+
+  Widget _buildHeader() {
+    final selectorIsReady =
+        periodOptions.isNotEmpty &&
+        selectedPeriodKey != null &&
+        onPeriodChanged != null;
+
+    if (selectorIsReady) {
+      return Container(
+        height: 42,
+        padding: const EdgeInsets.only(left: 8, right: 4),
+        decoration: BoxDecoration(
+          color: accent.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(6.4),
+          border: Border.all(color: accent.withValues(alpha: 0.28)),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            key: const ValueKey('pelanggaran-period-dropdown'),
+            value: selectedPeriodKey,
+            isExpanded: true,
+            isDense: true,
+            icon: Icon(Icons.expand_more_rounded, color: _gold, size: 18),
+            dropdownColor: _surface,
+            borderRadius: BorderRadius.circular(8),
+            style: const TextStyle(
+              color: _gold,
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.6,
+            ),
+            items: [
+              for (final option in periodOptions)
+                DropdownMenuItem<String>(
+                  value: option.key,
+                  child: Text(
+                    option.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+            ],
+            onChanged: (value) {
+              if (value != null) onPeriodChanged!(value);
+            },
+          ),
+        ),
+      );
+    }
+
+    final label = Text(
+      column.label,
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        color: _gold,
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 1.0,
+        shadows: [
+          Shadow(
+            color: _gold.withValues(alpha: 0.40),
+            blurRadius: 12,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+    );
+
+    return alignPeriodHeader
+        ? SizedBox(height: 42, child: Center(child: label))
+        : label;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          column.label,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: _gold,
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 2.0,
-            shadows: [
-              Shadow(
-                color: _gold.withValues(alpha: 0.40),
-                blurRadius: 12,
-                offset: const Offset(0, 1),
-              ),
-            ],
-          ),
-        ),
+        _buildHeader(),
         const SizedBox(height: 8),
         for (var index = 0; index < column.cards.length; index++) ...[
           _AnimatedStatCard(
