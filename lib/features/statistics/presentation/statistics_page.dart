@@ -1109,10 +1109,10 @@ class _SupabaseReportRepository {
         row['id'].toString(): row['code'].toString().toUpperCase(),
     };
 
-    final latest = _latestReportingMonth(
-      [...personnelRows, ...educationRows],
-      periods,
-    );
+    final latest = _latestReportingMonth([
+      ...personnelRows,
+      ...educationRows,
+    ], periods);
     if (latest == null) {
       return const StatisticsViewData(
         columns: [
@@ -1148,10 +1148,7 @@ class _SupabaseReportRepository {
       selectedPeriodKey,
     );
 
-    int personnelTotal({
-      required int startMonth,
-      required int endMonth,
-    }) {
+    int personnelTotal({required int startMonth, required int endMonth}) {
       var total = 0;
       for (final row in personnelRows) {
         if (row['data_status'] != 'VALID') continue;
