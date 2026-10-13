@@ -71,17 +71,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/signin',
-        pageBuilder: (context, state) => _buildExecutivePage(
-          key: state.pageKey,
-          child: const SignInPage(),
-        ),
+        pageBuilder: (context, state) =>
+            _buildExecutivePage(key: state.pageKey, child: const SignInPage()),
       ),
       GoRoute(
         path: '/',
-        pageBuilder: (context, state) => _buildExecutivePage(
-          key: state.pageKey,
-          child: const HomePage(),
-        ),
+        pageBuilder: (context, state) =>
+            _buildExecutivePage(key: state.pageKey, child: const HomePage()),
       ),
       GoRoute(
         path: '/statistik/pelanggaran',

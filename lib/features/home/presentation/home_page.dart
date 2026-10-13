@@ -273,10 +273,7 @@ class _PieMenu extends StatelessWidget {
           builder: (context, value, child) {
             return Opacity(
               opacity: value.clamp(0.0, 1.0),
-              child: Transform.scale(
-                scale: 0.93 + value * 0.07,
-                child: child,
-              ),
+              child: Transform.scale(scale: 0.93 + value * 0.07, child: child),
             );
           },
           child: SizedBox.square(
