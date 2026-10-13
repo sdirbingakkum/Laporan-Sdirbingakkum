@@ -413,8 +413,10 @@ class _PieMenuCenter extends StatelessWidget {
                                   text: centerKey,
                                   style: TextStyle(
                                     color: const Color(0xFF1E1302),
-                                    fontSize:
-                                        centerTextSize(context, centerKey),
+                                    fontSize: centerTextSize(
+                                      context,
+                                      centerKey,
+                                    ),
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: centerKey.length > 18
                                         ? 0.2
