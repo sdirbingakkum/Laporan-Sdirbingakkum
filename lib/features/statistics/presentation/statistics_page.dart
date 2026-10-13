@@ -470,8 +470,10 @@ class _SupabaseReportRepository {
       );
     }
 
-    final options = _periodOptions(latestYear, latestMonth);
-    final requestedKey = selectedPeriodKey ?? 'month:$latestMonth';
+    final reportYear = latestYear!;
+    final reportMonth = latestMonth!;
+    final options = _periodOptions(reportYear, reportMonth);
+    final requestedKey = selectedPeriodKey ?? 'month:$reportMonth';
     StatisticsPeriodOption? selectedOption;
     for (final option in options) {
       if (option.key == requestedKey) {
@@ -490,7 +492,7 @@ class _SupabaseReportRepository {
       for (final row in rows) {
         if (row['data_status'] != 'VALID') continue;
         final period = periods.byId[row['period_id']?.toString()];
-        if (period == null || _toInt(period['report_year']) != latestYear) {
+        if (period == null || _toInt(period['report_year']) != reportYear) {
           continue;
         }
         final month = _toInt(period['report_month']);
@@ -506,7 +508,7 @@ class _SupabaseReportRepository {
     }
 
     final yearToDateLabel =
-        '$latestYear · JAN–${_monthShortNames[latestMonth - 1]}';
+        '$reportYear · JAN–${_monthShortNames[reportMonth - 1]}';
     return StatisticsViewData(
       columns: [
         StatisticsColumnData(
@@ -516,7 +518,7 @@ class _SupabaseReportRepository {
               label: 'TATIB',
               value: sum(
                 startMonth: 1,
-                endMonth: latestMonth,
+                endMonth: reportMonth,
                 category: 'B',
               ).toString(),
               color: const Color(0xFFF59E0B),
@@ -525,7 +527,7 @@ class _SupabaseReportRepository {
               label: 'LALIN',
               value: sum(
                 startMonth: 1,
-                endMonth: latestMonth,
+                endMonth: reportMonth,
                 category: 'C',
               ).toString(),
               color: const Color(0xFF38BDF8),
@@ -560,7 +562,7 @@ class _SupabaseReportRepository {
         rows,
         periods,
         pomdams,
-        year: latestYear,
+        year: reportYear,
         startMonth: selectedOption.startMonth,
         endMonth: selectedOption.endMonth,
       ),
