@@ -232,7 +232,7 @@ Future<StatisticsViewData> _testStatisticsData(StatisticsModule module) async {
 const _testPelanggaranPeriodOptions = <StatisticsPeriodOption>[
   StatisticsPeriodOption(
     key: 'month:9',
-    label: 'SEPTEMBER 2026',
+    label: 'SEP',
     startMonth: 9,
     endMonth: 9,
   ),
@@ -528,6 +528,8 @@ void main() {
         find.byKey(const ValueKey('pelanggaran-period-dropdown')),
         findsOneWidget,
       );
+      expect(find.text('SEP'), findsOneWidget);
+      expect(find.text('SEPTEMBER 2026'), findsNothing);
       expect(find.text('55'), findsOneWidget);
       expect(find.text('138'), findsOneWidget);
       expect(find.text('13'), findsOneWidget);

@@ -399,21 +399,6 @@ class _SupabaseReportRepository {
     );
   }
 
-  static const _monthNames = <String>[
-    'JANUARI',
-    'FEBRUARI',
-    'MARET',
-    'APRIL',
-    'MEI',
-    'JUNI',
-    'JULI',
-    'AGUSTUS',
-    'SEPTEMBER',
-    'OKTOBER',
-    'NOVEMBER',
-    'DESEMBER',
-  ];
-
   static const _monthShortNames = <String>[
     'JAN',
     'FEB',
@@ -440,7 +425,7 @@ class _SupabaseReportRepository {
       options.add(
         StatisticsPeriodOption(
           key: 'month:$month',
-          label: '${_monthNames[month - 1]} $year',
+          label: _monthShortNames[month - 1],
           startMonth: month,
           endMonth: month,
         ),
