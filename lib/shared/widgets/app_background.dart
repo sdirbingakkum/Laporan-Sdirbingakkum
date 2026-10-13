@@ -42,32 +42,34 @@ class _AppBackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final topGlow = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          const Color(0xFFD7A93C).withValues(alpha: 0.075),
-          Colors.transparent,
-        ],
-      ).createShader(
-        Rect.fromCircle(
-          center: Offset(size.width * 0.12, size.height * 0.12),
-          radius: size.width * 0.68,
-        ),
-      );
+      ..shader =
+          RadialGradient(
+            colors: [
+              const Color(0xFFD7A93C).withValues(alpha: 0.075),
+              Colors.transparent,
+            ],
+          ).createShader(
+            Rect.fromCircle(
+              center: Offset(size.width * 0.12, size.height * 0.12),
+              radius: size.width * 0.68,
+            ),
+          );
 
     canvas.drawRect(Offset.zero & size, topGlow);
 
     final bottomGlow = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          const Color(0xFF49A86B).withValues(alpha: 0.035),
-          Colors.transparent,
-        ],
-      ).createShader(
-        Rect.fromCircle(
-          center: Offset(size.width * 0.88, size.height * 0.84),
-          radius: size.width * 0.64,
-        ),
-      );
+      ..shader =
+          RadialGradient(
+            colors: [
+              const Color(0xFF49A86B).withValues(alpha: 0.035),
+              Colors.transparent,
+            ],
+          ).createShader(
+            Rect.fromCircle(
+              center: Offset(size.width * 0.88, size.height * 0.84),
+              radius: size.width * 0.64,
+            ),
+          );
 
     canvas.drawRect(Offset.zero & size, bottomGlow);
 
