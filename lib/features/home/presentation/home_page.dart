@@ -378,8 +378,9 @@ class _PieMenuCenter extends StatelessWidget {
                                   package: icon.fontPackage,
                                   shadows: [
                                     Shadow(
-                                      color:
-                                          Colors.black.withValues(alpha: 0.85),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.85,
+                                      ),
                                       offset: const Offset(2.0, 2.8),
                                       blurRadius: 2,
                                     ),
