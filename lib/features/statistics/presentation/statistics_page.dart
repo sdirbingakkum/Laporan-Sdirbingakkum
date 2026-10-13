@@ -468,8 +468,8 @@ class _SupabaseReportRepository {
       );
     }
 
-    final reportYear = latestYear!;
-    final reportMonth = latestMonth!;
+    final reportYear = latestYear;
+    final reportMonth = latestMonth;
     final options = _periodOptions(reportYear, reportMonth);
     final requestedKey = selectedPeriodKey ?? 'month:$reportMonth';
     StatisticsPeriodOption? selectedOption;
