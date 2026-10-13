@@ -609,6 +609,37 @@ class _SupabaseReportRepository {
     );
   }
 
+  static List<StatisticsRankData> _topFive(
+    List<Map<String, dynamic>> rows,
+    _ReportPeriodIndex periods,
+    Map<String, String> pomdams, {
+    int? month,
+  }) {
+    final totals = <String, int>{};
+
+    for (final row in rows) {
+      final period = periods.byId[row['period_id']?.toString()];
+      if (period == null || period['report_year'] != 2026) continue;
+      if (month != null && period['report_month'] != month) continue;
+
+      final code = pomdams[row['pomdam_id']?.toString()];
+      if (code == null || code.isEmpty) continue;
+
+      totals[code] = (totals[code] ?? 0) + _toInt(row['value']);
+    }
+
+    final ranked = totals.entries.toList()
+      ..sort((a, b) {
+        final result = b.value.compareTo(a.value);
+        return result != 0 ? result : a.key.compareTo(b.key);
+      });
+
+    return [
+      for (final entry in ranked.take(5))
+        StatisticsRankData(entry.key, entry.value),
+    ];
+  }
+
   static List<StatisticsRankData> _topFiveForRange(
     List<Map<String, dynamic>> rows,
     _ReportPeriodIndex periods,
