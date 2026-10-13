@@ -226,8 +226,9 @@ class _PieMenu extends StatelessWidget {
         final maxWidth = constraints.hasBoundedWidth
             ? constraints.maxWidth
             : double.infinity;
-        final maxHeight =
-            constraints.hasBoundedHeight ? constraints.maxHeight : maxWidth;
+        final maxHeight = constraints.hasBoundedHeight
+            ? constraints.maxHeight
+            : maxWidth;
         final diameter = math.min(maxWidth, maxHeight);
 
         if (!diameter.isFinite || diameter <= 0) {
@@ -383,8 +384,9 @@ class _PieMenuCenter extends StatelessWidget {
                                   blurRadius: 0,
                                 ),
                                 Shadow(
-                                  color: const Color(0xFFE5B842)
-                                      .withValues(alpha: 0.50),
+                                  color: const Color(
+                                    0xFFE5B842,
+                                  ).withValues(alpha: 0.50),
                                   blurRadius: 14,
                                 ),
                               ],
@@ -416,19 +418,22 @@ class _PieMenuCenter extends StatelessWidget {
                                   color: const Color(0xFF1E1302),
                                   fontSize: centerTextSize(context, centerKey),
                                   fontWeight: FontWeight.w900,
-                                  letterSpacing:
-                                      centerKey.length > 18 ? 0.2 : 0.6,
+                                  letterSpacing: centerKey.length > 18
+                                      ? 0.2
+                                      : 0.6,
                                   height: 1.05,
                                   shadows: [
                                     Shadow(
-                                      color:
-                                          Colors.black.withValues(alpha: 0.80),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.80,
+                                      ),
                                       offset: const Offset(1.4, 2.0),
                                       blurRadius: 1,
                                     ),
                                     Shadow(
-                                      color: const Color(0xFFE5B842)
-                                          .withValues(alpha: 0.40),
+                                      color: const Color(
+                                        0xFFE5B842,
+                                      ).withValues(alpha: 0.40),
                                       blurRadius: 10,
                                     ),
                                   ],
@@ -445,11 +450,14 @@ class _PieMenuCenter extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize:
-                                        centerTextSize(context, centerKey),
+                                    fontSize: centerTextSize(
+                                      context,
+                                      centerKey,
+                                    ),
                                     fontWeight: FontWeight.w900,
-                                    letterSpacing:
-                                        centerKey.length > 18 ? 0.2 : 0.6,
+                                    letterSpacing: centerKey.length > 18
+                                        ? 0.2
+                                        : 0.6,
                                     height: 1.05,
                                   ),
                                 ),
@@ -571,9 +579,9 @@ class _PieMenuLabel extends StatelessWidget {
                         ),
                         // Golden radiance bloom
                         Shadow(
-                          color: const Color(0xFFE5B842).withValues(
-                            alpha: selected ? 0.70 : 0.30,
-                          ),
+                          color: const Color(
+                            0xFFE5B842,
+                          ).withValues(alpha: selected ? 0.70 : 0.30),
                           blurRadius: selected ? 18 : 6,
                         ),
                       ],
@@ -581,10 +589,11 @@ class _PieMenuLabel extends StatelessWidget {
                     // Polished 3D liquid gold face with specular gleam
                     ShaderMask(
                       blendMode: BlendMode.srcIn,
-                      shaderCallback: (bounds) => (selected
-                              ? _goldGradientSelected
-                              : _goldGradientUnselected)
-                          .createShader(bounds),
+                      shaderCallback: (bounds) =>
+                          (selected
+                                  ? _goldGradientSelected
+                                  : _goldGradientUnselected)
+                              .createShader(bounds),
                       child: Icon(
                         item.icon,
                         color: Colors.white,
@@ -631,9 +640,9 @@ class _PieMenuLabel extends StatelessWidget {
                           blurRadius: 0,
                         ),
                         Shadow(
-                          color: const Color(0xFFE5B842).withValues(
-                            alpha: selected ? 0.60 : 0.25,
-                          ),
+                          color: const Color(
+                            0xFFE5B842,
+                          ).withValues(alpha: selected ? 0.60 : 0.25),
                           blurRadius: selected ? 14 : 4,
                         ),
                       ],
@@ -642,10 +651,11 @@ class _PieMenuLabel extends StatelessWidget {
                   // Polished 3D liquid gold lettering
                   ShaderMask(
                     blendMode: BlendMode.srcIn,
-                    shaderCallback: (bounds) => (selected
-                            ? _goldGradientSelected
-                            : _goldGradientUnselected)
-                        .createShader(bounds),
+                    shaderCallback: (bounds) =>
+                        (selected
+                                ? _goldGradientSelected
+                                : _goldGradientUnselected)
+                            .createShader(bounds),
                     child: Text(
                       item.label,
                       textAlign: TextAlign.center,

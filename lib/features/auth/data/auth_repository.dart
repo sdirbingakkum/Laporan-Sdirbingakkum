@@ -6,8 +6,9 @@ const _puspomadEmailDomain = '@puspomad.mil.id';
 String _emailFromUsername(String username) {
   final normalized = username.trim();
   final atIndex = normalized.indexOf('@');
-  final baseUsername =
-      atIndex >= 0 ? normalized.substring(0, atIndex) : normalized;
+  final baseUsername = atIndex >= 0
+      ? normalized.substring(0, atIndex)
+      : normalized;
   return '$baseUsername$_puspomadEmailDomain';
 }
 

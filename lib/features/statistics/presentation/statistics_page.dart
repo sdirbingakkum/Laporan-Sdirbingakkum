@@ -73,7 +73,7 @@ class StatisticsPage extends StatefulWidget {
 
   final StatisticsModule module;
   final Future<StatisticsViewData> Function(StatisticsModule module)?
-      dataLoader;
+  dataLoader;
 
   @override
   State<StatisticsPage> createState() => _StatisticsPageState();
@@ -632,11 +632,7 @@ class _ReportDataError extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: const [
-            Icon(
-              Icons.wifi_off_rounded,
-              color: Color(0xFF4A5C53),
-              size: 40,
-            ),
+            Icon(Icons.wifi_off_rounded, color: Color(0xFF4A5C53), size: 40),
             SizedBox(height: 14),
             Text(
               'DATA LAPORAN TIDAK DAPAT DIMUAT.',
