@@ -8,13 +8,11 @@ import '../data/auth_repository.dart';
 import '../../../shared/widgets/app_background.dart';
 
 const _bg = Color(0xFF03150F);
-const _surfaceSoft = Color(0xFF0D2C20);
 const _gold = Color(0xFFD7A93C);
 const _goldLight = Color(0xFFF1D37A);
 const _goldDark = Color(0xFF8D651E);
 const _text = Color(0xFFF8F5EC);
 const _muted = Color(0xFFB7C2BC);
-const _line = Color(0xFF6E7C73);
 
 class SignInPage extends ConsumerStatefulWidget {
   const SignInPage({super.key});
@@ -76,8 +74,22 @@ class _SignInPageState extends ConsumerState<SignInPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_friendlyAuthMessage(error)),
+          content: Text(
+            _friendlyAuthMessage(error),
+            style: const TextStyle(
+              color: Color(0xFFF8F5EC),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.4,
+            ),
+          ),
           behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFF071F17),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: _gold.withValues(alpha: 0.30)),
+          ),
+          elevation: 10,
         ),
       );
     } catch (_) {
@@ -86,9 +98,23 @@ class _SignInPageState extends ConsumerState<SignInPage> {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('TERJADI KESALAHAN. SILAKAN COBA LAGI.'),
+        SnackBar(
+          content: const Text(
+            'TERJADI KESALAHAN. SILAKAN COBA LAGI.',
+            style: TextStyle(
+              color: Color(0xFFF8F5EC),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.4,
+            ),
+          ),
           behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFF071F17),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: _gold.withValues(alpha: 0.30)),
+          ),
+          elevation: 10,
         ),
       );
     } finally {

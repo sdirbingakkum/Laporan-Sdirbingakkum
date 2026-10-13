@@ -632,7 +632,7 @@ class _ReportDataError extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: const [
-            Icon(Icons.wifi_off_rounded, color: Color(0xFF4A5C53), size: 40),
+            Icon(Icons.wifi_off_rounded, color: Color(0xFF7A6840), size: 40),
             SizedBox(height: 14),
             Text(
               'DATA LAPORAN TIDAK DAPAT DIMUAT.',
@@ -851,10 +851,16 @@ Future<void> _showRankingSheet(
                 ),
                 Container(
                   width: 48,
-                  height: 6,
+                  height: 5,
                   margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.16),
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFFD7A93C).withValues(alpha: 0.30),
+                        const Color(0xFFF1D37A).withValues(alpha: 0.55),
+                        const Color(0xFFD7A93C).withValues(alpha: 0.30),
+                      ],
+                    ),
                     borderRadius: BorderRadius.circular(99),
                   ),
                 ),
@@ -873,6 +879,13 @@ Future<void> _showRankingSheet(
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.6,
                               height: 1.05,
+                              shadows: [
+                                Shadow(
+                                  color: accent.withValues(alpha: 0.40),
+                                  blurRadius: 14,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
                             ),
                           ),
                           const SizedBox(height: 5),
@@ -1117,6 +1130,13 @@ class _StatsColumnView extends StatelessWidget {
             fontSize: 14,
             fontWeight: FontWeight.w700,
             letterSpacing: 2.0,
+            shadows: [
+              Shadow(
+                color: _gold.withValues(alpha: 0.40),
+                blurRadius: 12,
+                offset: const Offset(0, 1),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 8),
@@ -1379,10 +1399,16 @@ Future<void> _showK9UnitSheet(BuildContext context, _K9UnitData unit) async {
                 Center(
                   child: Container(
                     width: 48,
-                    height: 6,
+                    height: 5,
                     margin: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.16),
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFFD7A93C).withValues(alpha: 0.30),
+                          const Color(0xFFF1D37A).withValues(alpha: 0.55),
+                          const Color(0xFFD7A93C).withValues(alpha: 0.30),
+                        ],
+                      ),
                       borderRadius: BorderRadius.circular(99),
                     ),
                   ),
@@ -1394,6 +1420,13 @@ Future<void> _showK9UnitSheet(BuildContext context, _K9UnitData unit) async {
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.7,
+                    shadows: [
+                      Shadow(
+                        color: Color(0x66D7A93C),
+                        blurRadius: 12,
+                        offset: Offset(0, 1),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 4),
