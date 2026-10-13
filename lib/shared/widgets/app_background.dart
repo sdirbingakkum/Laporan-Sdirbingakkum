@@ -4,12 +4,13 @@ const appBackgroundGradient = LinearGradient(
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
   colors: [
-    Color(0xFF071A12),
-    Color(0xFF0D251B),
-    Color(0xFF141B12),
-    Color(0xFF171008),
+    Color(0xFF0C2E20),
+    Color(0xFF0A241A),
+    Color(0xFF081C15),
+    Color(0xFF141E15),
+    Color(0xFF1F170D),
   ],
-  stops: [0.0, 0.38, 0.72, 1.0],
+  stops: [0.0, 0.28, 0.58, 0.82, 1.0],
 );
 
 class AppBackground extends StatelessWidget {
@@ -42,34 +43,32 @@ class _AppBackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final topGlow = Paint()
-      ..shader =
-          RadialGradient(
-            colors: [
-              const Color(0xFFD7A93C).withValues(alpha: 0.075),
-              Colors.transparent,
-            ],
-          ).createShader(
-            Rect.fromCircle(
-              center: Offset(size.width * 0.12, size.height * 0.12),
-              radius: size.width * 0.68,
-            ),
-          );
+      ..shader = RadialGradient(
+        colors: [
+          const Color(0xFFD7A93C).withValues(alpha: 0.085),
+          Colors.transparent,
+        ],
+      ).createShader(
+        Rect.fromCircle(
+          center: Offset(size.width * 0.12, size.height * 0.12),
+          radius: size.width * 0.70,
+        ),
+      );
 
     canvas.drawRect(Offset.zero & size, topGlow);
 
     final bottomGlow = Paint()
-      ..shader =
-          RadialGradient(
-            colors: [
-              const Color(0xFF49A86B).withValues(alpha: 0.035),
-              Colors.transparent,
-            ],
-          ).createShader(
-            Rect.fromCircle(
-              center: Offset(size.width * 0.88, size.height * 0.84),
-              radius: size.width * 0.64,
-            ),
-          );
+      ..shader = RadialGradient(
+        colors: [
+          const Color(0xFF49A86B).withValues(alpha: 0.055),
+          Colors.transparent,
+        ],
+      ).createShader(
+        Rect.fromCircle(
+          center: Offset(size.width * 0.88, size.height * 0.84),
+          radius: size.width * 0.65,
+        ),
+      );
 
     canvas.drawRect(Offset.zero & size, bottomGlow);
 

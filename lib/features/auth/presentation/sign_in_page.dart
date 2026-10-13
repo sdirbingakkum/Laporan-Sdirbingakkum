@@ -61,9 +61,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     });
 
     try {
-      await ref
-          .read(authRepositoryProvider)
-          .signIn(
+      await ref.read(authRepositoryProvider).signIn(
             username: _usernameController.text.trim(),
             password: _passwordController.text,
           );
@@ -86,7 +84,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           behavior: SnackBarBehavior.floating,
           backgroundColor: const Color(0xFF071F17),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(0.4),
             side: BorderSide(color: _gold.withValues(alpha: 0.30)),
           ),
           elevation: 10,
@@ -111,7 +109,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           behavior: SnackBarBehavior.floating,
           backgroundColor: const Color(0xFF071F17),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(0.4),
             side: BorderSide(color: _gold.withValues(alpha: 0.30)),
           ),
           elevation: 10,
@@ -155,14 +153,13 @@ class _SignInPageState extends ConsumerState<SignInPage> {
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final horizontalPadding = constraints.maxWidth >= 520
-                  ? 32.0
-                  : 16.0;
+              final horizontalPadding =
+                  constraints.maxWidth >= 520 ? 32.0 : 16.0;
               final contentWidth =
                   (constraints.maxWidth - horizontalPadding * 2).clamp(
-                    0.0,
-                    460.0,
-                  );
+                0.0,
+                460.0,
+              );
 
               return Center(
                 child: FittedBox(
@@ -288,7 +285,7 @@ class _SignInCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(0.4),
       child: BackdropFilter(
         filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
         child: Container(
@@ -300,7 +297,7 @@ class _SignInCard extends StatelessWidget {
               colors: [Color(0x9C183B2D), Color(0x72102C20), Color(0x7007130E)],
               stops: [0.0, 0.46, 1.0],
             ),
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(0.4),
             border: Border.all(color: _gold.withValues(alpha: 0.30)),
             boxShadow: [
               BoxShadow(
@@ -383,7 +380,7 @@ class _SignInCard extends StatelessWidget {
                 height: 52,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(0.4),
                     gradient: parent._isLoading
                         ? LinearGradient(
                             colors: [
@@ -429,7 +426,7 @@ class _SignInCard extends StatelessWidget {
                       disabledForegroundColor: Colors.black54,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(0.4),
                       ),
                     ),
                     child: AnimatedSwitcher(
@@ -552,19 +549,19 @@ class _DarkField extends StatelessWidget {
           vertical: dense ? 12 : 15,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(13),
+          borderRadius: BorderRadius.circular(0.4),
           borderSide: BorderSide(color: _gold.withValues(alpha: 0.24)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(13),
+          borderRadius: BorderRadius.circular(0.4),
           borderSide: const BorderSide(color: _goldLight, width: 1.4),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(13),
+          borderRadius: BorderRadius.circular(0.4),
           borderSide: const BorderSide(color: Color(0xFFCC6D61)),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(13),
+          borderRadius: BorderRadius.circular(0.4),
           borderSide: const BorderSide(color: Color(0xFFE28C80), width: 1.3),
         ),
       ),
