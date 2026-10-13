@@ -428,6 +428,57 @@ Future<StatisticsViewData> _testSelectablePeriodData(
     );
   }
 
+  if (module == StatisticsModule.provos) {
+    final isQuarterThree = periodKey == 'quarter:3';
+    return StatisticsViewData(
+      columns: [
+        StatisticsColumnData(
+          label: '2026 · JAN–SEP',
+          cards: const [
+            StatisticsCardData(
+              label: 'JUMLAH',
+              value: '4833',
+              color: Color(0xFF94A3B8),
+            ),
+            StatisticsCardData(
+              label: 'SUDAH DIK/TAR',
+              value: '1304',
+              color: Color(0xFF10B981),
+            ),
+            StatisticsCardData(
+              label: 'BELUM DIK/TAR',
+              value: '3488',
+              color: Color(0xFFF59E0B),
+            ),
+          ],
+        ),
+        StatisticsColumnData(
+          label: option.label,
+          cards: [
+            StatisticsCardData(
+              label: 'JUMLAH',
+              value: isQuarterThree ? '1200' : '500',
+              color: const Color(0xFF94A3B8),
+            ),
+            StatisticsCardData(
+              label: 'SUDAH DIK/TAR',
+              value: isQuarterThree ? '350' : '140',
+              color: const Color(0xFF10B981),
+            ),
+            StatisticsCardData(
+              label: 'BELUM DIK/TAR',
+              value: isQuarterThree ? '850' : '360',
+              color: const Color(0xFFF59E0B),
+            ),
+          ],
+        ),
+      ],
+      ranking: const [],
+      periodOptions: _testPelanggaranPeriodOptions,
+      selectedPeriodKey: option.key,
+    );
+  }
+
   return _testStatisticsData(module);
 }
 
@@ -762,21 +813,55 @@ void main() {
     expect(find.byKey(const ValueKey('report-period-columns')), findsOneWidget);
   });
 
-  testWidgets('PROVOS shows only the current year period', (tester) async {
+  testWidgets('PROVOS period dropdown refreshes its three indicators', (
+    tester,
+  ) async {
     await _setSurfaceSize(tester, const Size(390, 844));
     await tester.pumpWidget(
       MaterialApp(
         home: StatisticsPage(
           module: StatisticsModule.provos,
-          dataLoader: _testStatisticsData,
+          dataLoader: (module) => _testSelectablePeriodData(module, 'month:9'),
+          periodDataLoader: _testSelectablePeriodData,
         ),
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text(DateTime.now().year.toString()), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('provos-period-dropdown')),
+      findsOneWidget,
+    );
+    expect(find.text('2026 · JAN–SEP'), findsOneWidget);
+    expect(find.text('SEP'), findsOneWidget);
     expect(find.text('SEPT'), findsNothing);
-    expect(find.byKey(const ValueKey('report-period-columns')), findsNothing);
+    expect(find.text('4833'), findsOneWidget);
+    expect(find.text('1304'), findsOneWidget);
+    expect(find.text('3488'), findsOneWidget);
+    expect(find.text('500'), findsOneWidget);
+    expect(find.text('140'), findsOneWidget);
+    expect(find.text('360'), findsOneWidget);
+    expect(find.text('JUMLAH'), findsNWidgets(2));
+    expect(find.text('SUDAH DIK/TAR'), findsNWidgets(2));
+    expect(find.text('BELUM DIK/TAR'), findsNWidgets(2));
+    expect(find.byKey(const ValueKey('report-period-columns')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('provos-period-dropdown')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('TRIWULAN III'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('TRIWULAN III'), findsOneWidget);
+    expect(find.text('4833'), findsOneWidget);
+    expect(find.text('1304'), findsOneWidget);
+    expect(find.text('3488'), findsOneWidget);
+    expect(find.text('1200'), findsOneWidget);
+    expect(find.text('350'), findsOneWidget);
+    expect(find.text('850'), findsOneWidget);
+    expect(find.text('500'), findsNothing);
+    expect(find.text('140'), findsNothing);
+    expect(find.text('360'), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('K9 is populated with the standard report layout', (
