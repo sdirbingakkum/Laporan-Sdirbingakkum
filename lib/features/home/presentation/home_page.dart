@@ -367,28 +367,36 @@ class _PieMenuCenter extends StatelessWidget {
                         Stack(
                           alignment: Alignment.center,
                           children: [
-                            Icon(
-                              icon,
-                              color: const Color(0xFF1E1302),
-                              size: diameterForCenter(context),
-                              shadows: [
-                                Shadow(
-                                  color: Colors.black.withValues(alpha: 0.85),
-                                  offset: const Offset(2.0, 2.8),
-                                  blurRadius: 2,
+                            RichText(
+                              text: TextSpan(
+                                text: String.fromCharCode(icon.codePoint),
+                                style: TextStyle(
+                                  inherit: false,
+                                  color: const Color(0xFF1E1302),
+                                  fontSize: diameterForCenter(context),
+                                  fontFamily: icon.fontFamily,
+                                  package: icon.fontPackage,
+                                  shadows: [
+                                    Shadow(
+                                      color:
+                                          Colors.black.withValues(alpha: 0.85),
+                                      offset: const Offset(2.0, 2.8),
+                                      blurRadius: 2,
+                                    ),
+                                    Shadow(
+                                      color: const Color(0xFF452B05),
+                                      offset: const Offset(1.0, 1.5),
+                                      blurRadius: 0,
+                                    ),
+                                    Shadow(
+                                      color: const Color(
+                                        0xFFE5B842,
+                                      ).withValues(alpha: 0.50),
+                                      blurRadius: 14,
+                                    ),
+                                  ],
                                 ),
-                                Shadow(
-                                  color: const Color(0xFF452B05),
-                                  offset: const Offset(1.0, 1.5),
-                                  blurRadius: 0,
-                                ),
-                                Shadow(
-                                  color: const Color(
-                                    0xFFE5B842,
-                                  ).withValues(alpha: 0.50),
-                                  blurRadius: 14,
-                                ),
-                              ],
+                              ),
                             ),
                             ShaderMask(
                               blendMode: BlendMode.srcIn,
@@ -562,33 +570,40 @@ class _PieMenuLabel extends StatelessWidget {
                   alignment: Alignment.center,
                   children: [
                     // Deep physical extrusion wall and cast shadow
-                    Icon(
-                      item.icon,
-                      color: const Color(0xFF1E1302),
-                      size: compact ? iconSize * 0.82 : iconSize * 0.86,
-                      shadows: [
-                        // Deep physical extrusion shadow
-                        Shadow(
-                          color: Colors.black.withValues(
-                            alpha: selected ? 0.95 : 0.85,
-                          ),
-                          offset: const Offset(2.4, 3.4),
-                          blurRadius: 1,
+                    RichText(
+                      text: TextSpan(
+                        text: String.fromCharCode(item.icon.codePoint),
+                        style: TextStyle(
+                          inherit: false,
+                          color: const Color(0xFF1E1302),
+                          fontSize: compact ? iconSize * 0.82 : iconSize * 0.86,
+                          fontFamily: item.icon.fontFamily,
+                          package: item.icon.fontPackage,
+                          shadows: [
+                            // Deep physical extrusion shadow
+                            Shadow(
+                              color: Colors.black.withValues(
+                                alpha: selected ? 0.95 : 0.85,
+                              ),
+                              offset: const Offset(2.4, 3.4),
+                              blurRadius: 1,
+                            ),
+                            // Intermediate bronze bevel
+                            Shadow(
+                              color: const Color(0xFF452B05),
+                              offset: const Offset(1.2, 1.8),
+                              blurRadius: 0,
+                            ),
+                            // Golden radiance bloom
+                            Shadow(
+                              color: const Color(
+                                0xFFE5B842,
+                              ).withValues(alpha: selected ? 0.70 : 0.30),
+                              blurRadius: selected ? 18 : 6,
+                            ),
+                          ],
                         ),
-                        // Intermediate bronze bevel
-                        Shadow(
-                          color: const Color(0xFF452B05),
-                          offset: const Offset(1.2, 1.8),
-                          blurRadius: 0,
-                        ),
-                        // Golden radiance bloom
-                        Shadow(
-                          color: const Color(
-                            0xFFE5B842,
-                          ).withValues(alpha: selected ? 0.70 : 0.30),
-                          blurRadius: selected ? 18 : 6,
-                        ),
-                      ],
+                      ),
                     ),
                     // Polished 3D liquid gold face with specular gleam
                     ShaderMask(
