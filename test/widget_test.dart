@@ -302,7 +302,7 @@ Future<StatisticsViewData> _testPelanggaranPeriodData(
           ),
           StatisticsCardData(
             label: 'LALIN',
-            value: isQuarterThree ? '35' : '12',
+            value: isQuarterThree ? '38' : '12',
             color: const Color(0xFF38BDF8),
           ),
         ],
