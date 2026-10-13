@@ -314,6 +314,123 @@ Future<StatisticsViewData> _testPelanggaranPeriodData(
   );
 }
 
+Future<StatisticsViewData> _testSelectablePeriodData(
+  StatisticsModule module,
+  String periodKey,
+) async {
+  final option = _testPelanggaranPeriodOptions.firstWhere(
+    (item) => item.key == periodKey,
+  );
+  final isQuarterThree = periodKey == 'quarter:3';
+
+  if (module == StatisticsModule.lakaLalin) {
+    return StatisticsViewData(
+      columns: [
+        StatisticsColumnData(
+          label: '2026 · JAN–SEP',
+          cards: const [
+            StatisticsCardData(
+              label: 'JUMLAH KASUS',
+              value: '106',
+              color: Color(0xFF38BDF8),
+            ),
+            StatisticsCardData(
+              label: 'LAKA GANDA',
+              value: '63',
+              color: Color(0xFFF97316),
+            ),
+            StatisticsCardData(
+              label: 'TUNGGAL',
+              value: '41',
+              color: Color(0xFFF59E0B),
+            ),
+            StatisticsCardData(
+              label: 'TABRAK LARI',
+              value: '2',
+              color: Color(0xFFEF4444),
+            ),
+          ],
+        ),
+        StatisticsColumnData(
+          label: option.label,
+          cards: [
+            StatisticsCardData(
+              label: 'JUMLAH KASUS',
+              value: isQuarterThree ? '42' : '9',
+              color: const Color(0xFF38BDF8),
+            ),
+            StatisticsCardData(
+              label: 'LAKA GANDA',
+              value: isQuarterThree ? '24' : '4',
+              color: const Color(0xFFF97316),
+            ),
+            StatisticsCardData(
+              label: 'TUNGGAL',
+              value: isQuarterThree ? '17' : '5',
+              color: const Color(0xFFF59E0B),
+            ),
+            StatisticsCardData(
+              label: 'TABRAK LARI',
+              value: isQuarterThree ? '1' : '0',
+              color: const Color(0xFFEF4444),
+            ),
+          ],
+        ),
+      ],
+      ranking: const [StatisticsRankData('POMDAM TEST', 42)],
+      periodOptions: _testPelanggaranPeriodOptions,
+      selectedPeriodKey: option.key,
+    );
+  }
+
+  if (module == StatisticsModule.simTni) {
+    final comparisonValues = isQuarterThree
+        ? const ['953', '356', '83', '8', '1207']
+        : const ['318', '122', '33', '4', '523'];
+    final annualValues = const ['2734', '1081', '320', '118', '3232'];
+    const labels = ['A', 'BI', 'BII', 'BII SUS', 'C'];
+    const colors = [
+      Color(0xFF3B82F6),
+      Color(0xFF06B6D4),
+      Color(0xFF10B981),
+      Color(0xFF8B5CF6),
+      Color(0xFF6366F1),
+    ];
+    final comparisonCards = [
+      for (var index = 0; index < labels.length; index++)
+        StatisticsCardData(
+          label: labels[index],
+          value: comparisonValues[index],
+          color: colors[index],
+        ),
+    ];
+    final comparisonTotal = isQuarterThree ? 2607 : 1000;
+
+    return StatisticsViewData(
+      columns: [
+        StatisticsColumnData(
+          label: '2026 · JAN–SEP',
+          cards: [
+            for (var index = 0; index < labels.length; index++)
+              StatisticsCardData(
+                label: labels[index],
+                value: annualValues[index],
+                color: colors[index],
+              ),
+          ],
+        ),
+        StatisticsColumnData(label: option.label, cards: comparisonCards),
+      ],
+      ranking: const [StatisticsRankData('POMDAM TEST', 2607)],
+      totalSim: comparisonTotal,
+      periodOptions: _testPelanggaranPeriodOptions,
+      selectedPeriodKey: option.key,
+    );
+  }
+
+  return _testStatisticsData(module);
+}
+
 void main() {
   test('standalone build has embedded Supabase configuration fallback', () {
     final config = AppConfig.fromEnvironment();
@@ -553,6 +670,75 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('Laka Lalin period dropdown refreshes values', (tester) async {
+    await _setSurfaceSize(tester, const Size(390, 844));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatisticsPage(
+          module: StatisticsModule.lakaLalin,
+          dataLoader: (module) => _testSelectablePeriodData(module, 'month:9'),
+          periodDataLoader: _testSelectablePeriodData,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('laka-lalin-period-dropdown')),
+      findsOneWidget,
+    );
+    expect(find.text('106'), findsOneWidget);
+    expect(find.text('42'), findsNothing);
+    expect(find.text('9'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('laka-lalin-period-dropdown')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('TRIWULAN III'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('106'), findsOneWidget);
+    expect(find.text('42'), findsOneWidget);
+    expect(find.text('9'), findsNothing);
+    expect(find.text('24'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('SIM TNI period dropdown refreshes categories and total', (
+    tester,
+  ) async {
+    await _setSurfaceSize(tester, const Size(390, 844));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatisticsPage(
+          module: StatisticsModule.simTni,
+          dataLoader: (module) => _testSelectablePeriodData(module, 'month:9'),
+          periodDataLoader: _testSelectablePeriodData,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('sim-tni-period-dropdown')),
+      findsOneWidget,
+    );
+    expect(find.text('1000'), findsOneWidget);
+    expect(find.text('7485'), findsNothing);
+    expect(find.text('2734'), findsOneWidget);
+    expect(find.text('SEP'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('sim-tni-period-dropdown')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('TRIWULAN III'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('2607'), findsOneWidget);
+    expect(find.text('1207'), findsOneWidget);
+    expect(find.text('2734'), findsOneWidget);
+    expect(find.text('1000'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('SIM TNI shows total SIM above aligned period columns', (
     tester,

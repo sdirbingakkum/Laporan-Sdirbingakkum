@@ -15,6 +15,12 @@ const _muted = Color(0xFFB7C2BC);
 
 enum StatisticsModule { pelanggaran, lakaLalin, simTni, k9, provos }
 
+bool _supportsPeriodSelector(StatisticsModule module) {
+  return module == StatisticsModule.pelanggaran ||
+      module == StatisticsModule.lakaLalin ||
+      module == StatisticsModule.simTni;
+}
+
 Color _moduleAccent(StatisticsModule module) {
   switch (module) {
     case StatisticsModule.pelanggaran:
@@ -118,7 +124,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
     );
   }
 
-  void _changePelanggaranPeriod(String periodKey) {
+  void _changeComparisonPeriod(String periodKey) {
     setState(() {
       final periodDataLoader = widget.periodDataLoader;
       if (periodDataLoader != null) {
@@ -216,9 +222,8 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         totalSim: data.totalSim,
                         periodOptions: data.periodOptions,
                         selectedPeriodKey: data.selectedPeriodKey,
-                        onPeriodChanged:
-                            widget.module == StatisticsModule.pelanggaran
-                            ? _changePelanggaranPeriod
+                        onPeriodChanged: _supportsPeriodSelector(widget.module)
+                            ? _changeComparisonPeriod
                             : null,
                       ),
                     ),
@@ -252,6 +257,27 @@ class _PelanggaranSourceData {
   final Map<String, String> pomdams;
   final List<Map<String, dynamic>> rows;
   final Map<String, String> categoryByViolationId;
+}
+
+class _PeriodSourceData {
+  const _PeriodSourceData({
+    required this.periods,
+    required this.pomdams,
+    required this.rows,
+    required this.typeById,
+  });
+
+  final _ReportPeriodIndex periods;
+  final Map<String, String> pomdams;
+  final List<Map<String, dynamic>> rows;
+  final Map<String, String> typeById;
+}
+
+class _LatestReportMonth {
+  const _LatestReportMonth(this.year, this.month);
+
+  final int year;
+  final int month;
 }
 
 class _ReportPeriodIndex {
@@ -338,37 +364,6 @@ class _SupabaseReportRepository {
     );
   }
 
-  static List<StatisticsRankData> _topFive(
-    List<Map<String, dynamic>> rows,
-    _ReportPeriodIndex periods,
-    Map<String, String> pomdams, {
-    int? month,
-  }) {
-    final totals = <String, int>{};
-
-    for (final row in rows) {
-      final period = periods.byId[row['period_id']?.toString()];
-      if (period == null || period['report_year'] != 2026) continue;
-      if (month != null && period['report_month'] != month) continue;
-
-      final code = pomdams[row['pomdam_id']?.toString()];
-      if (code == null || code.isEmpty) continue;
-
-      totals[code] = (totals[code] ?? 0) + _toInt(row['value']);
-    }
-
-    final ranked = totals.entries.toList()
-      ..sort((a, b) {
-        final result = b.value.compareTo(a.value);
-        return result != 0 ? result : a.key.compareTo(b.key);
-      });
-
-    return [
-      for (final entry in ranked.take(5))
-        StatisticsRankData(entry.key, entry.value),
-    ];
-  }
-
   static Future<StatisticsViewData> load(StatisticsModule module) async {
     final client = Supabase.instance.client;
 
@@ -390,13 +385,18 @@ class _SupabaseReportRepository {
     StatisticsModule module,
     String periodKey,
   ) async {
-    if (module != StatisticsModule.pelanggaran) {
-      return load(module);
+    final client = Supabase.instance.client;
+    switch (module) {
+      case StatisticsModule.pelanggaran:
+        return _loadPelanggaran(client, selectedPeriodKey: periodKey);
+      case StatisticsModule.lakaLalin:
+        return _loadLaka(client, selectedPeriodKey: periodKey);
+      case StatisticsModule.simTni:
+        return _loadSim(client, selectedPeriodKey: periodKey);
+      case StatisticsModule.k9:
+      case StatisticsModule.provos:
+        return load(module);
     }
-    return _loadPelanggaran(
-      Supabase.instance.client,
-      selectedPeriodKey: periodKey,
-    );
   }
 
   static const _monthShortNames = <String>[
@@ -414,10 +414,7 @@ class _SupabaseReportRepository {
     'DES',
   ];
 
-  static List<StatisticsPeriodOption> _periodOptions(
-    int year,
-    int latestMonth,
-  ) {
+  static List<StatisticsPeriodOption> _periodOptions(int latestMonth) {
     final options = <StatisticsPeriodOption>[];
 
     // The most recent month is shown first so it is easy to return to default.
@@ -513,7 +510,7 @@ class _SupabaseReportRepository {
 
     final reportYear = latestYear;
     final reportMonth = latestMonth;
-    final options = _periodOptions(reportYear, reportMonth);
+    final options = _periodOptions(reportMonth);
     final requestedKey = selectedPeriodKey ?? 'month:$reportMonth';
     StatisticsPeriodOption? selectedOption;
     for (final option in options) {
@@ -612,6 +609,37 @@ class _SupabaseReportRepository {
     );
   }
 
+  static List<StatisticsRankData> _topFive(
+    List<Map<String, dynamic>> rows,
+    _ReportPeriodIndex periods,
+    Map<String, String> pomdams, {
+    int? month,
+  }) {
+    final totals = <String, int>{};
+
+    for (final row in rows) {
+      final period = periods.byId[row['period_id']?.toString()];
+      if (period == null || period['report_year'] != 2026) continue;
+      if (month != null && period['report_month'] != month) continue;
+
+      final code = pomdams[row['pomdam_id']?.toString()];
+      if (code == null || code.isEmpty) continue;
+
+      totals[code] = (totals[code] ?? 0) + _toInt(row['value']);
+    }
+
+    final ranked = totals.entries.toList()
+      ..sort((a, b) {
+        final result = b.value.compareTo(a.value);
+        return result != 0 ? result : a.key.compareTo(b.key);
+      });
+
+    return [
+      for (final entry in ranked.take(5))
+        StatisticsRankData(entry.key, entry.value),
+    ];
+  }
+
   static List<StatisticsRankData> _topFiveForRange(
     List<Map<String, dynamic>> rows,
     _ReportPeriodIndex periods,
@@ -644,27 +672,179 @@ class _SupabaseReportRepository {
     ];
   }
 
-  static Future<StatisticsViewData> _loadLaka(SupabaseClient client) async {
+  static Future<_PeriodSourceData>? _lakaSourceFuture;
+  static Future<_PeriodSourceData>? _simSourceFuture;
+
+  static Future<List<Map<String, dynamic>>> _fetchAllRows(
+    SupabaseClient client,
+    String table,
+    String columns,
+  ) async {
+    const pageSize = 1000;
+    final rows = <Map<String, dynamic>>[];
+    for (var start = 0; ; start += pageSize) {
+      final page = List<Map<String, dynamic>>.from(
+        await client
+            .from(table)
+            .select(columns)
+            .order('id')
+            .range(start, start + pageSize - 1),
+      );
+      rows.addAll(page);
+      if (page.length < pageSize) break;
+    }
+    return rows;
+  }
+
+  static Future<_PeriodSourceData> _fetchPeriodSource(
+    SupabaseClient client, {
+    required String table,
+    required String columns,
+    required String typeTable,
+  }) async {
     final periods = await _periods(client);
     final pomdams = await _pomdams(client);
-    final rows = List<Map<String, dynamic>>.from(
-      await client
-          .from('laka_accident_records')
-          .select('period_id,pomdam_id,accident_type_id,value'),
-    );
+    final rows = await _fetchAllRows(client, table, columns);
     final types = List<Map<String, dynamic>>.from(
-      await client.from('accident_types').select('id,code'),
+      await client.from(typeTable).select('id,code'),
     );
-    final typeById = <String, String>{
-      for (final row in types) row['id'].toString(): row['code'].toString(),
-    };
+    return _PeriodSourceData(
+      periods: periods,
+      pomdams: pomdams,
+      rows: rows,
+      typeById: {
+        for (final row in types)
+          row['id'].toString(): row['code']?.toString() ?? '',
+      },
+    );
+  }
 
-    int sum({int? month, String? type}) {
+  static Future<_PeriodSourceData> _loadLakaSource(
+    SupabaseClient client,
+  ) async {
+    try {
+      return await (_lakaSourceFuture ??= _fetchPeriodSource(
+        client,
+        table: 'laka_accident_records',
+        columns: 'id,period_id,pomdam_id,accident_type_id,value,data_status',
+        typeTable: 'accident_types',
+      ));
+    } catch (_) {
+      _lakaSourceFuture = null;
+      rethrow;
+    }
+  }
+
+  static Future<_PeriodSourceData> _loadSimSource(SupabaseClient client) async {
+    try {
+      return await (_simSourceFuture ??= _fetchPeriodSource(
+        client,
+        table: 'sim_records',
+        columns: 'id,period_id,pomdam_id,sim_type_id,value,data_status',
+        typeTable: 'sim_types',
+      ));
+    } catch (_) {
+      _simSourceFuture = null;
+      rethrow;
+    }
+  }
+
+  static _LatestReportMonth? _latestReportingMonth(
+    List<Map<String, dynamic>> rows,
+    _ReportPeriodIndex periods,
+  ) {
+    int? latestYear;
+    int? latestMonth;
+    for (final row in rows) {
+      if (row['data_status'] != 'VALID') continue;
+      final period = periods.byId[row['period_id']?.toString()];
+      if (period == null) continue;
+      final year = _toInt(period['report_year']);
+      final month = _toInt(period['report_month']);
+      if (year <= 0 || month < 1 || month > 12) continue;
+      if (latestYear == null ||
+          year > latestYear ||
+          (year == latestYear && month > latestMonth!)) {
+        latestYear = year;
+        latestMonth = month;
+      }
+    }
+    if (latestYear == null || latestMonth == null) return null;
+    return _LatestReportMonth(latestYear, latestMonth);
+  }
+
+  static StatisticsPeriodOption _resolveSelectedPeriod(
+    List<StatisticsPeriodOption> options,
+    int latestMonth,
+    String? requestedKey,
+  ) {
+    final key = requestedKey ?? 'month:$latestMonth';
+    for (final option in options) {
+      if (option.key == key) return option;
+    }
+    return options.first;
+  }
+
+  static Future<StatisticsViewData> _loadLaka(
+    SupabaseClient client, {
+    String? selectedPeriodKey,
+  }) async {
+    final source = await _loadLakaSource(client);
+    final periods = source.periods;
+    final pomdams = source.pomdams;
+    final rows = source.rows;
+    final typeById = source.typeById;
+    final latest = _latestReportingMonth(rows, periods);
+    if (latest == null) {
+      return const StatisticsViewData(
+        columns: [
+          StatisticsColumnData(
+            label: 'BELUM ADA DATA',
+            cards: [
+              StatisticsCardData(
+                label: 'JUMLAH KASUS',
+                value: '0',
+                color: Color(0xFF38BDF8),
+              ),
+              StatisticsCardData(
+                label: 'LAKA GANDA',
+                value: '0',
+                color: Color(0xFFF97316),
+              ),
+              StatisticsCardData(
+                label: 'TUNGGAL',
+                value: '0',
+                color: Color(0xFFF59E0B),
+              ),
+              StatisticsCardData(
+                label: 'TABRAK LARI',
+                value: '0',
+                color: Color(0xFFEF4444),
+              ),
+            ],
+          ),
+        ],
+        ranking: [],
+      );
+    }
+
+    final options = _periodOptions(latest.month);
+    final selected = _resolveSelectedPeriod(
+      options,
+      latest.month,
+      selectedPeriodKey,
+    );
+
+    int sum({required int startMonth, required int endMonth, String? type}) {
       var total = 0;
       for (final row in rows) {
+        if (row['data_status'] != 'VALID') continue;
         final period = periods.byId[row['period_id']?.toString()];
-        if (period == null || period['report_year'] != 2026) continue;
-        if (month != null && period['report_month'] != month) continue;
+        if (period == null || _toInt(period['report_year']) != latest.year) {
+          continue;
+        }
+        final month = _toInt(period['report_month']);
+        if (month < startMonth || month > endMonth) continue;
         if (type != null &&
             typeById[row['accident_type_id']?.toString()] != type) {
           continue;
@@ -674,150 +854,190 @@ class _SupabaseReportRepository {
       return total;
     }
 
+    List<StatisticsCardData> cardsForRange(int startMonth, int endMonth) => [
+      StatisticsCardData(
+        label: 'JUMLAH KASUS',
+        value: sum(startMonth: startMonth, endMonth: endMonth).toString(),
+        color: const Color(0xFF38BDF8),
+      ),
+      StatisticsCardData(
+        label: 'LAKA GANDA',
+        value: sum(
+          startMonth: startMonth,
+          endMonth: endMonth,
+          type: 'GANDA',
+        ).toString(),
+        color: const Color(0xFFF97316),
+      ),
+      StatisticsCardData(
+        label: 'TUNGGAL',
+        value: sum(
+          startMonth: startMonth,
+          endMonth: endMonth,
+          type: 'TUNGGAL',
+        ).toString(),
+        color: const Color(0xFFF59E0B),
+      ),
+      StatisticsCardData(
+        label: 'TABRAK LARI',
+        value: sum(
+          startMonth: startMonth,
+          endMonth: endMonth,
+          type: 'TABRAK_LARI',
+        ).toString(),
+        color: const Color(0xFFEF4444),
+      ),
+    ];
+
     return StatisticsViewData(
       columns: [
         StatisticsColumnData(
-          label: '2026',
-          cards: [
-            StatisticsCardData(
-              label: 'JUMLAH KASUS',
-              value: sum().toString(),
-              color: const Color(0xFF38BDF8),
-            ),
-            StatisticsCardData(
-              label: 'LAKA GANDA',
-              value: sum(type: 'GANDA').toString(),
-              color: const Color(0xFFF97316),
-            ),
-            StatisticsCardData(
-              label: 'TUNGGAL',
-              value: sum(type: 'TUNGGAL').toString(),
-              color: const Color(0xFFF59E0B),
-            ),
-            StatisticsCardData(
-              label: 'TABRAK LARI',
-              value: sum(type: 'TABRAK_LARI').toString(),
-              color: const Color(0xFFEF4444),
-            ),
-          ],
+          label: '${latest.year} · JAN–${_monthShortNames[latest.month - 1]}',
+          cards: cardsForRange(1, latest.month),
         ),
         StatisticsColumnData(
-          label: 'SEPT',
-          cards: [
-            StatisticsCardData(
-              label: 'JUMLAH KASUS',
-              value: sum(month: 9).toString(),
-              color: const Color(0xFF38BDF8),
-            ),
-            StatisticsCardData(
-              label: 'LAKA GANDA',
-              value: sum(month: 9, type: 'GANDA').toString(),
-              color: const Color(0xFFF97316),
-            ),
-            StatisticsCardData(
-              label: 'TUNGGAL',
-              value: sum(month: 9, type: 'TUNGGAL').toString(),
-              color: const Color(0xFFF59E0B),
-            ),
-            StatisticsCardData(
-              label: 'TABRAK LARI',
-              value: sum(month: 9, type: 'TABRAK_LARI').toString(),
-              color: const Color(0xFFEF4444),
-            ),
-          ],
+          label: selected.label,
+          cards: cardsForRange(selected.startMonth, selected.endMonth),
         ),
       ],
-      ranking: _topFive(rows, periods, pomdams, month: 9),
+      ranking: _topFiveForRange(
+        rows,
+        periods,
+        pomdams,
+        year: latest.year,
+        startMonth: selected.startMonth,
+        endMonth: selected.endMonth,
+      ),
+      periodOptions: options,
+      selectedPeriodKey: selected.key,
     );
   }
 
-  static Future<StatisticsViewData> _loadSim(SupabaseClient client) async {
-    final periods = await _periods(client);
-    final pomdams = await _pomdams(client);
-    final rows = List<Map<String, dynamic>>.from(
-      await client
-          .from('sim_records')
-          .select('period_id,pomdam_id,sim_type_id,value'),
-    );
-    final types = List<Map<String, dynamic>>.from(
-      await client.from('sim_types').select('id,code'),
-    );
-    final typeById = <String, String>{
-      for (final row in types) row['id'].toString(): row['code'].toString(),
-    };
+  static Future<StatisticsViewData> _loadSim(
+    SupabaseClient client, {
+    String? selectedPeriodKey,
+  }) async {
+    final source = await _loadSimSource(client);
+    final periods = source.periods;
+    final pomdams = source.pomdams;
+    final rows = source.rows;
+    final typeById = source.typeById;
+    final latest = _latestReportingMonth(rows, periods);
+    if (latest == null) {
+      return const StatisticsViewData(
+        columns: [
+          StatisticsColumnData(
+            label: 'BELUM ADA DATA',
+            cards: [
+              StatisticsCardData(
+                label: 'A',
+                value: '0',
+                color: Color(0xFF3B82F6),
+              ),
+              StatisticsCardData(
+                label: 'BI',
+                value: '0',
+                color: Color(0xFF06B6D4),
+              ),
+              StatisticsCardData(
+                label: 'BII',
+                value: '0',
+                color: Color(0xFF10B981),
+              ),
+              StatisticsCardData(
+                label: 'BII SUS',
+                value: '0',
+                color: Color(0xFF8B5CF6),
+              ),
+              StatisticsCardData(
+                label: 'C',
+                value: '0',
+                color: Color(0xFF6366F1),
+              ),
+            ],
+          ),
+        ],
+        ranking: [],
+        totalSim: 0,
+      );
+    }
 
-    const month = 9;
-    int sum(String code) {
+    final options = _periodOptions(latest.month);
+    final selected = _resolveSelectedPeriod(
+      options,
+      latest.month,
+      selectedPeriodKey,
+    );
+
+    int sum({
+      required int startMonth,
+      required int endMonth,
+      required String code,
+    }) {
       var total = 0;
       for (final row in rows) {
+        if (row['data_status'] != 'VALID') continue;
         final period = periods.byId[row['period_id']?.toString()];
-        if (period == null ||
-            period['report_year'] != 2026 ||
-            period['report_month'] != month) {
+        if (period == null || _toInt(period['report_year']) != latest.year) {
           continue;
         }
+        final month = _toInt(period['report_month']);
+        if (month < startMonth || month > endMonth) continue;
         if (typeById[row['sim_type_id']?.toString()] != code) continue;
         total += _toInt(row['value']);
       }
       return total;
     }
 
-    final cards = [
-      StatisticsCardData(
-        label: 'A',
-        value: sum('A').toString(),
-        color: const Color(0xFF3B82F6),
-      ),
-      StatisticsCardData(
-        label: 'BI',
-        value: sum('BI').toString(),
-        color: const Color(0xFF06B6D4),
-      ),
-      StatisticsCardData(
-        label: 'BII',
-        value: sum('BII').toString(),
-        color: const Color(0xFF10B981),
-      ),
-      StatisticsCardData(
-        label: 'BII SUS',
-        value: sum('BII_KHUSUS').toString(),
-        color: const Color(0xFF8B5CF6),
-      ),
-      StatisticsCardData(
-        label: 'C',
-        value: sum('C').toString(),
-        color: const Color(0xFF6366F1),
-      ),
+    const definitions = <({String label, String code, Color color})>[
+      (label: 'A', code: 'A', color: Color(0xFF3B82F6)),
+      (label: 'BI', code: 'BI', color: Color(0xFF06B6D4)),
+      (label: 'BII', code: 'BII', color: Color(0xFF10B981)),
+      (label: 'BII SUS', code: 'BII_KHUSUS', color: Color(0xFF8B5CF6)),
+      (label: 'C', code: 'C', color: Color(0xFF6366F1)),
     ];
-    final total = cards.fold<int>(0, (sum, card) => sum + _toInt(card.value));
+
+    List<StatisticsCardData> cardsForRange(int startMonth, int endMonth) => [
+      for (final definition in definitions)
+        StatisticsCardData(
+          label: definition.label,
+          value: sum(
+            startMonth: startMonth,
+            endMonth: endMonth,
+            code: definition.code,
+          ).toString(),
+          color: definition.color,
+        ),
+    ];
+
+    final comparisonCards = cardsForRange(
+      selected.startMonth,
+      selected.endMonth,
+    );
+    final selectedTotal = comparisonCards.fold<int>(
+      0,
+      (sum, card) => sum + _toInt(card.value),
+    );
 
     return StatisticsViewData(
       columns: [
         StatisticsColumnData(
-          label: '2026',
-          cards: [
-            for (final card in cards)
-              StatisticsCardData(
-                label: card.label,
-                value: card.value,
-                color: card.color,
-              ),
-          ],
+          label: '${latest.year} · JAN–${_monthShortNames[latest.month - 1]}',
+          cards: cardsForRange(1, latest.month),
         ),
-        StatisticsColumnData(
-          label: 'SEPTEMBER 2026',
-          cards: [
-            for (final card in cards)
-              StatisticsCardData(
-                label: card.label,
-                value: card.value,
-                color: card.color,
-              ),
-          ],
-        ),
+        StatisticsColumnData(label: selected.label, cards: comparisonCards),
       ],
-      ranking: _topFive(rows, periods, pomdams, month: month),
-      totalSim: total,
+      ranking: _topFiveForRange(
+        rows,
+        periods,
+        pomdams,
+        year: latest.year,
+        startMonth: selected.startMonth,
+        endMonth: selected.endMonth,
+      ),
+      totalSim: selectedTotal,
+      periodOptions: options,
+      selectedPeriodKey: selected.key,
     );
   }
 
@@ -1023,17 +1243,17 @@ class _ContentBody extends StatelessWidget {
                   child: _StatsColumnView(
                     column: columns[index],
                     accent: accent,
-                    alignPeriodHeader: module == StatisticsModule.pelanggaran,
-                    periodOptions:
-                        module == StatisticsModule.pelanggaran && index == 1
+                    module: module,
+                    alignPeriodHeader: _supportsPeriodSelector(module),
+                    periodOptions: _supportsPeriodSelector(module) && index == 1
                         ? periodOptions
                         : const [],
                     selectedPeriodKey:
-                        module == StatisticsModule.pelanggaran && index == 1
+                        _supportsPeriodSelector(module) && index == 1
                         ? selectedPeriodKey
                         : null,
                     onPeriodChanged:
-                        module == StatisticsModule.pelanggaran && index == 1
+                        _supportsPeriodSelector(module) && index == 1
                         ? onPeriodChanged
                         : null,
                   ),
@@ -1477,6 +1697,7 @@ class _StatsColumnView extends StatelessWidget {
   const _StatsColumnView({
     required this.column,
     required this.accent,
+    this.module = StatisticsModule.pelanggaran,
     this.alignPeriodHeader = false,
     this.periodOptions = const [],
     this.selectedPeriodKey,
@@ -1485,6 +1706,7 @@ class _StatsColumnView extends StatelessWidget {
 
   final _StatColumn column;
   final Color accent;
+  final StatisticsModule module;
   final bool alignPeriodHeader;
   final List<StatisticsPeriodOption> periodOptions;
   final String? selectedPeriodKey;
@@ -1507,7 +1729,13 @@ class _StatsColumnView extends StatelessWidget {
         ),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
-            key: const ValueKey('pelanggaran-period-dropdown'),
+            key: ValueKey(switch (module) {
+              StatisticsModule.pelanggaran => 'pelanggaran-period-dropdown',
+              StatisticsModule.lakaLalin => 'laka-lalin-period-dropdown',
+              StatisticsModule.simTni => 'sim-tni-period-dropdown',
+              StatisticsModule.k9 => 'k9-period-dropdown',
+              StatisticsModule.provos => 'provos-period-dropdown',
+            }),
             value: selectedPeriodKey,
             isExpanded: true,
             isDense: true,
