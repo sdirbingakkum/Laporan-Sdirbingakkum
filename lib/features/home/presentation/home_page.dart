@@ -293,7 +293,6 @@ class _PieMenuCenter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final icon = item?.icon ?? Icons.apps_rounded;
-    final iconColor = item?.lightColor ?? _goldLight;
     final centerKey = item?.label ?? 'MENU UTAMA';
 
     return FractionallySizedBox(
