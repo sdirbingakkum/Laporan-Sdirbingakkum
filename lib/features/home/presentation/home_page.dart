@@ -17,6 +17,32 @@ const _goldLight = Color(0xFFF1D37A);
 const _text = Color(0xFFF8F5EC);
 const _muted = Color(0xFFB7C2BC);
 
+const _goldGradientSelected = LinearGradient(
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  colors: [
+    Color(0xFFFFFFFF),
+    Color(0xFFFFF4BF),
+    Color(0xFFF7DD88),
+    Color(0xFFE5B842),
+    Color(0xFFB8861E),
+  ],
+  stops: [0.0, 0.20, 0.48, 0.75, 1.0],
+);
+
+const _goldGradientUnselected = LinearGradient(
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  colors: [
+    Color(0xFFFFF8D6),
+    Color(0xFFF7E298),
+    Color(0xFFE5B842),
+    Color(0xFFC79222),
+    Color(0xFF8E5E10),
+  ],
+  stops: [0.0, 0.22, 0.50, 0.78, 1.0],
+);
+
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
@@ -337,55 +363,98 @@ class _PieMenuCenter extends StatelessWidget {
                       key: ValueKey(centerKey),
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Chiseled 3D metallic icon in center hub
-                        Icon(
-                          icon,
-                          color: iconColor,
-                          size: diameterForCenter(context),
-                          shadows: [
-                            Shadow(
-                              color: Colors.black.withValues(alpha: 0.80),
-                              offset: const Offset(1.6, 2.4),
-                              blurRadius: 1,
+                        // Chiseled 3D Gold metallic icon in center hub
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Icon(
+                              icon,
+                              color: const Color(0xFF1E1302),
+                              size: diameterForCenter(context),
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black.withValues(alpha: 0.85),
+                                  offset: const Offset(2.0, 2.8),
+                                  blurRadius: 2,
+                                ),
+                                Shadow(
+                                  color: const Color(0xFF452B05),
+                                  offset: const Offset(1.0, 1.5),
+                                  blurRadius: 0,
+                                ),
+                                Shadow(
+                                  color: const Color(0xFFE5B842)
+                                      .withValues(alpha: 0.50),
+                                  blurRadius: 14,
+                                ),
+                              ],
                             ),
-                            Shadow(
-                              color: Colors.white.withValues(alpha: 0.45),
-                              offset: const Offset(-0.7, -0.8),
-                              blurRadius: 0,
-                            ),
-                            Shadow(
-                              color: iconColor.withValues(alpha: 0.35),
-                              blurRadius: 12,
+                            ShaderMask(
+                              blendMode: BlendMode.srcIn,
+                              shaderCallback: (bounds) =>
+                                  _goldGradientSelected.createShader(bounds),
+                              child: Icon(
+                                icon,
+                                color: Colors.white,
+                                size: diameterForCenter(context),
+                              ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 6),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            centerKey,
-                            textAlign: TextAlign.center,
-                            maxLines: centerKey == 'MENU UTAMA' ? 2 : 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: item == null ? _text : iconColor,
-                              fontSize: centerTextSize(context, centerKey),
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: centerKey.length > 18 ? 0.2 : 0.6,
-                              height: 1.05,
-                              shadows: [
-                                Shadow(
-                                  color: Colors.black.withValues(alpha: 0.75),
-                                  offset: const Offset(1.0, 1.6),
-                                  blurRadius: 0,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Text(
+                                centerKey,
+                                textAlign: TextAlign.center,
+                                maxLines: centerKey == 'MENU UTAMA' ? 2 : 3,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: const Color(0xFF1E1302),
+                                  fontSize: centerTextSize(context, centerKey),
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing:
+                                      centerKey.length > 18 ? 0.2 : 0.6,
+                                  height: 1.05,
+                                  shadows: [
+                                    Shadow(
+                                      color:
+                                          Colors.black.withValues(alpha: 0.80),
+                                      offset: const Offset(1.4, 2.0),
+                                      blurRadius: 1,
+                                    ),
+                                    Shadow(
+                                      color: const Color(0xFFE5B842)
+                                          .withValues(alpha: 0.40),
+                                      blurRadius: 10,
+                                    ),
+                                  ],
                                 ),
-                                Shadow(
-                                  color: Colors.white.withValues(alpha: 0.25),
-                                  offset: const Offset(-0.5, -0.5),
-                                  blurRadius: 0,
+                              ),
+                              ShaderMask(
+                                blendMode: BlendMode.srcIn,
+                                shaderCallback: (bounds) =>
+                                    _goldGradientSelected.createShader(bounds),
+                                child: Text(
+                                  centerKey,
+                                  textAlign: TextAlign.center,
+                                  maxLines: centerKey == 'MENU UTAMA' ? 2 : 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize:
+                                        centerTextSize(context, centerKey),
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing:
+                                        centerKey.length > 18 ? 0.2 : 0.6,
+                                    height: 1.05,
+                                  ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -469,107 +538,131 @@ class _PieMenuLabel extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               // =======================================================
-              // TRUE 3D CHISELED METAL ICON
-              // Sculpted, raised from the slice face with directional
-              // highlights and deep physical extrusion shadows.
+              // 3D CHISELED GOLD RELIEF ICON
+              // Multi-layered gold extrusion with liquid metallic face
+              // and deep cast shadows into the colored slice.
               // =======================================================
               AnimatedScale(
                 scale: selected ? 1.10 : 1.0,
                 duration: const Duration(milliseconds: 180),
                 curve: Curves.easeOutCubic,
-                child: Icon(
-                  item.icon,
-                  color: selected
-                      ? const Color(0xFFFFFFFF)
-                      : const Color(0xFFFAF7F0),
-                  size: compact ? iconSize * 0.82 : iconSize * 0.86,
-                  shadows: [
-                    // Deep physical extrusion shadow (bottom-right wall)
-                    Shadow(
-                      color: Colors.black
-                          .withValues(alpha: selected ? 0.95 : 0.85),
-                      offset: const Offset(2.4, 3.4),
-                      blurRadius: 1,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Deep physical extrusion wall and cast shadow
+                    Icon(
+                      item.icon,
+                      color: const Color(0xFF1E1302),
+                      size: compact ? iconSize * 0.82 : iconSize * 0.86,
+                      shadows: [
+                        // Deep physical extrusion shadow
+                        Shadow(
+                          color: Colors.black.withValues(
+                            alpha: selected ? 0.95 : 0.85,
+                          ),
+                          offset: const Offset(2.4, 3.4),
+                          blurRadius: 1,
+                        ),
+                        // Intermediate bronze bevel
+                        Shadow(
+                          color: const Color(0xFF452B05),
+                          offset: const Offset(1.2, 1.8),
+                          blurRadius: 0,
+                        ),
+                        // Golden radiance bloom
+                        Shadow(
+                          color: const Color(0xFFE5B842).withValues(
+                            alpha: selected ? 0.70 : 0.30,
+                          ),
+                          blurRadius: selected ? 18 : 6,
+                        ),
+                      ],
                     ),
-                    // Intermediate shadow layer (gives thickness to the icon)
-                    Shadow(
-                      color: Colors.black
-                          .withValues(alpha: selected ? 0.70 : 0.55),
-                      offset: const Offset(1.2, 1.8),
-                      blurRadius: 0,
-                    ),
-                    // Directional highlight on top-left edge
-                    Shadow(
-                      color: Colors.white
-                          .withValues(alpha: selected ? 0.85 : 0.60),
-                      offset: const Offset(-0.9, -1.0),
-                      blurRadius: 0,
-                    ),
-                    // Soft light bounce from the colored slice below
-                    Shadow(
-                      color: item.lightColor
-                          .withValues(alpha: selected ? 0.45 : 0.20),
-                      offset: const Offset(0.0, -0.4),
-                      blurRadius: 0,
-                    ),
-                    // Ambient glow aura when selected
-                    if (selected)
-                      Shadow(
-                        color: item.lightColor.withValues(alpha: 0.60),
-                        blurRadius: 18,
+                    // Polished 3D liquid gold face with specular gleam
+                    ShaderMask(
+                      blendMode: BlendMode.srcIn,
+                      shaderCallback: (bounds) => (selected
+                              ? _goldGradientSelected
+                              : _goldGradientUnselected)
+                          .createShader(bounds),
+                      child: Icon(
+                        item.icon,
+                        color: Colors.white,
+                        size: compact ? iconSize * 0.82 : iconSize * 0.86,
                       ),
+                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 6),
 
               // =======================================================
-              // TRUE 3D CHISELED TEXT
-              // Raised lettering with physical depth and specular bevel.
+              // 3D CHISELED GOLD TEXT
+              // Raised gold lettering with physical depth and specular bevel.
               // =======================================================
-              Text(
-                item.label,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: selected ? item.lightColor : _text,
-                  fontSize: isLong
-                      ? math.max(labelFontSize - 0.5, 7.6).toDouble()
-                      : labelFontSize,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.45,
-                  height: 1.05,
-                  shadows: [
-                    // Deep 3D extrusion wall
-                    Shadow(
-                      color: Colors.black
-                          .withValues(alpha: selected ? 0.95 : 0.85),
-                      offset: const Offset(1.8, 2.6),
-                      blurRadius: 1,
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Deep physical extrusion wall and cast shadow
+                  Text(
+                    item.label,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: const Color(0xFF1E1302),
+                      fontSize: isLong
+                          ? math.max(labelFontSize - 0.5, 7.6).toDouble()
+                          : labelFontSize,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.45,
+                      height: 1.05,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withValues(
+                            alpha: selected ? 0.95 : 0.85,
+                          ),
+                          offset: const Offset(1.8, 2.6),
+                          blurRadius: 1,
+                        ),
+                        Shadow(
+                          color: const Color(0xFF382305),
+                          offset: const Offset(0.9, 1.3),
+                          blurRadius: 0,
+                        ),
+                        Shadow(
+                          color: const Color(0xFFE5B842).withValues(
+                            alpha: selected ? 0.60 : 0.25,
+                          ),
+                          blurRadius: selected ? 14 : 4,
+                        ),
+                      ],
                     ),
-                    // Mid-extrusion bevel
-                    Shadow(
-                      color: Colors.black
-                          .withValues(alpha: selected ? 0.60 : 0.45),
-                      offset: const Offset(0.9, 1.3),
-                      blurRadius: 0,
-                    ),
-                    // Sharp top-left specular catch light
-                    Shadow(
-                      color: Colors.white
-                          .withValues(alpha: selected ? 0.75 : 0.50),
-                      offset: const Offset(-0.7, -0.8),
-                      blurRadius: 0,
-                    ),
-                    // Vibrant aura on selection
-                    if (selected)
-                      Shadow(
-                        color: item.lightColor.withValues(alpha: 0.50),
-                        blurRadius: 14,
+                  ),
+                  // Polished 3D liquid gold lettering
+                  ShaderMask(
+                    blendMode: BlendMode.srcIn,
+                    shaderCallback: (bounds) => (selected
+                            ? _goldGradientSelected
+                            : _goldGradientUnselected)
+                        .createShader(bounds),
+                    child: Text(
+                      item.label,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: isLong
+                            ? math.max(labelFontSize - 0.5, 7.6).toDouble()
+                            : labelFontSize,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.45,
+                        height: 1.05,
                       ),
-                  ],
-                ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
