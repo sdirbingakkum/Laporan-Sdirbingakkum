@@ -200,9 +200,8 @@ class _PieMenu extends StatelessWidget {
         final maxWidth = constraints.hasBoundedWidth
             ? constraints.maxWidth
             : double.infinity;
-        final maxHeight = constraints.hasBoundedHeight
-            ? constraints.maxHeight
-            : maxWidth;
+        final maxHeight =
+            constraints.hasBoundedHeight ? constraints.maxHeight : maxWidth;
         final diameter = math.min(maxWidth, maxHeight);
 
         if (!diameter.isFinite || diameter <= 0) {
@@ -391,7 +390,8 @@ class _PieMenuCenter extends StatelessWidget {
                           ),
                           // Secondary bevel shadow
                           Shadow(
-                            color: const Color(0xFF382405).withValues(alpha: 0.90),
+                            color:
+                                const Color(0xFF382405).withValues(alpha: 0.90),
                             offset: const Offset(0.9, 1.3),
                             blurRadius: 0,
                           ),
@@ -530,7 +530,8 @@ class _PieMenuLabel extends StatelessWidget {
                   shadows: [
                     // Deep 3D drop extrusion shadow
                     Shadow(
-                      color: Colors.black.withValues(alpha: selected ? 0.90 : 0.75),
+                      color: Colors.black
+                          .withValues(alpha: selected ? 0.90 : 0.75),
                       offset: const Offset(2.2, 3.2),
                       blurRadius: 1,
                     ),
@@ -542,13 +543,15 @@ class _PieMenuLabel extends StatelessWidget {
                     ),
                     // Crisp specular crest highlight (light shining from top-left)
                     Shadow(
-                      color: Colors.white.withValues(alpha: selected ? 0.75 : 0.45),
+                      color: Colors.white
+                          .withValues(alpha: selected ? 0.75 : 0.45),
                       offset: const Offset(-0.8, -0.9),
                       blurRadius: 0,
                     ),
                     // Ambient module illumination aura
                     Shadow(
-                      color: item.lightColor.withValues(alpha: selected ? 0.55 : 0.15),
+                      color: item.lightColor
+                          .withValues(alpha: selected ? 0.55 : 0.15),
                       blurRadius: selected ? 18 : 6,
                     ),
                   ],
@@ -572,7 +575,8 @@ class _PieMenuLabel extends StatelessWidget {
                   shadows: [
                     // 3D cast extrusion
                     Shadow(
-                      color: Colors.black.withValues(alpha: selected ? 0.90 : 0.75),
+                      color: Colors.black
+                          .withValues(alpha: selected ? 0.90 : 0.75),
                       offset: const Offset(1.6, 2.4),
                       blurRadius: 1,
                     ),
@@ -584,7 +588,8 @@ class _PieMenuLabel extends StatelessWidget {
                     ),
                     // Crisp upper highlight
                     Shadow(
-                      color: Colors.white.withValues(alpha: selected ? 0.65 : 0.35),
+                      color: Colors.white
+                          .withValues(alpha: selected ? 0.65 : 0.35),
                       offset: const Offset(-0.6, -0.7),
                       blurRadius: 0,
                     ),
@@ -627,10 +632,10 @@ class _PieMenuPainter extends CustomPainter {
 
   // Rich POMAD PRIMA coin gold palette
   static const _goldBright = Color(0xFFFFF0A8); // specular crest highlight
-  static const _goldFace = Color(0xFFE5B842);   // primary minted gold
-  static const _goldMid = Color(0xFFB8861E);    // warm amber gold
-  static const _goldDeep = Color(0xFF7A540E);   // bronze core shadow
-  static const _goldDark = Color(0xFF382304);   // deep recess groove shadow
+  static const _goldFace = Color(0xFFE5B842); // primary minted gold
+  static const _goldMid = Color(0xFFB8861E); // warm amber gold
+  static const _goldDeep = Color(0xFF7A540E); // bronze core shadow
+  static const _goldDark = Color(0xFF382304); // deep recess groove shadow
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -648,8 +653,7 @@ class _PieMenuPainter extends CustomPainter {
       final layerAlpha = 0.14 + (layer / rimSteps) * 0.20;
       final rimOffset = Offset(0, yOffset);
 
-      final rimPaint = Paint()
-        ..color = _goldDark.withValues(alpha: layerAlpha);
+      final rimPaint = Paint()..color = _goldDark.withValues(alpha: layerAlpha);
 
       for (var i = 0; i < itemCount; i++) {
         final start = -math.pi / 2 + i * sweep;
@@ -662,7 +666,8 @@ class _PieMenuPainter extends CustomPainter {
             center.dy + math.sin(start) * (outerRadius + 3.0) + yOffset,
           )
           ..arcTo(
-            Rect.fromCircle(center: center + rimOffset, radius: outerRadius + 3.0),
+            Rect.fromCircle(
+                center: center + rimOffset, radius: outerRadius + 3.0),
             start,
             sweep,
             false,
@@ -861,7 +866,8 @@ class _PieMenuPainter extends CustomPainter {
           _goldDark,
         ],
         stops: const [0.0, 0.48, 1.0],
-      ).createShader(Rect.fromCircle(center: center, radius: outerRadius + 2.0));
+      ).createShader(
+          Rect.fromCircle(center: center, radius: outerRadius + 2.0));
     canvas.drawCircle(center, outerRadius + 2.2, outerBevelBase);
 
     // Layer 5B: Heavy Chamfered Primary Gold Rim
@@ -872,14 +878,15 @@ class _PieMenuPainter extends CustomPainter {
         begin: const Alignment(-0.90, -0.92),
         end: const Alignment(0.80, 0.82),
         colors: [
-          _goldBright,                        // bright specular reflection
-          _goldFace,                          // warm minted gold
+          _goldBright, // bright specular reflection
+          _goldFace, // warm minted gold
           _goldMid.withValues(alpha: 0.85),
-          _goldDeep.withValues(alpha: 0.55),  // shadow bronze
+          _goldDeep.withValues(alpha: 0.55), // shadow bronze
           _goldMid.withValues(alpha: 0.70),
         ],
         stops: const [0.0, 0.22, 0.55, 0.82, 1.0],
-      ).createShader(Rect.fromCircle(center: center, radius: outerRadius + 1.2));
+      ).createShader(
+          Rect.fromCircle(center: center, radius: outerRadius + 1.2));
     canvas.drawCircle(center, outerRadius + 1.2, primaryGoldRim);
 
     // Layer 5C: Fine Specular Crest Hairline
@@ -895,7 +902,8 @@ class _PieMenuPainter extends CustomPainter {
           Colors.transparent,
         ],
         stops: const [0.0, 0.35, 0.70],
-      ).createShader(Rect.fromCircle(center: center, radius: outerRadius + 2.8));
+      ).createShader(
+          Rect.fromCircle(center: center, radius: outerRadius + 2.8));
     canvas.drawCircle(center, outerRadius + 2.8, outerSpecularHairline);
 
     // Layer 5D: Inset Coin Groove (The recessed step inside the outer rim)
@@ -946,7 +954,8 @@ class _PieMenuPainter extends CustomPainter {
           Colors.transparent,
         ],
         stops: const [0.0, 0.35, 0.75],
-      ).createShader(Rect.fromCircle(center: center, radius: innerRadius - 1.2));
+      ).createShader(
+          Rect.fromCircle(center: center, radius: innerRadius - 1.2));
     canvas.drawCircle(center, innerRadius - 1.2, innerSpecularHairline);
   }
 
