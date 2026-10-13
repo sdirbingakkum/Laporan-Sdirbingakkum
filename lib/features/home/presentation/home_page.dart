@@ -256,9 +256,8 @@ class _PieMenu extends StatelessWidget {
   }
 }
 
-/// Center hub styled after the central core medallion of the POMAD PRIMA badge.
-/// Features a heavy double-coin gold bezel, deep obsidian minted plate,
-/// and high-contrast chiseled gold icon relief.
+/// Sleek modern floating center hub with sophisticated depth.
+/// Borderless and minimal, yet distinctly 3D with layered reflections.
 class _PieMenuCenter extends StatelessWidget {
   const _PieMenuCenter({this.item});
 
@@ -274,177 +273,127 @@ class _PieMenuCenter extends StatelessWidget {
       widthFactor: 0.35,
       heightFactor: 0.35,
       child: ClipOval(
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            // POMAD PRIMA central medallion: deep obsidian metal base
-            // with rich gold rim
-            gradient: const RadialGradient(
-              center: Alignment(-0.35, -0.40),
-              radius: 0.95,
-              colors: [
-                Color(0xFF1E2822), // subtle metallic highlight
-                Color(0xFF0F1713), // dark coin plate
-                Color(0xFF060A08), // deep edge vignette
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                center: const Alignment(-0.35, -0.40),
+                radius: 1.0,
+                colors: [
+                  Colors.white.withValues(alpha: 0.18),
+                  const Color(0xFF0F261C).withValues(alpha: 0.50),
+                  const Color(0xFF040F0A).withValues(alpha: 0.88),
+                ],
+                stops: const [0.0, 0.45, 1.0],
+              ),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.20),
+                width: 1.0,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.60),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                ),
               ],
-              stops: [0.0, 0.55, 1.0],
             ),
-            border: Border.all(
-              color: const Color(0xFFF3D882), // outer polished gold rim
-              width: 2.2,
-            ),
-            boxShadow: [
-              // Deep cast shadow like a raised military medal
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.68),
-                blurRadius: 28,
-                offset: const Offset(0, 10),
-              ),
-              // Warm golden ambient illumination
-              BoxShadow(
-                color: const Color(0xFFD4A535).withValues(alpha: 0.22),
-                blurRadius: 24,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: Stack(
-            children: [
-              // Inner chamfered gold step (stepped coin bezel like POMAD PRIMA)
-              Positioned.fill(
-                child: Padding(
-                  padding: const EdgeInsets.all(3.5),
-                  child: DecoratedBox(
+            child: Stack(
+              children: [
+                // Top-left curved specular sheen
+                Positioned(
+                  left: -12,
+                  top: -14,
+                  child: Container(
+                    width: 82,
+                    height: 82,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(
-                        color: const Color(0xFF8B6419).withValues(alpha: 0.85),
-                        width: 1.0,
-                      ),
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                      gradient: RadialGradient(
                         colors: [
-                          Color(0x38FFFFFF),
+                          Colors.white.withValues(alpha: 0.22),
                           Colors.transparent,
-                          Color(0x55000000),
                         ],
+                        stops: const [0.0, 0.70],
                       ),
                     ),
                   ),
                 ),
-              ),
 
-              // Upper-left curved specular reflection
-              // (curved glass/metal dome sheen)
-              Positioned(
-                left: 6,
-                top: 4,
-                right: 6,
-                height: 48,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(80),
-                      bottom: Radius.circular(50),
-                    ),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white.withValues(alpha: 0.24),
-                        Colors.white.withValues(alpha: 0.04),
-                        Colors.transparent,
-                      ],
-                      stops: const [0.0, 0.55, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-
-              // Center content: chiseled 3D gold relief icon and typography
-              Center(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 220),
-                  switchInCurve: Curves.easeOutCubic,
-                  switchOutCurve: Curves.easeInCubic,
-                  transitionBuilder: (child, animation) {
-                    return ScaleTransition(
-                      scale: animation,
-                      child: FadeTransition(opacity: animation, child: child),
-                    );
-                  },
-                  child: Column(
-                    key: ValueKey(centerKey),
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Chiseled Gold Relief Icon (like Gajah Mada gold mask)
-                      Icon(
-                        icon,
-                        color: iconColor,
-                        size: diameterForCenter(context),
-                        shadows: [
-                          // Deep 3D extrusion shadow (bottom-right)
-                          Shadow(
-                            color: Colors.black.withValues(alpha: 0.85),
-                            offset: const Offset(1.8, 2.5),
-                            blurRadius: 1,
-                          ),
-                          // Secondary bevel shadow
-                          Shadow(
-                            color:
-                                const Color(0xFF382405).withValues(alpha: 0.90),
-                            offset: const Offset(0.9, 1.3),
-                            blurRadius: 0,
-                          ),
-                          // Crisp white specular edge on top-left
-                          Shadow(
-                            color: Colors.white.withValues(alpha: 0.65),
-                            offset: const Offset(-0.8, -0.9),
-                            blurRadius: 0,
-                          ),
-                          // Soft gold radiance aura
-                          Shadow(
-                            color: iconColor.withValues(alpha: 0.45),
-                            blurRadius: 14,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Text(
-                          centerKey,
-                          textAlign: TextAlign.center,
-                          maxLines: centerKey == 'MENU UTAMA' ? 2 : 3,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: item == null ? _goldLight : iconColor,
-                            fontSize: centerTextSize(context, centerKey),
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: centerKey.length > 18 ? 0.2 : 0.7,
-                            height: 1.05,
-                            shadows: [
-                              // Embossed chiseled letter depth
-                              Shadow(
-                                color: Colors.black.withValues(alpha: 0.85),
-                                offset: const Offset(1.2, 1.8),
-                                blurRadius: 0,
-                              ),
-                              Shadow(
-                                color: Colors.white.withValues(alpha: 0.35),
-                                offset: const Offset(-0.6, -0.6),
-                                blurRadius: 0,
-                              ),
-                            ],
+                Center(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 220),
+                    switchInCurve: Curves.easeOutCubic,
+                    switchOutCurve: Curves.easeInCubic,
+                    transitionBuilder: (child, animation) {
+                      return ScaleTransition(
+                        scale: animation,
+                        child: FadeTransition(opacity: animation, child: child),
+                      );
+                    },
+                    child: Column(
+                      key: ValueKey(centerKey),
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Chiseled 3D metallic icon in center hub
+                        Icon(
+                          icon,
+                          color: iconColor,
+                          size: diameterForCenter(context),
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withValues(alpha: 0.80),
+                              offset: const Offset(1.6, 2.4),
+                              blurRadius: 1,
+                            ),
+                            Shadow(
+                              color: Colors.white.withValues(alpha: 0.45),
+                              offset: const Offset(-0.7, -0.8),
+                              blurRadius: 0,
+                            ),
+                            Shadow(
+                              color: iconColor.withValues(alpha: 0.35),
+                              blurRadius: 12,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            centerKey,
+                            textAlign: TextAlign.center,
+                            maxLines: centerKey == 'MENU UTAMA' ? 2 : 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: item == null ? _text : iconColor,
+                              fontSize: centerTextSize(context, centerKey),
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: centerKey.length > 18 ? 0.2 : 0.6,
+                              height: 1.05,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black.withValues(alpha: 0.75),
+                                  offset: const Offset(1.0, 1.6),
+                                  blurRadius: 0,
+                                ),
+                                Shadow(
+                                  color: Colors.white.withValues(alpha: 0.25),
+                                  offset: const Offset(-0.5, -0.5),
+                                  blurRadius: 0,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -475,8 +424,10 @@ class _PieMenuCenter extends StatelessWidget {
   }
 }
 
-/// Pie slice labels and icons styled with extruded chiseled 3D metal effect,
-/// matching the embossed silver/chrome "POMAD" and gold "PRIMA" lettering.
+/// 3D Sculpted / Chiseled relief labels and icons:
+/// - Distinct physical extrusion depth (multi-step shadow).
+/// - Top-left directional specular rim (catching directional light).
+/// - Anchored directly to the face of the pie slice with realistic drop shadow.
 class _PieMenuLabel extends StatelessWidget {
   const _PieMenuLabel({
     required this.index,
@@ -511,58 +462,71 @@ class _PieMenuLabel extends StatelessWidget {
       child: SizedBox(
         width: labelWidth,
         child: AnimatedScale(
-          scale: selected ? 1.04 : 1,
+          scale: selected ? 1.05 : 1.0,
           duration: const Duration(milliseconds: 180),
           curve: Curves.easeOutCubic,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Extruded Chiseled 3D Metal Icon
-              // (like POMAD/PRIMA metal reliefs)
+              // =======================================================
+              // TRUE 3D CHISELED METAL ICON
+              // Sculpted, raised from the slice face with directional
+              // highlights and deep physical extrusion shadows.
+              // =======================================================
               AnimatedScale(
-                scale: selected ? 1.10 : 1,
+                scale: selected ? 1.10 : 1.0,
                 duration: const Duration(milliseconds: 180),
                 curve: Curves.easeOutCubic,
                 child: Icon(
                   item.icon,
-                  // Polished silver/platinum finish with crisp metallic edge
                   color: selected
                       ? const Color(0xFFFFFFFF)
-                      : const Color(0xFFF4F0E4),
-                  size: compact ? iconSize * 0.80 : iconSize * 0.84,
+                      : const Color(0xFFFAF7F0),
+                  size: compact ? iconSize * 0.82 : iconSize * 0.86,
                   shadows: [
-                    // Deep 3D drop extrusion shadow
+                    // Deep physical extrusion shadow (bottom-right wall)
                     Shadow(
                       color: Colors.black
-                          .withValues(alpha: selected ? 0.90 : 0.75),
-                      offset: const Offset(2.2, 3.2),
+                          .withValues(alpha: selected ? 0.95 : 0.85),
+                      offset: const Offset(2.4, 3.4),
                       blurRadius: 1,
                     ),
-                    // Intermediate bronze/dark metallic bevel
+                    // Intermediate shadow layer (gives thickness to the icon)
                     Shadow(
-                      color: const Color(0xFF2B1A05).withValues(alpha: 0.85),
-                      offset: const Offset(1.1, 1.6),
+                      color: Colors.black
+                          .withValues(alpha: selected ? 0.70 : 0.55),
+                      offset: const Offset(1.2, 1.8),
                       blurRadius: 0,
                     ),
-                    // Crisp specular crest highlight
-                    // (light shining from top-left)
+                    // Directional highlight on top-left edge
                     Shadow(
                       color: Colors.white
-                          .withValues(alpha: selected ? 0.75 : 0.45),
-                      offset: const Offset(-0.8, -0.9),
+                          .withValues(alpha: selected ? 0.85 : 0.60),
+                      offset: const Offset(-0.9, -1.0),
                       blurRadius: 0,
                     ),
-                    // Ambient module illumination aura
+                    // Soft light bounce from the colored slice below
                     Shadow(
                       color: item.lightColor
-                          .withValues(alpha: selected ? 0.55 : 0.15),
-                      blurRadius: selected ? 18 : 6,
+                          .withValues(alpha: selected ? 0.45 : 0.20),
+                      offset: const Offset(0.0, -0.4),
+                      blurRadius: 0,
                     ),
+                    // Ambient glow aura when selected
+                    if (selected)
+                      Shadow(
+                        color: item.lightColor.withValues(alpha: 0.60),
+                        blurRadius: 18,
+                      ),
                   ],
                 ),
               ),
               const SizedBox(height: 6),
-              // Chiseled 3D Lettering (matching "POMAD PRIMA" stamped text)
+
+              // =======================================================
+              // TRUE 3D CHISELED TEXT
+              // Raised lettering with physical depth and specular bevel.
+              // =======================================================
               Text(
                 item.label,
                 textAlign: TextAlign.center,
@@ -573,35 +537,36 @@ class _PieMenuLabel extends StatelessWidget {
                   fontSize: isLong
                       ? math.max(labelFontSize - 0.5, 7.6).toDouble()
                       : labelFontSize,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w900,
                   letterSpacing: 0.45,
                   height: 1.05,
                   shadows: [
-                    // 3D cast extrusion
+                    // Deep 3D extrusion wall
                     Shadow(
                       color: Colors.black
-                          .withValues(alpha: selected ? 0.90 : 0.75),
-                      offset: const Offset(1.6, 2.4),
+                          .withValues(alpha: selected ? 0.95 : 0.85),
+                      offset: const Offset(1.8, 2.6),
                       blurRadius: 1,
                     ),
-                    // Mid-bevel groove
+                    // Mid-extrusion bevel
                     Shadow(
-                      color: Colors.black.withValues(alpha: 0.55),
-                      offset: const Offset(0.8, 1.2),
+                      color: Colors.black
+                          .withValues(alpha: selected ? 0.60 : 0.45),
+                      offset: const Offset(0.9, 1.3),
                       blurRadius: 0,
                     ),
-                    // Crisp upper highlight
+                    // Sharp top-left specular catch light
                     Shadow(
                       color: Colors.white
-                          .withValues(alpha: selected ? 0.65 : 0.35),
-                      offset: const Offset(-0.6, -0.7),
+                          .withValues(alpha: selected ? 0.75 : 0.50),
+                      offset: const Offset(-0.7, -0.8),
                       blurRadius: 0,
                     ),
-                    // Vibrant module glow on selection
+                    // Vibrant aura on selection
                     if (selected)
                       Shadow(
-                        color: item.lightColor.withValues(alpha: 0.45),
-                        blurRadius: 12,
+                        color: item.lightColor.withValues(alpha: 0.50),
+                        blurRadius: 14,
                       ),
                   ],
                 ),
@@ -614,12 +579,11 @@ class _PieMenuLabel extends StatelessWidget {
   }
 }
 
-/// Custom painter executing the POMAD PRIMA coin-medal aesthetic:
-/// 1. Stepped chamfered gold outer rim with directional specular highlights.
-/// 2. Vitreous enamel module slices with lacquer dome reflections and edge
-///    vignettes.
-/// 3. Machined coin separator ridges with highlight and groove shadows.
-/// 4. Stepped inner gold bezel separating segments from center hub.
+/// Custom painter crafting sleek, sophisticated 3D volumetric pie slices:
+/// - NO outer gold rim or border.
+/// - NO heavy gold separator ribs.
+/// - Pure 3D volume on each slice: curved pillowed surface lighting,
+///   faceted specular shoulder, and micro-groove precision seams.
 class _PieMenuPainter extends CustomPainter {
   const _PieMenuPainter({required this.itemCount, required this.selectedIndex});
 
@@ -635,65 +599,25 @@ class _PieMenuPainter extends CustomPainter {
     Color(0xFF49A86B), // PROVOS TNI-AD - emerald military green
   ];
 
-  // Rich POMAD PRIMA coin gold palette
-  static const _goldBright = Color(0xFFFFF0A8); // specular crest highlight
-  static const _goldFace = Color(0xFFE5B842); // primary minted gold
-  static const _goldMid = Color(0xFFB8861E); // warm amber gold
-  static const _goldDeep = Color(0xFF7A540E); // bronze core shadow
-  static const _goldDark = Color(0xFF382304); // deep recess groove shadow
-
   @override
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
     final outerRadius = size.shortestSide * 0.43;
-    final innerRadius = size.shortestSide * 0.17;
     final sweep = 2 * math.pi / itemCount;
 
-    // -- STEP 1: PHYSICAL COIN THICKNESS / EXTRUSION RIM -------------
-    // Multiple offset layers drawing down to produce the physical depth
-    // of a heavy minted coin medal resting against the dark backdrop.
-    const int rimSteps = 7;
-    for (var layer = rimSteps; layer >= 1; layer--) {
-      final yOffset = layer * 1.0;
-      final layerAlpha = 0.14 + (layer / rimSteps) * 0.20;
-      final rimOffset = Offset(0, yOffset);
-
-      final rimPaint = Paint()..color = _goldDark.withValues(alpha: layerAlpha);
-
-      for (var i = 0; i < itemCount; i++) {
-        final start = -math.pi / 2 + i * sweep;
-        final light = _lightPalette[i];
-
-        final path = Path()
-          ..moveTo(center.dx, center.dy + yOffset)
-          ..lineTo(
-            center.dx + math.cos(start) * (outerRadius + 3.0),
-            center.dy + math.sin(start) * (outerRadius + 3.0) + yOffset,
-          )
-          ..arcTo(
-            Rect.fromCircle(
-                center: center + rimOffset, radius: outerRadius + 3.0),
-            start,
-            sweep,
-            false,
-          )
-          ..close();
-
-        // Darkened bronze/module tint for the extruded coin side
-        final rimSideColor = Color.lerp(light, _goldDark, 0.78)!;
-        rimPaint.color = rimSideColor.withValues(alpha: layerAlpha);
-        canvas.drawPath(path, rimPaint);
-      }
-    }
-
-    // -- STEP 2: AMBIENT COIN DROP SHADOW ---------------------------
+    // -----------------------------------------------------------------
+    // 1. SOFT AMBIENT BASE SHADOW
+    // Floats the entire sleek 3D wheel cleanly above the dark canvas.
+    // -----------------------------------------------------------------
     final baseShadow = Paint()
-      ..color = Colors.black.withValues(alpha: 0.55)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20);
-    canvas.drawCircle(center.translate(0, 5.0), outerRadius + 4.0, baseShadow);
+      ..color = Colors.black.withValues(alpha: 0.40)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18);
+    canvas.drawCircle(center.translate(0, 4.0), outerRadius + 1.0, baseShadow);
 
-    // -- STEP 3: VITREOUS ENAMEL SLICES (Module Bodies) --------------
-    // Each slice is rendered with the depth of a polished military enamel badge
+    // -----------------------------------------------------------------
+    // 2. 3D VOLUMETRIC PIE SLICES
+    // Each slice is sculpted with rich 3D curvature and lighting.
+    // -----------------------------------------------------------------
     for (var i = 0; i < itemCount; i++) {
       final start = -math.pi / 2 + i * sweep;
       final selected = i == selectedIndex;
@@ -713,95 +637,103 @@ class _PieMenuPainter extends CustomPainter {
         )
         ..close();
 
-      // Elevated shadow for selected segment (lifts higher from coin bed)
+      // Selected segment lifts up in 3D space with a deep cast shadow
       if (selected) {
         canvas.drawShadow(
           path,
           Colors.black.withValues(alpha: 0.65),
-          12.0,
+          14.0,
           true,
         );
       }
 
-      // Base Enamel Gradient: rich saturation, crisp directional falloff
-      final enamelBase = Paint()
+      // --- Volumetric Face Gradient ---
+      // Sculpted 3D curvature: crisp top-left highlight, rich saturated core,
+      // and deep shadowed falloff toward bottom-right.
+      final faceGradient = Paint()
         ..shader = LinearGradient(
           begin: const Alignment(-0.85, -0.90),
           end: const Alignment(0.85, 0.90),
           colors: [
-            Color.lerp(light, Colors.white, selected ? 0.48 : 0.38)!,
-            Color.lerp(light, Colors.white, selected ? 0.24 : 0.16)!,
+            Color.lerp(light, Colors.white, selected ? 0.52 : 0.40)!,
+            Color.lerp(light, Colors.white, selected ? 0.28 : 0.18)!,
+            Color.lerp(light, Colors.white, selected ? 0.10 : 0.05)!,
             light,
-            Color.lerp(light, Colors.black, selected ? 0.08 : 0.14)!,
-            Color.lerp(light, Colors.black, selected ? 0.28 : 0.36)!,
-            Color.lerp(light, Colors.black, selected ? 0.52 : 0.62)!,
-            Color.lerp(light, Colors.black, selected ? 0.74 : 0.82)!,
+            Color.lerp(light, Colors.black, selected ? 0.10 : 0.18)!,
+            Color.lerp(light, Colors.black, selected ? 0.32 : 0.44)!,
+            Color.lerp(light, Colors.black, selected ? 0.58 : 0.70)!,
+            Color.lerp(light, Colors.black, selected ? 0.78 : 0.88)!,
           ],
-          stops: const [0.0, 0.06, 0.18, 0.36, 0.56, 0.76, 1.0],
+          stops: const [0.0, 0.05, 0.12, 0.28, 0.48, 0.68, 0.85, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
-      canvas.drawPath(path, enamelBase);
+      canvas.drawPath(path, faceGradient);
 
-      // Curved Lacquer Dome Reflection (Glossy glass/enamel badge sheen)
-      final domeGloss = Paint()
+      // --- Convex Dome Light Sheen ---
+      // Simulates a smooth pillowed 3D surface reflecting ambient light.
+      final domeLight = Paint()
         ..shader = RadialGradient(
           center: const Alignment(-0.55, -0.60),
-          radius: 0.85,
+          radius: 0.88,
           colors: [
-            Colors.white.withValues(alpha: selected ? 0.38 : 0.26),
-            Colors.white.withValues(alpha: selected ? 0.16 : 0.09),
+            Colors.white.withValues(alpha: selected ? 0.36 : 0.24),
+            Colors.white.withValues(alpha: selected ? 0.14 : 0.08),
             Colors.white.withValues(alpha: selected ? 0.03 : 0.015),
             Colors.transparent,
           ],
-          stops: const [0.0, 0.18, 0.40, 0.75],
+          stops: const [0.0, 0.20, 0.45, 0.80],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
-      canvas.drawPath(path, domeGloss);
+      canvas.drawPath(path, domeLight);
 
-      // Intense Specular Hotspot (Mirror-like polished chrome shine)
-      final mirrorHotspot = Paint()
+      // --- Sharp Specular Hotspot ---
+      // A bright point of focused reflection, creating high-gloss depth.
+      final specularSpot = Paint()
         ..shader = RadialGradient(
-          center: const Alignment(-0.46, -0.52),
-          radius: 0.32,
+          center: const Alignment(-0.46, -0.50),
+          radius: 0.35,
           colors: [
-            Colors.white.withValues(alpha: selected ? 0.34 : 0.20),
+            Colors.white.withValues(alpha: selected ? 0.32 : 0.18),
             Colors.white.withValues(alpha: selected ? 0.08 : 0.04),
             Colors.transparent,
           ],
-          stops: const [0.0, 0.32, 1.0],
+          stops: const [0.0, 0.30, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
-      canvas.drawPath(path, mirrorHotspot);
+      canvas.drawPath(path, specularSpot);
 
-      // Deep Edge Vignette
-      // (simulates enamel sitting inside a recessed coin bed)
-      final rimRecess = Paint()
+      // --- Edge Chiaroscuro Vignette ---
+      // Darkens the perimeter of each slice, making the center bulge forward.
+      final edgeVignette = Paint()
         ..shader = RadialGradient(
           center: Alignment.center,
           radius: 1.0,
           colors: [
             Colors.transparent,
-            Colors.black.withValues(alpha: 0.12),
-            Colors.black.withValues(alpha: 0.48),
+            Colors.black.withValues(alpha: 0.10),
+            Colors.black.withValues(alpha: selected ? 0.35 : 0.48),
           ],
-          stops: const [0.65, 0.86, 1.0],
+          stops: const [0.65, 0.88, 1.0],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
-      canvas.drawPath(path, rimRecess);
+      canvas.drawPath(path, edgeVignette);
 
-      // Lower-right ambient occlusion bevel
-      final lowerBevel = Paint()
+      // --- Lower Depth Falloff ---
+      final lowerDepth = Paint()
         ..shader = RadialGradient(
           center: const Alignment(0.80, 0.82),
           radius: 0.95,
           colors: [
-            Colors.black.withValues(alpha: selected ? 0.42 : 0.50),
-            Colors.black.withValues(alpha: 0.18),
+            Colors.black.withValues(alpha: selected ? 0.36 : 0.45),
+            Colors.black.withValues(alpha: 0.15),
             Colors.transparent,
           ],
           stops: const [0.0, 0.40, 0.85],
         ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
-      canvas.drawPath(path, lowerBevel);
+      canvas.drawPath(path, lowerDepth);
     }
 
-    // -- STEP 4: MACHINED COIN SEPARATOR RIBS -----------------------
-    // Embossed gold dividers between slices, like minted coin partitions
+    // -----------------------------------------------------------------
+    // 3. PRECISION MICRO-GROOVE SEAMS (NO HEAVY BARS)
+    // Clean, hairline joint between slices: dark groove + hairline light.
+    // Creates seamless 3D facet boundaries without any clunky borders.
+    // -----------------------------------------------------------------
     for (var i = 0; i < itemCount; i++) {
       final angle = -math.pi / 2 + i * sweep;
       final unit = Offset(math.cos(angle), math.sin(angle));
@@ -812,158 +744,51 @@ class _PieMenuPainter extends CustomPainter {
         center.dy + unit.dy * outerRadius,
       );
 
-      // Deep coin groove channel
-      final groovePaint = Paint()
+      // Recessed micro-groove (dark shadow line)
+      final darkGroove = Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.2
+        ..strokeWidth = 1.6
         ..strokeCap = StrokeCap.butt
-        ..color = _goldDark.withValues(alpha: 0.85);
+        ..color = Colors.black.withValues(alpha: 0.45);
       canvas.drawLine(
-        startPoint + normal * 0.6,
-        endPoint + normal * 0.6,
-        groovePaint,
+        startPoint + normal * 0.5,
+        endPoint + normal * 0.5,
+        darkGroove,
       );
 
-      // Raised gold bevel crest (highlighted top-left facing edge)
-      final ribHighlight = Paint()
+      // Highlighted micro-crest (hairline light reflection on opposite edge)
+      final lightCrest = Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.0
+        ..strokeWidth = 0.6
         ..strokeCap = StrokeCap.butt
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            _goldBright.withValues(alpha: 0.95),
-            _goldFace.withValues(alpha: 0.70),
-            _goldMid.withValues(alpha: 0.40),
-          ],
-        ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
+        ..color = Colors.white.withValues(alpha: 0.28);
       canvas.drawLine(
-        startPoint - normal * 0.7,
-        endPoint - normal * 0.7,
-        ribHighlight,
-      );
-
-      // Hairline specular glint on the ridge
-      final ridgeSpecular = Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.4
-        ..color = Colors.white.withValues(alpha: 0.45);
-      canvas.drawLine(
-        startPoint - normal * 0.9,
-        endPoint - normal * 0.9,
-        ridgeSpecular,
+        startPoint - normal * 0.6,
+        endPoint - normal * 0.6,
+        lightCrest,
       );
     }
 
-    // -- STEP 5: OUTER MULTI-STEPPED GOLD COIN BEZEL ----------------
-    // Exactly like the heavy chamfered gold rim on POMAD PRIMA!
-
-    // Layer 5A: Outermost bronze edge bevel
-    final outerBevelBase = Paint()
+    // -----------------------------------------------------------------
+    // 4. NATURAL BEVEL HAIRLINE ON OUTER EDGE (NO GOLD RIM)
+    // A subtle, clean directional catch-light on the top-left outer curve,
+    // creating a polished beveled edge without any colored border.
+    // -----------------------------------------------------------------
+    final outerBevelLight = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.6
-      ..shader = LinearGradient(
-        begin: const Alignment(-0.85, -0.90),
-        end: const Alignment(0.85, 0.90),
-        colors: [
-          _goldMid.withValues(alpha: 0.85),
-          _goldDeep.withValues(alpha: 0.95),
-          _goldDark,
-        ],
-        stops: const [0.0, 0.48, 1.0],
-      ).createShader(
-          Rect.fromCircle(center: center, radius: outerRadius + 2.0));
-    canvas.drawCircle(center, outerRadius + 2.2, outerBevelBase);
-
-    // Layer 5B: Heavy Chamfered Primary Gold Rim
-    final primaryGoldRim = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.8
-      ..shader = LinearGradient(
-        begin: const Alignment(-0.90, -0.92),
-        end: const Alignment(0.80, 0.82),
-        colors: [
-          _goldBright, // bright specular reflection
-          _goldFace, // warm minted gold
-          _goldMid.withValues(alpha: 0.85),
-          _goldDeep.withValues(alpha: 0.55), // shadow bronze
-          _goldMid.withValues(alpha: 0.70),
-        ],
-        stops: const [0.0, 0.22, 0.55, 0.82, 1.0],
-      ).createShader(
-          Rect.fromCircle(center: center, radius: outerRadius + 1.2));
-    canvas.drawCircle(center, outerRadius + 1.2, primaryGoldRim);
-
-    // Layer 5C: Fine Specular Crest Hairline
-    final outerSpecularHairline = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.65
+      ..strokeWidth = 0.8
       ..shader = LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          Colors.white.withValues(alpha: 0.85),
-          _goldBright.withValues(alpha: 0.65),
+          Colors.white.withValues(alpha: 0.35),
+          Colors.white.withValues(alpha: 0.10),
           Colors.transparent,
+          Colors.black.withValues(alpha: 0.25),
         ],
-        stops: const [0.0, 0.35, 0.70],
-      ).createShader(
-          Rect.fromCircle(center: center, radius: outerRadius + 2.8));
-    canvas.drawCircle(center, outerRadius + 2.8, outerSpecularHairline);
-
-    // Layer 5D: Inset Coin Groove (The recessed step inside the outer rim)
-    final insetGroove = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.85
-      ..color = _goldDark.withValues(alpha: 0.90);
-    canvas.drawCircle(center, outerRadius - 0.2, insetGroove);
-
-    // -- STEP 6: INNER STEPPED GOLD COIN BEZEL ----------------------
-    // The inner gold ring enclosing the center hub,
-    // matching POMAD PRIMA inner coin circle
-
-    // Layer 6A: Inner Groove / Recess
-    final innerGroove = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0
-      ..color = _goldDark.withValues(alpha: 0.95);
-    canvas.drawCircle(center, innerRadius + 1.2, innerGroove);
-
-    // Layer 6B: Raised Inner Gold Bezel Ring
-    final innerGoldBezel = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.4
-      ..shader = LinearGradient(
-        begin: const Alignment(-0.85, -0.90),
-        end: const Alignment(0.85, 0.90),
-        colors: [
-          _goldBright,
-          _goldFace,
-          _goldMid.withValues(alpha: 0.75),
-          _goldDeep.withValues(alpha: 0.45),
-          _goldMid.withValues(alpha: 0.60),
-        ],
-        stops: const [0.0, 0.25, 0.60, 0.85, 1.0],
-      ).createShader(Rect.fromCircle(center: center, radius: innerRadius));
-    canvas.drawCircle(center, innerRadius, innerGoldBezel);
-
-    // Layer 6C: Inner Specular Edge Hairline
-    final innerSpecularHairline = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.5
-      ..shader = LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Colors.white.withValues(alpha: 0.80),
-          _goldBright.withValues(alpha: 0.40),
-          Colors.transparent,
-        ],
-        stops: const [0.0, 0.35, 0.75],
-      ).createShader(
-          Rect.fromCircle(center: center, radius: innerRadius - 1.2));
-    canvas.drawCircle(center, innerRadius - 1.2, innerSpecularHairline);
+        stops: const [0.0, 0.25, 0.60, 1.0],
+      ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
+    canvas.drawCircle(center, outerRadius - 0.4, outerBevelLight);
   }
 
   static int? indexAt(Offset position, Size size, {required int itemCount}) {
