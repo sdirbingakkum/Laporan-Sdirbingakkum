@@ -291,7 +291,9 @@ class _SupabaseReportRepository {
     SupabaseClient client,
   ) async {
     try {
-      return await (_pelanggaranSourceFuture ??= _fetchPelanggaranSource(client));
+      return await (_pelanggaranSourceFuture ??= _fetchPelanggaranSource(
+        client,
+      ));
     } catch (_) {
       _pelanggaranSourceFuture = null;
       rethrow;
