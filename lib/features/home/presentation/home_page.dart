@@ -296,8 +296,9 @@ class _PieMenu extends StatelessWidget {
         final maxWidth = constraints.hasBoundedWidth
             ? constraints.maxWidth
             : double.infinity;
-        final maxHeight =
-            constraints.hasBoundedHeight ? constraints.maxHeight : maxWidth;
+        final maxHeight = constraints.hasBoundedHeight
+            ? constraints.maxHeight
+            : maxWidth;
         final diameter = math.min(maxWidth, maxHeight);
 
         if (!diameter.isFinite || diameter <= 0) {
@@ -504,8 +505,9 @@ class _PieMenuCenter extends StatelessWidget {
                                       centerKey,
                                     ),
                                     fontWeight: FontWeight.w900,
-                                    letterSpacing:
-                                        centerKey.length > 18 ? 0.2 : 0.6,
+                                    letterSpacing: centerKey.length > 18
+                                        ? 0.2
+                                        : 0.6,
                                     height: 1.05,
                                     shadows: [
                                       Shadow(
@@ -541,8 +543,9 @@ class _PieMenuCenter extends StatelessWidget {
                                       centerKey,
                                     ),
                                     fontWeight: FontWeight.w900,
-                                    letterSpacing:
-                                        centerKey.length > 18 ? 0.2 : 0.6,
+                                    letterSpacing: centerKey.length > 18
+                                        ? 0.2
+                                        : 0.6,
                                     height: 1.05,
                                   ),
                                 ),
@@ -681,10 +684,11 @@ class _PieMenuLabel extends StatelessWidget {
                     // Polished 3D liquid gold face with specular gleam
                     ShaderMask(
                       blendMode: BlendMode.srcIn,
-                      shaderCallback: (bounds) => (selected
-                              ? _goldGradientSelected
-                              : _goldGradientUnselected)
-                          .createShader(bounds),
+                      shaderCallback: (bounds) =>
+                          (selected
+                                  ? _goldGradientSelected
+                                  : _goldGradientUnselected)
+                              .createShader(bounds),
                       child: Icon(
                         item.icon,
                         color: Colors.white,
@@ -749,10 +753,11 @@ class _PieMenuLabel extends StatelessWidget {
                   // Polished 3D liquid gold lettering
                   ShaderMask(
                     blendMode: BlendMode.srcIn,
-                    shaderCallback: (bounds) => (selected
-                            ? _goldGradientSelected
-                            : _goldGradientUnselected)
-                        .createShader(bounds),
+                    shaderCallback: (bounds) =>
+                        (selected
+                                ? _goldGradientSelected
+                                : _goldGradientUnselected)
+                            .createShader(bounds),
                     child: Text(
                       item.label,
                       textAlign: TextAlign.center,
