@@ -611,10 +611,7 @@ void main() {
       StatisticsModule.lakaLalin,
     ];
 
-    Page<void> executivePage({
-      required LocalKey key,
-      required Widget child,
-    }) {
+    Page<void> executivePage({required LocalKey key, required Widget child}) {
       return CustomTransitionPage<void>(
         key: key,
         child: child,
@@ -670,7 +667,8 @@ void main() {
       expect(menu, findsOneWidget);
       final center = tester.getCenter(menu);
       final size = tester.getSize(menu);
-      final angle = -math.pi / 2 + (2 * math.pi / modules.length) * (index + 0.5);
+      final angle =
+          -math.pi / 2 + (2 * math.pi / modules.length) * (index + 0.5);
       await tester.tapAt(
         Offset(
           center.dx + math.cos(angle) * size.width * 0.36,
@@ -693,10 +691,7 @@ void main() {
 
     await tapModule(1);
     await tester.pumpAndSettle();
-    expect(
-      find.byKey(const ValueKey('statistics-lakaLalin')),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('statistics-lakaLalin')), findsOneWidget);
 
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
