@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 
@@ -216,12 +215,10 @@ class _HomePageState extends ConsumerState<HomePage>
       return;
     }
 
-    // Do not keep the menu locked while waiting for the pushed route to pop.
-    // On Android, route-result futures can remain pending for some back-stack
-    // paths; that would leave the home menu permanently ignoring taps.
-    unawaited(context.push<Object?>(_items[index].route).then<void>((_) {}));
-
-    await Future<void>.delayed(const Duration(milliseconds: 400));
+    // Keep the lock only until the report route has been requested. The home
+    // page is covered by the pushed route, so it must not depend on the route's
+    // result future to become tappable again after returning on Android.
+    final navigation = context.push<Object?>(_items[index].route);
 
     if (!mounted) {
       return;
@@ -229,9 +226,18 @@ class _HomePageState extends ConsumerState<HomePage>
 
     setState(() {
       _navigationInProgress = false;
-      _selectedIndex = -1;
     });
-    _pieController.forward(from: 0);
+
+    try {
+      await navigation;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _selectedIndex = -1;
+        });
+        _pieController.forward(from: 0);
+      }
+    }
   }
 
   @override

@@ -603,6 +603,108 @@ void main() {
     }
   });
 
+  testWidgets('pie menu remains tappable after system back from a report', (
+    tester,
+  ) async {
+    final modules = <StatisticsModule>[
+      StatisticsModule.pelanggaran,
+      StatisticsModule.lakaLalin,
+    ];
+
+    Page<void> executivePage({
+      required LocalKey key,
+      required Widget child,
+    }) {
+      return CustomTransitionPage<void>(
+        key: key,
+        child: child,
+        transitionDuration: const Duration(milliseconds: 280),
+        reverseTransitionDuration: const Duration(milliseconds: 220),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final curve = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+            reverseCurve: Curves.easeInCubic,
+          );
+          return FadeTransition(
+            opacity: curve,
+            child: ScaleTransition(
+              scale: Tween<double>(begin: 0.985, end: 1.0).animate(curve),
+              child: child,
+            ),
+          );
+        },
+      );
+    }
+
+    final router = GoRouter(
+      initialLocation: '/',
+      routes: [
+        GoRoute(
+          path: '/',
+          pageBuilder: (context, state) =>
+              executivePage(key: state.pageKey, child: const HomePage()),
+        ),
+        for (final module in modules)
+          GoRoute(
+            path: _routeFor(module),
+            pageBuilder: (context, state) => executivePage(
+              key: state.pageKey,
+              child: StatisticsPage(
+                module: module,
+                dataLoader: _testStatisticsData,
+              ),
+            ),
+          ),
+      ],
+    );
+
+    await _setSurfaceSize(tester, const Size(390, 844));
+    await tester.pumpWidget(
+      ProviderScope(child: MaterialApp.router(routerConfig: router)),
+    );
+    await tester.pumpAndSettle();
+
+    Future<void> tapModule(int index) async {
+      final menu = find.byKey(const ValueKey('main-pie-menu'));
+      expect(menu, findsOneWidget);
+      final center = tester.getCenter(menu);
+      final size = tester.getSize(menu);
+      final angle = -math.pi / 2 + (2 * math.pi / modules.length) * (index + 0.5);
+      await tester.tapAt(
+        Offset(
+          center.dx + math.cos(angle) * size.width * 0.36,
+          center.dy + math.sin(angle) * size.height * 0.36,
+        ),
+      );
+    }
+
+    await tapModule(0);
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('statistics-pelanggaran')),
+      findsOneWidget,
+    );
+
+    // Exercise the platform/Router back path instead of the on-screen arrow.
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.byType(HomePage), findsOneWidget);
+
+    await tapModule(1);
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('statistics-lakaLalin')),
+      findsOneWidget,
+    );
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.byType(HomePage), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    router.dispose();
+  });
+
   testWidgets('pie menu remains usable on compact mobile viewports', (
     tester,
   ) async {
