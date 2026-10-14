@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../shared/widgets/app_background.dart';
@@ -168,7 +169,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
         title: _title,
         subtitle: 'PUSPOMAD',
         onSignOut: () => _signOut(context),
-        onBack: () => Navigator.of(context).pop(),
+        onBack: () => context.pop(),
       ),
       body: AppBackground(
         child: SafeArea(

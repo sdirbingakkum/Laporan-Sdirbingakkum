@@ -215,7 +215,10 @@ class _HomePageState extends ConsumerState<HomePage>
       return;
     }
 
-    await context.push(_items[index].route);
+    // Keep the lock only until the report route has been requested. The home
+    // page is covered by the pushed route, so it must not depend on the route's
+    // result future to become tappable again after returning on Android.
+    final navigation = context.push<Object?>(_items[index].route);
 
     if (!mounted) {
       return;
@@ -223,9 +226,18 @@ class _HomePageState extends ConsumerState<HomePage>
 
     setState(() {
       _navigationInProgress = false;
-      _selectedIndex = -1;
     });
-    _pieController.forward(from: 0);
+
+    try {
+      await navigation;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _selectedIndex = -1;
+        });
+        _pieController.forward(from: 0);
+      }
+    }
   }
 
   @override
