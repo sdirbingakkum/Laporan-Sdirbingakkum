@@ -219,9 +219,7 @@ class _HomePageState extends ConsumerState<HomePage>
     // Do not keep the menu locked while waiting for the pushed route to pop.
     // On Android, route-result futures can remain pending for some back-stack
     // paths; that would leave the home menu permanently ignoring taps.
-    unawaited(
-      context.push<Object?>(_items[index].route).then<void>((_) {}),
-    );
+    unawaited(context.push<Object?>(_items[index].route).then<void>((_) {}));
 
     await Future<void>.delayed(const Duration(milliseconds: 400));
 
