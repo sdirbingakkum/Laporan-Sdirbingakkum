@@ -565,8 +565,9 @@ void main() {
       expect(gesture, findsOneWidget);
       final center = tester.getCenter(gesture);
       final size = tester.getSize(gesture);
+      const menuItemCount = 5;
       final angle =
-          -math.pi / 2 + (2 * math.pi / modules.length) * (index + 0.5);
+          -math.pi / 2 + (2 * math.pi / menuItemCount) * (index + 0.5);
 
       await tester.tapAt(
         Offset(
