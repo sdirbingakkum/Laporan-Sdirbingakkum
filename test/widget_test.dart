@@ -669,7 +669,7 @@ void main() {
       final center = tester.getCenter(menu);
       final size = tester.getSize(menu);
       final angle =
-          -math.pi / 2 + (2 * math.pi / modules.length) * (index + 0.5);
+          -math.pi / 2 + (2 * math.pi / menuItemCount) * (index + 0.5);
       await tester.tapAt(
         Offset(
           center.dx + math.cos(angle) * size.width * 0.36,
