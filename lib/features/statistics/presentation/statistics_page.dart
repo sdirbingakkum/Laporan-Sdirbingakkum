@@ -2958,8 +2958,7 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
         _ReportMetric(
           title: 'POMDAM AKTIF',
           value: '$activePomdams/${ranking.length}',
-          detail:
-              '$zeroPomdams Pomdam tanpa kasus tercatat pada periode ini.',
+          detail: '$zeroPomdams Pomdam tanpa kasus tercatat pada periode ini.',
           icon: Icons.military_tech_rounded,
         ),
       );
