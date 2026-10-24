@@ -965,6 +965,14 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.byType(DraggableScrollableSheet), findsOneWidget);
         expect(find.text('ANALISIS $title'), findsOneWidget);
+        final headerIcon = tester.widget<Icon>(
+          find.byKey(const ValueKey('analysis-sheet-header-icon')),
+        );
+        expect(
+          headerIcon.icon,
+          Icons.bar_chart_rounded,
+          reason: '$title should use the shared analysis header icon',
+        );
         expect(tester.takeException(), isNull, reason: '$title analysis sheet');
 
         await tester.tap(find.byTooltip('Tutup analisis'));
