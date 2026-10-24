@@ -880,6 +880,8 @@ void main() {
         );
         await tester.pumpAndSettle();
 
+        await tester.ensureVisible(find.text('STATISTIK'));
+        await tester.pumpAndSettle();
         await tester.tap(find.text('STATISTIK'));
         await tester.pumpAndSettle();
 
