@@ -1529,7 +1529,8 @@ Future<void> _showRankingSheet(
   final periodTotal = selectedTotal ?? sumCards(analysisCards);
   final periodTitle = selectedPeriodLabel ?? 'PERIODE TERPILIH';
   final yearLabel = (yearToDateLabel ?? '').split('·').first.trim();
-  final periodCaption = yearLabel.isEmpty ||
+  final periodCaption =
+      yearLabel.isEmpty ||
           periodTitle.toUpperCase().contains(yearLabel.toUpperCase())
       ? periodTitle.toUpperCase()
       : '$periodTitle · $yearLabel';
@@ -1683,7 +1684,7 @@ Future<void> _showRankingSheet(
                                       yearToDateLabel ?? periodTitle,
                                   accent: accent,
                                   onItemTap: onItemTap,
-                                )
+                                ),
                         ),
                       ),
                     ),
@@ -2763,7 +2764,6 @@ class _SimAnalysisSheetContent extends StatelessWidget {
   }
 }
 
-
 class _ReportMetric {
   const _ReportMetric({
     required this.title,
@@ -2834,7 +2834,8 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasReportData = !periodLabel.toUpperCase().contains('BELUM ADA DATA');
     final yearName = yearToDateLabel.split('·').first.trim();
-    final heroPeriodCaption = yearName.isEmpty ||
+    final heroPeriodCaption =
+        yearName.isEmpty ||
             periodLabel.toUpperCase().contains(yearName.toUpperCase())
         ? periodLabel
         : '$periodLabel · $yearName';
@@ -2871,8 +2872,10 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
     };
     final yearTotal = switch (module) {
       StatisticsModule.pelanggaran => _reportCardsTotal(yearToDateCards),
-      StatisticsModule.lakaLalin =>
-        _reportCardCount(yearToDateCards, 'JUMLAH KASUS'),
+      StatisticsModule.lakaLalin => _reportCardCount(
+        yearToDateCards,
+        'JUMLAH KASUS',
+      ),
       StatisticsModule.simTni => 0,
       StatisticsModule.k9 => _reportCardCount(yearToDateCards, 'NYATA'),
       StatisticsModule.provos => _reportCardCount(yearToDateCards, 'JUMLAH'),
@@ -2882,32 +2885,32 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
     final categoryCards = switch (module) {
       StatisticsModule.pelanggaran => cards,
       StatisticsModule.lakaLalin =>
-        cards.where((card) => card.label.toUpperCase() != 'JUMLAH KASUS').toList(),
+        cards
+            .where((card) => card.label.toUpperCase() != 'JUMLAH KASUS')
+            .toList(),
       StatisticsModule.simTni => const <_StatCardData>[],
       StatisticsModule.k9 => const <_StatCardData>[],
-      StatisticsModule.provos => cards
-          .where(
-            (card) =>
-                card.label.toUpperCase() == 'SUDAH DIK/TAR' ||
-                card.label.toUpperCase() == 'BELUM DIK/TAR',
-          )
-          .toList(),
+      StatisticsModule.provos =>
+        cards
+            .where(
+              (card) =>
+                  card.label.toUpperCase() == 'SUDAH DIK/TAR' ||
+                  card.label.toUpperCase() == 'BELUM DIK/TAR',
+            )
+            .toList(),
     };
     final compositionDenominator = isProvos
         ? _reportCardCount(cards, 'JUMLAH')
         : total;
     final categoryTotal = _reportCardsTotal(categoryCards);
-    final pomdamTotal = ranking.fold<int>(
-      0,
-      (sum, item) => sum + item.value,
-    );
+    final pomdamTotal = ranking.fold<int>(0, (sum, item) => sum + item.value);
     final activePomdams = ranking.where((item) => item.value > 0).length;
     final zeroPomdams = ranking.length - activePomdams;
     final sortedCategories = [...categoryCards]
-      ..sort(
-        (a, b) => _analysisInt(b.value).compareTo(_analysisInt(a.value)),
-      );
-    final topCategory = sortedCategories.isEmpty ? null : sortedCategories.first;
+      ..sort((a, b) => _analysisInt(b.value).compareTo(_analysisInt(a.value)));
+    final topCategory = sortedCategories.isEmpty
+        ? null
+        : sortedCategories.first;
     final topPomdam = ranking.isEmpty ? null : ranking.first;
 
     final metrics = <_ReportMetric>[];
@@ -2918,7 +2921,8 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
           _ReportMetric(
             title: card.label,
             value: _formatAnalysisNumber(value),
-            detail: '${_reportPercent(value, total)} dari seluruh pelanggaran periode ini.',
+            detail:
+                '${_reportPercent(value, total)} dari seluruh pelanggaran periode ini.',
             icon: card.label.toUpperCase() == 'TATIB'
                 ? Icons.gavel_rounded
                 : Icons.directions_car_rounded,
@@ -2929,7 +2933,8 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
         _ReportMetric(
           title: 'POMDAM AKTIF',
           value: '${activePomdams}/${ranking.length}',
-          detail: '${zeroPomdams} Pomdam bernilai 0; tetap ditampilkan dalam daftar.',
+          detail:
+              '${zeroPomdams} Pomdam bernilai 0; tetap ditampilkan dalam daftar.',
           icon: Icons.military_tech_rounded,
         ),
       );
@@ -2945,7 +2950,8 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
           _ReportMetric(
             title: label,
             value: _formatAnalysisNumber(value),
-            detail: '${_reportPercent(value, total)} dari total kasus pada periode pilihan.',
+            detail:
+                '${_reportPercent(value, total)} dari total kasus pada periode pilihan.',
             icon: icon,
           ),
         );
@@ -2954,14 +2960,18 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
         _ReportMetric(
           title: 'POMDAM AKTIF',
           value: '${activePomdams}/${ranking.length}',
-          detail: '${zeroPomdams} Pomdam tanpa kasus tercatat pada periode ini.',
+          detail:
+              '${zeroPomdams} Pomdam tanpa kasus tercatat pada periode ini.',
           icon: Icons.military_tech_rounded,
         ),
       );
     } else if (isK9) {
-      final orgRecordedUnits = _k9Units.where((unit) => unit.org != null).length;
-      final shortageRecordedUnits =
-          _k9Units.where((unit) => unit.shortage != null).length;
+      final orgRecordedUnits = _k9Units
+          .where((unit) => unit.org != null)
+          .length;
+      final shortageRecordedUnits = _k9Units
+          .where((unit) => unit.shortage != null)
+          .length;
       metrics.addAll([
         _ReportMetric(
           title: 'NYATA',
@@ -2972,13 +2982,15 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
         _ReportMetric(
           title: 'SESUAI ORGAS',
           value: _formatAnalysisNumber(_reportCardCount(cards, 'SESUAI ORGAS')),
-          detail: 'Nilai org tersedia untuk $orgRecordedUnits dari ${_k9Units.length} unit yang ditampilkan.',
+          detail:
+              'Nilai org tersedia untuk $orgRecordedUnits dari ${_k9Units.length} unit yang ditampilkan.',
           icon: Icons.fact_check_rounded,
         ),
         _ReportMetric(
           title: 'KEKURANGAN',
           value: _formatAnalysisNumber(_reportCardCount(cards, 'KEKURANGAN')),
-          detail: 'Kekurangan tercatat pada $shortageRecordedUnits unit; nilai kosong bukan dianggap nol.',
+          detail:
+              'Kekurangan tercatat pada $shortageRecordedUnits unit; nilai kosong bukan dianggap nol.',
           icon: Icons.warning_amber_rounded,
         ),
         _ReportMetric(
@@ -2996,25 +3008,29 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
         _ReportMetric(
           title: 'JUMLAH PERSONEL',
           value: _formatAnalysisNumber(personnel),
-          detail: 'Akumulasi personel pada tahun/periode laporan yang ditampilkan.',
+          detail:
+              'Akumulasi personel pada tahun/periode laporan yang ditampilkan.',
           icon: Icons.groups_rounded,
         ),
         _ReportMetric(
           title: 'SUDAH DIK/TAR',
           value: _formatAnalysisNumber(completed),
-          detail: '${_reportPercent(completed, personnel)} dibanding total personel.',
+          detail:
+              '${_reportPercent(completed, personnel)} dibanding total personel.',
           icon: Icons.verified_user_rounded,
         ),
         _ReportMetric(
           title: 'BELUM DIK/TAR',
           value: _formatAnalysisNumber(pending),
-          detail: '${_reportPercent(pending, personnel)} dibanding total personel.',
+          detail:
+              '${_reportPercent(pending, personnel)} dibanding total personel.',
           icon: Icons.pending_actions_rounded,
         ),
         _ReportMetric(
           title: 'POMDAM AKTIF',
           value: '${activePomdams}/${ranking.length}',
-          detail: 'Pomdam dengan nilai personel lebih dari nol pada periode ini.',
+          detail:
+              'Pomdam dengan nilai personel lebih dari nol pada periode ini.',
           icon: Icons.military_tech_rounded,
         ),
       ]);
@@ -3025,7 +3041,8 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
       insights.add(
         const _ReportInsight(
           title: 'Data belum tersedia',
-          description: 'Sumber laporan belum menyediakan periode yang dapat dianalisis. Angka 0 pada tampilan ini tidak otomatis berarti tidak ada kejadian; pastikan laporan sudah diinput.',
+          description:
+              'Sumber laporan belum menyediakan periode yang dapat dianalisis. Angka 0 pada tampilan ini tidak otomatis berarti tidak ada kejadian; pastikan laporan sudah diinput.',
           icon: Icons.info_outline_rounded,
         ),
       );
@@ -3034,7 +3051,8 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
         insights.add(
           _ReportInsight(
             title: 'Kategori paling dominan',
-            description: '${topCategory.label} memiliki ${_formatAnalysisNumber(_analysisInt(topCategory.value))} catatan atau ${_reportPercent(_analysisInt(topCategory.value), total)} dari total periode. Ini menunjukkan komposisi catatan, bukan dengan sendirinya tren naik atau turun.',
+            description:
+                '${topCategory.label} memiliki ${_formatAnalysisNumber(_analysisInt(topCategory.value))} catatan atau ${_reportPercent(_analysisInt(topCategory.value), total)} dari total periode. Ini menunjukkan komposisi catatan, bukan dengan sendirinya tren naik atau turun.',
             icon: Icons.insights_rounded,
           ),
         );
@@ -3042,25 +3060,30 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
       insights.add(
         _ReportInsight(
           title: 'Cakupan pencatatan Pomdam',
-          description: '${activePomdams} dari ${ranking.length} Pomdam memiliki nilai lebih dari nol; ${zeroPomdams} Pomdam tetap tercantum dengan nilai 0.',
+          description:
+              '${activePomdams} dari ${ranking.length} Pomdam memiliki nilai lebih dari nol; ${zeroPomdams} Pomdam tetap tercantum dengan nilai 0.',
           icon: Icons.location_city_rounded,
         ),
       );
       insights.add(
         _ReportInsight(
           title: 'Rekonsiliasi total Pomdam',
-          description: 'Jumlah seluruh baris Pomdam adalah ${_formatAnalysisNumber(pomdamTotal)}, sedangkan total kategori pelanggaran adalah ${_formatAnalysisNumber(total)}. ${pomdamTotal == total ? 'Keduanya selaras.' : 'Ada selisih ${_formatAnalysisNumber((pomdamTotal - total).abs())}; periksa kategori sumber dan rekap per Pomdam.'}',
+          description:
+              'Jumlah seluruh baris Pomdam adalah ${_formatAnalysisNumber(pomdamTotal)}, sedangkan total kategori pelanggaran adalah ${_formatAnalysisNumber(total)}. ${pomdamTotal == total ? 'Keduanya selaras.' : 'Ada selisih ${_formatAnalysisNumber((pomdamTotal - total).abs())}; periksa kategori sumber dan rekap per Pomdam.'}',
           icon: Icons.fact_check_rounded,
         ),
       );
     } else if (isLaka) {
       final componentMatches = categoryTotal == total;
-      final leadingType = sortedCategories.isEmpty ? null : sortedCategories.first;
+      final leadingType = sortedCategories.isEmpty
+          ? null
+          : sortedCategories.first;
       if (leadingType != null) {
         insights.add(
           _ReportInsight(
             title: 'Jenis kasus paling dominan',
-            description: '${leadingType.label} tercatat ${_formatAnalysisNumber(_analysisInt(leadingType.value))} kasus atau ${_reportPercent(_analysisInt(leadingType.value), total)} dari total laporan. Gunakan distribusi ini untuk membaca jenis kasus yang paling sering tercatat.',
+            description:
+                '${leadingType.label} tercatat ${_formatAnalysisNumber(_analysisInt(leadingType.value))} kasus atau ${_reportPercent(_analysisInt(leadingType.value), total)} dari total laporan. Gunakan distribusi ini untuk membaca jenis kasus yang paling sering tercatat.',
             icon: Icons.trending_up_rounded,
           ),
         );
@@ -3068,35 +3091,46 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
       insights.add(
         _ReportInsight(
           title: 'Rekonsiliasi jenis laka',
-          description: 'Penjumlahan jenis laka adalah ${_formatAnalysisNumber(categoryTotal)}, dibandingkan jumlah kasus ${_formatAnalysisNumber(total)}. ${componentMatches ? 'Rincian jenis cocok dengan total kasus.' : 'Terdapat selisih ${_formatAnalysisNumber((categoryTotal - total).abs())}; periksa pencatatan jenis dan total kasus.'}',
+          description:
+              'Penjumlahan jenis laka adalah ${_formatAnalysisNumber(categoryTotal)}, dibandingkan jumlah kasus ${_formatAnalysisNumber(total)}. ${componentMatches ? 'Rincian jenis cocok dengan total kasus.' : 'Terdapat selisih ${_formatAnalysisNumber((categoryTotal - total).abs())}; periksa pencatatan jenis dan total kasus.'}',
           icon: Icons.fact_check_rounded,
         ),
       );
       insights.add(
         _ReportInsight(
           title: 'Sebaran antar-Pomdam',
-          description: '${activePomdams} dari ${ranking.length} Pomdam memiliki kasus tercatat. ${topPomdam == null ? 'Belum ada Pomdam yang bisa dibandingkan.' : '${topPomdam.name} berada di peringkat pertama dengan ${_formatAnalysisNumber(topPomdam.value)} kasus.'}',
+          description:
+              '${activePomdams} dari ${ranking.length} Pomdam memiliki kasus tercatat. ${topPomdam == null ? 'Belum ada Pomdam yang bisa dibandingkan.' : '${topPomdam.name} berada di peringkat pertama dengan ${_formatAnalysisNumber(topPomdam.value)} kasus.'}',
           icon: Icons.location_city_rounded,
         ),
       );
     } else if (isK9) {
-      final orgRecordedUnits = _k9Units.where((unit) => unit.org != null).length;
-      final shortageRecordedUnits =
-          _k9Units.where((unit) => unit.shortage != null).length;
-      final actualTotal = _k9Units.fold<int>(0, (sum, unit) => sum + unit.actual);
+      final orgRecordedUnits = _k9Units
+          .where((unit) => unit.org != null)
+          .length;
+      final shortageRecordedUnits = _k9Units
+          .where((unit) => unit.shortage != null)
+          .length;
+      final actualTotal = _k9Units.fold<int>(
+        0,
+        (sum, unit) => sum + unit.actual,
+      );
       final actualLeader = [..._k9Units]
         ..sort((a, b) => b.actual.compareTo(a.actual));
       insights.add(
         _ReportInsight(
           title: 'Unit dengan K9 nyata terbanyak',
-          description: actualLeader.isEmpty ? 'Belum ada rincian unit K9.' : '${actualLeader.first.name} mencatat ${_formatAnalysisNumber(actualLeader.first.actual)} K9 atau ${_reportPercent(actualLeader.first.actual, actualTotal)} dari seluruh K9 nyata yang dirinci.',
+          description: actualLeader.isEmpty
+              ? 'Belum ada rincian unit K9.'
+              : '${actualLeader.first.name} mencatat ${_formatAnalysisNumber(actualLeader.first.actual)} K9 atau ${_reportPercent(actualLeader.first.actual, actualTotal)} dari seluruh K9 nyata yang dirinci.',
           icon: Icons.emoji_events_rounded,
         ),
       );
       insights.add(
         _ReportInsight(
           title: 'Kelengkapan data organisasi',
-          description: 'Nilai sesuai orgas tersedia pada $orgRecordedUnits dari ${_k9Units.length} unit; nilai kekurangan tercatat pada $shortageRecordedUnits unit. Bagian yang kosong ditandai belum dicatat, bukan dinormalisasi menjadi nol.',
+          description:
+              'Nilai sesuai orgas tersedia pada $orgRecordedUnits dari ${_k9Units.length} unit; nilai kekurangan tercatat pada $shortageRecordedUnits unit. Bagian yang kosong ditandai belum dicatat, bukan dinormalisasi menjadi nol.',
           icon: Icons.fact_check_rounded,
         ),
       );
@@ -3109,21 +3143,24 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
       insights.add(
         _ReportInsight(
           title: 'Cakupan status DIK/TAR',
-          description: 'Status yang tercatat berjumlah ${_formatAnalysisNumber(statusTotal)} dibanding total personel ${_formatAnalysisNumber(personnel)}. ${statusTotal == personnel ? 'Jumlah status sesuai dengan total personel.' : 'Ada selisih ${_formatAnalysisNumber(gap)}; angka ini perlu diverifikasi sebelum dipakai sebagai persentase penyelesaian final.'}',
+          description:
+              'Status yang tercatat berjumlah ${_formatAnalysisNumber(statusTotal)} dibanding total personel ${_formatAnalysisNumber(personnel)}. ${statusTotal == personnel ? 'Jumlah status sesuai dengan total personel.' : 'Ada selisih ${_formatAnalysisNumber(gap)}; angka ini perlu diverifikasi sebelum dipakai sebagai persentase penyelesaian final.'}',
           icon: Icons.fact_check_rounded,
         ),
       );
       insights.add(
         _ReportInsight(
           title: 'Prioritas tindak lanjut',
-          description: '${_formatAnalysisNumber(pending)} personel masih tercatat BELUM DIK/TAR (${_reportPercent(pending, personnel)} terhadap JUMLAH). Gunakan daftar unit di bawah untuk melihat sebaran personel dan mengarahkan validasi lanjutan.',
+          description:
+              '${_formatAnalysisNumber(pending)} personel masih tercatat BELUM DIK/TAR (${_reportPercent(pending, personnel)} terhadap JUMLAH). Gunakan daftar unit di bawah untuk melihat sebaran personel dan mengarahkan validasi lanjutan.',
           icon: Icons.flag_rounded,
         ),
       );
       insights.add(
         _ReportInsight(
           title: 'Sebaran personel',
-          description: '${activePomdams} dari ${ranking.length} Pomdam memiliki nilai personel lebih dari nol. Nilai ranking merepresentasikan rekap personel, bukan status DIK/TAR terperinci per Pomdam.',
+          description:
+              '${activePomdams} dari ${ranking.length} Pomdam memiliki nilai personel lebih dari nol. Nilai ranking merepresentasikan rekap personel, bukan status DIK/TAR terperinci per Pomdam.',
           icon: Icons.location_city_rounded,
         ),
       );
@@ -3137,11 +3174,15 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
       StatisticsModule.provos => 'STATUS DIK/TAR',
     };
     final distributionSubtitle = switch (module) {
-      StatisticsModule.pelanggaran => 'Porsi setiap kategori terhadap seluruh catatan pada periode pilihan.',
-      StatisticsModule.lakaLalin => 'Persentase jenis kasus dihitung terhadap jumlah kasus, agar selisih rekap tetap terlihat.',
+      StatisticsModule.pelanggaran =>
+        'Porsi setiap kategori terhadap seluruh catatan pada periode pilihan.',
+      StatisticsModule.lakaLalin =>
+        'Persentase jenis kasus dihitung terhadap jumlah kasus, agar selisih rekap tetap terlihat.',
       StatisticsModule.simTni => 'Komposisi data laporan.',
-      StatisticsModule.k9 => 'Jumlah K9 nyata dan kelengkapan data organisasi per unit.',
-      StatisticsModule.provos => 'Persentase status dibanding total personel. Jika jumlah status berbeda, perbedaan ditampilkan di bagian temuan.',
+      StatisticsModule.k9 =>
+        'Jumlah K9 nyata dan kelengkapan data organisasi per unit.',
+      StatisticsModule.provos =>
+        'Persentase status dibanding total personel. Jika jumlah status berbeda, perbedaan ditampilkan di bagian temuan.',
     };
     final pomdamTitle = isK9
         ? 'RINCIAN SELURUH UNIT K9'
@@ -3173,11 +3214,15 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
           child: _AnalysisSectionTitle(
             title: 'RINGKASAN EKSEKUTIF',
             subtitle: switch (module) {
-              StatisticsModule.pelanggaran => 'Ringkasan kategori dan cakupan laporan untuk membaca komposisi pelanggaran pada periode terpilih.',
-              StatisticsModule.lakaLalin => 'Ringkasan jumlah kasus, komposisi jenis laka, dan sebaran pencatatan antar-Pomdam.',
+              StatisticsModule.pelanggaran =>
+                'Ringkasan kategori dan cakupan laporan untuk membaca komposisi pelanggaran pada periode terpilih.',
+              StatisticsModule.lakaLalin =>
+                'Ringkasan jumlah kasus, komposisi jenis laka, dan sebaran pencatatan antar-Pomdam.',
               StatisticsModule.simTni => 'Ringkasan statistik laporan.',
-              StatisticsModule.k9 => 'Ringkasan K9 nyata, data organisasi, dan cakupan rincian unit yang tersedia.',
-              StatisticsModule.provos => 'Ringkasan jumlah personel serta status DIK/TAR; indikator tidak dijumlahkan menjadi satu total.',
+              StatisticsModule.k9 =>
+                'Ringkasan K9 nyata, data organisasi, dan cakupan rincian unit yang tersedia.',
+              StatisticsModule.provos =>
+                'Ringkasan jumlah personel serta status DIK/TAR; indikator tidak dijumlahkan menjadi satu total.',
             },
             accent: accent,
           ),
@@ -3196,7 +3241,8 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
               children: [
                 for (var index = 0; index < metrics.length; index++)
                   SizedBox(
-                    width: !oneColumn &&
+                    width:
+                        !oneColumn &&
                             metrics.length.isOdd &&
                             index == metrics.length - 1
                         ? constraints.maxWidth
@@ -3260,8 +3306,8 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
                 count: _analysisInt(categoryCards[index].value),
                 share: compositionDenominator > 0
                     ? _analysisInt(categoryCards[index].value) /
-                        compositionDenominator *
-                        100
+                          compositionDenominator *
+                          100
                     : 0,
                 color: categoryCards[index].color,
               ),
@@ -3274,7 +3320,8 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
             index: 13,
             child: _AnalysisSectionTitle(
               title: 'PERIODE PILIHAN VS KUMULATIF',
-              subtitle: 'Jumlah periode pilihan dibanding akumulasi Januari sampai periode terbaru yang tersedia.',
+              subtitle:
+                  'Jumlah periode pilihan dibanding akumulasi Januari sampai periode terbaru yang tersedia.',
               accent: accent,
             ),
           ),
@@ -3285,8 +3332,11 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
                 final card = categoryCards[index];
                 final annualCards = isLaka
                     ? yearToDateCards
-                        .where((item) => item.label.toUpperCase() != 'JUMLAH KASUS')
-                        .toList()
+                          .where(
+                            (item) =>
+                                item.label.toUpperCase() != 'JUMLAH KASUS',
+                          )
+                          .toList()
                     : yearToDateCards;
                 _StatCardData? annual;
                 for (final item in annualCards) {
@@ -3296,7 +3346,9 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
                   }
                 }
                 final periodValue = _analysisInt(card.value);
-                final yearValue = annual == null ? 0 : _analysisInt(annual.value);
+                final yearValue = annual == null
+                    ? 0
+                    : _analysisInt(annual.value);
                 return _AnalysisEntrance(
                   index: index + 14,
                   child: _SimYearComparisonRow(
@@ -3348,7 +3400,8 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
           index: 40,
           child: _AnalysisSectionTitle(
             title: 'TEMUAN UTAMA & VALIDASI',
-            subtitle: 'Insight dihitung dari angka agregat yang tampil, tanpa mengarang tren di luar data.',
+            subtitle:
+                'Insight dihitung dari angka agregat yang tampil, tanpa mengarang tren di luar data.',
             accent: accent,
           ),
         ),
@@ -3449,7 +3502,10 @@ class _ReportAnalysisHeroCard extends StatelessWidget {
               ),
               Flexible(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 9,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: accent.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(99),
@@ -3640,7 +3696,9 @@ class _K9AnalysisUnitRow extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: rankColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: rankColor.withValues(alpha: 0.28)),
+                      border: Border.all(
+                        color: rankColor.withValues(alpha: 0.28),
+                      ),
                     ),
                     child: Text(
                       rank.toString().padLeft(2, '0'),
@@ -3676,7 +3734,11 @@ class _K9AnalysisUnitRow extends StatelessWidget {
               const SizedBox(height: 9),
               Row(
                 children: [
-                  miniValue('NYATA', _formatAnalysisNumber(unit.actual), _emerald),
+                  miniValue(
+                    'NYATA',
+                    _formatAnalysisNumber(unit.actual),
+                    _emerald,
+                  ),
                   const SizedBox(width: 6),
                   miniValue(
                     'SESUAI ORGAS',

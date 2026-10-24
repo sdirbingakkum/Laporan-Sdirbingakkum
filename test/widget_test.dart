@@ -1040,7 +1040,8 @@ void main() {
           expect(
             tester.takeException(),
             isNull,
-            reason: 'Analysis overflow or exception for ${titles[module]} at $size',
+            reason:
+                'Analysis overflow or exception for ${titles[module]} at $size',
           );
           await tester.tap(find.byTooltip('Tutup analisis'));
           await tester.pumpAndSettle();
