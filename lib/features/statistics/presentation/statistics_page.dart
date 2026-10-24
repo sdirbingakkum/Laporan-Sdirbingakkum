@@ -1724,6 +1724,7 @@ class _AnalysisEntrance extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Cap long reports so later rows stay responsive on mobile.
     final animationDuration = 420 + (index > 12 ? 12 : index) * 45;
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: 0, end: 1),
