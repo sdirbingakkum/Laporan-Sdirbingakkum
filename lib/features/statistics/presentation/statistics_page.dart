@@ -1601,11 +1601,8 @@ Future<void> _showRankingSheet(
                               color: accent.withValues(alpha: 0.34),
                             ),
                           ),
-                          child: Icon(
-                            module == StatisticsModule.simTni
-                                ? Icons.insights_rounded
-                                : Icons.bar_chart_rounded,
-                            color: accent,
+                          child: const Icon(
+                            Icons.bar_chart_rounded,
                             size: 23,
                           ),
                         ),
