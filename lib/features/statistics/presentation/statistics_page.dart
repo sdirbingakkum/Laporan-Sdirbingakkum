@@ -188,11 +188,8 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   label: column.label,
                   cards: column.cards
                       .map(
-                        (card) => _StatCardData(
-                          card.label,
-                          card.value,
-                          card.color,
-                        ),
+                        (card) =>
+                            _StatCardData(card.label, card.value, card.color),
                       )
                       .toList(),
                 ),
@@ -252,7 +249,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         selectedTotal: data.totalSim,
                         onItemTap: widget.module == StatisticsModule.k9
                             ? (index) =>
-                                _showK9UnitSheet(context, _k9Units[index])
+                                  _showK9UnitSheet(context, _k9Units[index])
                             : null,
                       ),
                     ),
