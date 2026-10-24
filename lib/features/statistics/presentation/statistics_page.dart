@@ -1567,12 +1567,10 @@ Future<void> _showRankingSheet(
                                     _AnalysisEntrance(
                                       index: 0,
                                       child: _AnalysisSectionTitle(
-                                        title: module ==
-                                                StatisticsModule.k9
+                                        title: module == StatisticsModule.k9
                                             ? 'RINGKASAN UNIT K9'
                                             : 'POMDAM DENGAN NILAI TERTINGGI',
-                                        subtitle: module ==
-                                                StatisticsModule.k9
+                                        subtitle: module == StatisticsModule.k9
                                             ? 'Pilih unit untuk melihat rincian.'
                                             : 'Urutan berdasarkan nilai agregat laporan.',
                                         accent: accent,
@@ -1582,9 +1580,11 @@ Future<void> _showRankingSheet(
                                     if (ranking.isEmpty)
                                       const _AnalysisEmptyState()
                                     else
-                                      for (var index = 0;
-                                          index < ranking.length;
-                                          index++) ...[
+                                      for (
+                                        var index = 0;
+                                        index < ranking.length;
+                                        index++
+                                      ) ...[
                                         _AnalysisEntrance(
                                           index: index + 1,
                                           child: _AnalysisRankingRow(
@@ -1624,9 +1624,9 @@ int _analysisInt(String value) {
 
 String _formatAnalysisNumber(int value) {
   return value.toString().replaceAllMapped(
-        RegExp(r'\B(?=(\d{3})+(?!\d))'),
-        (_) => '.',
-      );
+    RegExp(r'\B(?=(\d{3})+(?!\d))'),
+    (_) => '.',
+  );
 }
 
 String _formatAnalysisPercent(double value) {
@@ -1736,10 +1736,7 @@ class _AnalysisSectionTitle extends StatelessWidget {
               color: accent,
               borderRadius: BorderRadius.circular(99),
               boxShadow: [
-                BoxShadow(
-                  color: accent.withValues(alpha: 0.34),
-                  blurRadius: 9,
-                ),
+                BoxShadow(color: accent.withValues(alpha: 0.34), blurRadius: 9),
               ],
             ),
           ),
@@ -1840,10 +1837,7 @@ class _AnalysisHeroCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 9,
-                  vertical: 6,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
                 decoration: BoxDecoration(
                   color: accent.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(99),
@@ -1875,10 +1869,7 @@ class _AnalysisHeroCard extends StatelessWidget {
                 letterSpacing: -1.5,
                 height: 1.0,
                 shadows: [
-                  Shadow(
-                    color: accent.withValues(alpha: 0.34),
-                    blurRadius: 18,
-                  ),
+                  Shadow(color: accent.withValues(alpha: 0.34), blurRadius: 18),
                 ],
               ),
             ),
@@ -1910,7 +1901,11 @@ class _AnalysisHeroCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 11),
-          _AnalysisAnimatedBar(value: yearShare / 100, color: accent, height: 6),
+          _AnalysisAnimatedBar(
+            value: yearShare / 100,
+            color: accent,
+            height: 6,
+          ),
           const SizedBox(height: 7),
           Text(
             _formatAnalysisPercent(yearShare) +
@@ -2438,9 +2433,7 @@ class _SimAnalysisSheetContent extends StatelessWidget {
       (sum, card) => sum + _analysisInt(card.value),
     );
     final topFiveTotal = ranking.fold<int>(0, (sum, item) => sum + item.value);
-    final categoryDenominator = categoryTotal > 0
-        ? categoryTotal
-        : periodTotal;
+    final categoryDenominator = categoryTotal > 0 ? categoryTotal : periodTotal;
     final ytdShare = yearTotal > 0 ? periodTotal / yearTotal * 100 : 0.0;
     final topFiveShare = periodTotal > 0
         ? topFiveTotal / periodTotal * 100
@@ -2449,15 +2442,9 @@ class _SimAnalysisSheetContent extends StatelessWidget {
       for (final card in yearToDateCategories) card.label: card,
     };
     final orderedCategories = categories.toList()
-      ..sort(
-        (a, b) => _analysisInt(b.value).compareTo(_analysisInt(a.value)),
-      );
-    final dominant = orderedCategories.isEmpty
-        ? null
-        : orderedCategories.first;
-    final dominantValue = dominant == null
-        ? 0
-        : _analysisInt(dominant.value);
+      ..sort((a, b) => _analysisInt(b.value).compareTo(_analysisInt(a.value)));
+    final dominant = orderedCategories.isEmpty ? null : orderedCategories.first;
+    final dominantValue = dominant == null ? 0 : _analysisInt(dominant.value);
     final dominantShare = categoryDenominator > 0
         ? dominantValue / categoryDenominator * 100
         : 0.0;
@@ -2545,7 +2532,8 @@ class _SimAnalysisSheetContent extends StatelessWidget {
                     child: _AnalysisMetricCard(
                       title: 'KONTRIBUSI TOP 5 POMDAM',
                       value: _formatAnalysisPercent(topFiveShare),
-                      detail: _formatAnalysisNumber(topFiveTotal) +
+                      detail:
+                          _formatAnalysisNumber(topFiveTotal) +
                           ' SIM dari ' +
                           _formatAnalysisNumber(periodTotal) +
                           ' SIM tercatat pada periode terpilih.',
@@ -2603,12 +2591,8 @@ class _SimAnalysisSheetContent extends StatelessWidget {
               final card = categories[index];
               final annual = yearByCategory[card.label];
               final periodValue = _analysisInt(card.value);
-              final yearValue = annual == null
-                  ? 0
-                  : _analysisInt(annual.value);
-              final share = yearValue > 0
-                  ? periodValue / yearValue * 100
-                  : 0.0;
+              final yearValue = annual == null ? 0 : _analysisInt(annual.value);
+              final share = yearValue > 0 ? periodValue / yearValue * 100 : 0.0;
               return _AnalysisEntrance(
                 index: index + 12,
                 child: _SimYearComparisonRow(
@@ -2672,7 +2656,8 @@ class _SimAnalysisSheetContent extends StatelessWidget {
             child: _AnalysisInsightRow(
               icon: Icons.pie_chart_rounded,
               title: 'Kategori dominan: ' + dominant.label,
-              description: 'Kategori ini mencatat ' +
+              description:
+                  'Kategori ini mencatat ' +
                   _formatAnalysisNumber(dominantValue) +
                   ' SIM, setara ' +
                   _formatAnalysisPercent(dominantShare) +
@@ -2688,7 +2673,8 @@ class _SimAnalysisSheetContent extends StatelessWidget {
             child: _AnalysisInsightRow(
               icon: Icons.emoji_events_rounded,
               title: 'Pomdam dengan nilai tertinggi',
-              description: leader.name +
+              description:
+                  leader.name +
                   ' berada di peringkat pertama dengan ' +
                   _formatAnalysisNumber(leader.value) +
                   ' SIM atau ' +
@@ -2704,7 +2690,8 @@ class _SimAnalysisSheetContent extends StatelessWidget {
           child: _AnalysisInsightRow(
             icon: Icons.groups_rounded,
             title: 'Konsentrasi lima Pomdam teratas',
-            description: 'Lima peringkat teratas secara gabungan mencatat ' +
+            description:
+                'Lima peringkat teratas secara gabungan mencatat ' +
                 _formatAnalysisNumber(topFiveTotal) +
                 ' SIM (' +
                 _formatAnalysisPercent(topFiveShare) +
@@ -2718,7 +2705,8 @@ class _SimAnalysisSheetContent extends StatelessWidget {
           child: _AnalysisInsightRow(
             icon: Icons.calendar_month_rounded,
             title: 'Konteks tahun berjalan',
-            description: 'Periode terpilih mencatat ' +
+            description:
+                'Periode terpilih mencatat ' +
                 _formatAnalysisNumber(periodTotal) +
                 ' dari ' +
                 _formatAnalysisNumber(yearTotal) +

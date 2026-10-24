@@ -889,10 +889,7 @@ void main() {
         expect(find.text('RINGKASAN EKSEKUTIF'), findsOneWidget);
         expect(find.text('KOMPOSISI JENIS SIM'), findsOneWidget);
         expect(find.text('RINCIAN VS KUMULATIF'), findsOneWidget);
-        expect(
-          find.text('POMDAM DENGAN PENERBITAN TERTINGGI'),
-          findsOneWidget,
-        );
+        expect(find.text('POMDAM DENGAN PENERBITAN TERTINGGI'), findsOneWidget);
         expect(find.text('TEMUAN UTAMA'), findsOneWidget);
         expect(find.text('KONTRIBUSI TOP 5 POMDAM'), findsOneWidget);
         expect(tester.takeException(), isNull);
