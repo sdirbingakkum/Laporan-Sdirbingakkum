@@ -879,9 +879,19 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: 'Report page overflow before opening analysis at $size',
+        );
 
         await tester.ensureVisible(find.text('STATISTIK'));
         await tester.pumpAndSettle();
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: 'Report page overflow after scrolling at $size',
+        );
         await tester.tap(find.text('STATISTIK'));
         await tester.pumpAndSettle();
 
@@ -894,7 +904,11 @@ void main() {
         expect(find.text('POMDAM DENGAN PENERBITAN TERTINGGI'), findsOneWidget);
         expect(find.text('TEMUAN UTAMA'), findsOneWidget);
         expect(find.text('KONTRIBUSI TOP 5 POMDAM'), findsOneWidget);
-        expect(tester.takeException(), isNull);
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: 'Analysis sheet overflow at $size',
+        );
 
         await tester.tap(find.byTooltip('Tutup analisis'));
         await tester.pumpAndSettle();
