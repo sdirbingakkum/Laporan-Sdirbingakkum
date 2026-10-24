@@ -1411,8 +1411,6 @@ Future<void> _showRankingSheet(
   }
 
   final periodTotal = selectedTotal ?? sumCards(analysisCards);
-  final yearTotal = sumCards(yearToDateCards);
-  final topFiveTotal = ranking.fold<int>(0, (sum, item) => sum + item.value);
   final periodTitle = selectedPeriodLabel ?? 'PERIODE TERPILIH';
   final yearLabel = (yearToDateLabel ?? '').split('·').first.trim();
   final periodCaption = yearLabel.isEmpty
