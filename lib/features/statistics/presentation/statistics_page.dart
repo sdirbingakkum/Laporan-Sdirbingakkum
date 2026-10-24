@@ -1603,6 +1603,7 @@ Future<void> _showRankingSheet(
                           ),
                           child: const Icon(
                             Icons.bar_chart_rounded,
+                            key: ValueKey('analysis-sheet-header-icon'),
                             size: 23,
                           ),
                         ),
