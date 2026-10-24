@@ -861,6 +861,48 @@ void main() {
     expect(find.byKey(const ValueKey('report-period-columns')), findsOneWidget);
   });
 
+  testWidgets(
+    'SIM TNI animated analysis sheet is detailed and responsive on mobile',
+    (tester) async {
+      const sizes = <Size>[Size(390, 844), Size(320, 568)];
+
+      for (final size in sizes) {
+        await _setSurfaceSize(tester, size);
+        await tester.pumpWidget(
+          MaterialApp(
+            home: StatisticsPage(
+              module: StatisticsModule.simTni,
+              dataLoader: (module) =>
+                  _testSelectablePeriodData(module, 'month:9'),
+              periodDataLoader: _testSelectablePeriodData,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('STATISTIK'));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(DraggableScrollableSheet), findsOneWidget);
+        expect(find.text('ANALISIS SIM TNI'), findsOneWidget);
+        expect(find.text('TOTAL PENERBITAN'), findsOneWidget);
+        expect(find.text('RINGKASAN EKSEKUTIF'), findsOneWidget);
+        expect(find.text('KOMPOSISI JENIS SIM'), findsOneWidget);
+        expect(find.text('RINCIAN VS KUMULATIF'), findsOneWidget);
+        expect(
+          find.text('POMDAM DENGAN PENERBITAN TERTINGGI'),
+          findsOneWidget,
+        );
+        expect(find.text('TEMUAN UTAMA'), findsOneWidget);
+        expect(find.text('KONTRIBUSI TOP 5 POMDAM'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+
+        await tester.tap(find.byTooltip('Tutup analisis'));
+        await tester.pumpAndSettle();
+      }
+    },
+  );
+
   testWidgets('PROVOS shows only the three cumulative indicators', (
     tester,
   ) async {
