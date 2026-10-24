@@ -791,7 +791,7 @@ void main() {
       find.byKey(const ValueKey('laka-lalin-period-dropdown')),
       findsOneWidget,
     );
-    expect(find.text('106'), findsOneWidget);
+    expect(find.text('106'), findsNWidgets(2));
     expect(find.text('42'), findsNothing);
     expect(find.text('9'), findsOneWidget);
 
@@ -803,7 +803,7 @@ void main() {
     await tester.tap(find.text('TRIWULAN III'));
     await tester.pumpAndSettle();
 
-    expect(find.text('106'), findsOneWidget);
+    expect(find.text('106'), findsNWidgets(2));
     expect(find.text('42'), findsOneWidget);
     expect(find.text('9'), findsNothing);
     expect(find.text('24'), findsOneWidget);
