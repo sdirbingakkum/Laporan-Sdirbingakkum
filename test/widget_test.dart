@@ -911,7 +911,10 @@ void main() {
         expect(find.text('JENIS SIM DITAMPILKAN'), findsOneWidget);
         expect(find.text('SELURUH POMDAM'), findsOneWidget);
         expect(find.text('POMDAM DENGAN PENERBITAN'), findsOneWidget);
-        expect(find.text('DISTRIBUSI PENERBITAN SELURUH POMDAM'), findsOneWidget);
+        expect(
+          find.text('DISTRIBUSI PENERBITAN SELURUH POMDAM'),
+          findsOneWidget,
+        );
         expect(find.text('POMDAM TEST'), findsOneWidget);
         expect(find.text('POMDAM BARAT'), findsOneWidget);
         expect(find.text('POMDAM NIHIL'), findsOneWidget);

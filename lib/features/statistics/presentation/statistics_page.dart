@@ -2491,7 +2491,9 @@ class _SimAnalysisSheetContent extends StatelessWidget {
     final categoryDenominator = categoryTotal > 0 ? categoryTotal : periodTotal;
     final ytdShare = yearTotal > 0 ? periodTotal / yearTotal * 100 : 0.0;
     final pomdamTotal = ranking.fold<int>(0, (sum, item) => sum + item.value);
-    final contributingPomdamCount = ranking.where((item) => item.value > 0).length;
+    final contributingPomdamCount = ranking
+        .where((item) => item.value > 0)
+        .length;
     final zeroValuePomdamCount = ranking.length - contributingPomdamCount;
     final categoryTotalMatches = categoryTotal == periodTotal;
     final pomdamTotalMatches = pomdamTotal == periodTotal;
