@@ -985,113 +985,116 @@ void main() {
     'Pelanggaran and Laka-Lalin show cumulative total cards on the main report page',
     (tester) async {
       await _setSurfaceSize(tester, const Size(390, 844));
-      const cases = <({
-        StatisticsModule module,
-        String label,
-        String total,
-        StatisticsViewData data,
-      })>[
-        (
-          module: StatisticsModule.pelanggaran,
-          label: 'TOTAL PELANGGARAN',
-          total: '100',
-          data: StatisticsViewData(
-            columns: [
-              StatisticsColumnData(
-                label: '2026 · JAN–SEP',
-                cards: [
-                  StatisticsCardData(
-                    label: 'TATIB',
-                    value: '40',
-                    color: Color(0xFFF59E0B),
+      const cases =
+          <
+            ({
+              StatisticsModule module,
+              String label,
+              String total,
+              StatisticsViewData data,
+            })
+          >[
+            (
+              module: StatisticsModule.pelanggaran,
+              label: 'TOTAL PELANGGARAN',
+              total: '100',
+              data: StatisticsViewData(
+                columns: [
+                  StatisticsColumnData(
+                    label: '2026 · JAN–SEP',
+                    cards: [
+                      StatisticsCardData(
+                        label: 'TATIB',
+                        value: '40',
+                        color: Color(0xFFF59E0B),
+                      ),
+                      StatisticsCardData(
+                        label: 'LALIN',
+                        value: '60',
+                        color: Color(0xFF38BDF8),
+                      ),
+                    ],
                   ),
-                  StatisticsCardData(
-                    label: 'LALIN',
-                    value: '60',
-                    color: Color(0xFF38BDF8),
-                  ),
-                ],
-              ),
-              StatisticsColumnData(
-                label: 'SEP',
-                cards: [
-                  StatisticsCardData(
-                    label: 'TATIB',
-                    value: '4',
-                    color: Color(0xFFF59E0B),
-                  ),
-                  StatisticsCardData(
-                    label: 'LALIN',
-                    value: '6',
-                    color: Color(0xFF38BDF8),
-                  ),
-                ],
-              ),
-            ],
-            ranking: [],
-          ),
-        ),
-        (
-          module: StatisticsModule.lakaLalin,
-          label: 'TOTAL KASUS LAKA-LALIN',
-          total: '20',
-          data: StatisticsViewData(
-            columns: [
-              StatisticsColumnData(
-                label: '2026 · JAN–SEP',
-                cards: [
-                  StatisticsCardData(
-                    label: 'JUMLAH KASUS',
-                    value: '20',
-                    color: Color(0xFF38BDF8),
-                  ),
-                  StatisticsCardData(
-                    label: 'LAKA GANDA',
-                    value: '8',
-                    color: Color(0xFFF97316),
-                  ),
-                  StatisticsCardData(
-                    label: 'TUNGGAL',
-                    value: '7',
-                    color: Color(0xFFF59E0B),
-                  ),
-                  StatisticsCardData(
-                    label: 'TABRAK LARI',
-                    value: '5',
-                    color: Color(0xFFEF4444),
+                  StatisticsColumnData(
+                    label: 'SEP',
+                    cards: [
+                      StatisticsCardData(
+                        label: 'TATIB',
+                        value: '4',
+                        color: Color(0xFFF59E0B),
+                      ),
+                      StatisticsCardData(
+                        label: 'LALIN',
+                        value: '6',
+                        color: Color(0xFF38BDF8),
+                      ),
+                    ],
                   ),
                 ],
+                ranking: [],
               ),
-              StatisticsColumnData(
-                label: 'SEP',
-                cards: [
-                  StatisticsCardData(
-                    label: 'JUMLAH KASUS',
-                    value: '7',
-                    color: Color(0xFF38BDF8),
+            ),
+            (
+              module: StatisticsModule.lakaLalin,
+              label: 'TOTAL KASUS LAKA-LALIN',
+              total: '20',
+              data: StatisticsViewData(
+                columns: [
+                  StatisticsColumnData(
+                    label: '2026 · JAN–SEP',
+                    cards: [
+                      StatisticsCardData(
+                        label: 'JUMLAH KASUS',
+                        value: '20',
+                        color: Color(0xFF38BDF8),
+                      ),
+                      StatisticsCardData(
+                        label: 'LAKA GANDA',
+                        value: '8',
+                        color: Color(0xFFF97316),
+                      ),
+                      StatisticsCardData(
+                        label: 'TUNGGAL',
+                        value: '7',
+                        color: Color(0xFFF59E0B),
+                      ),
+                      StatisticsCardData(
+                        label: 'TABRAK LARI',
+                        value: '5',
+                        color: Color(0xFFEF4444),
+                      ),
+                    ],
                   ),
-                  StatisticsCardData(
-                    label: 'LAKA GANDA',
-                    value: '3',
-                    color: Color(0xFFF97316),
-                  ),
-                  StatisticsCardData(
-                    label: 'TUNGGAL',
-                    value: '2',
-                    color: Color(0xFFF59E0B),
-                  ),
-                  StatisticsCardData(
-                    label: 'TABRAK LARI',
-                    value: '2',
-                    color: Color(0xFFEF4444),
+                  StatisticsColumnData(
+                    label: 'SEP',
+                    cards: [
+                      StatisticsCardData(
+                        label: 'JUMLAH KASUS',
+                        value: '7',
+                        color: Color(0xFF38BDF8),
+                      ),
+                      StatisticsCardData(
+                        label: 'LAKA GANDA',
+                        value: '3',
+                        color: Color(0xFFF97316),
+                      ),
+                      StatisticsCardData(
+                        label: 'TUNGGAL',
+                        value: '2',
+                        color: Color(0xFFF59E0B),
+                      ),
+                      StatisticsCardData(
+                        label: 'TABRAK LARI',
+                        value: '2',
+                        color: Color(0xFFEF4444),
+                      ),
+                    ],
                   ),
                 ],
+                ranking: [],
               ),
-            ],
-            ranking: [],
-          ),
-        ),
-      ];
+            ),
+          ];
 
       for (final scenario in cases) {
         await tester.pumpWidget(
@@ -1114,10 +1117,7 @@ void main() {
           findsOneWidget,
         );
         expect(
-          find.descendant(
-            of: totalCard,
-            matching: find.text(scenario.total),
-          ),
+          find.descendant(of: totalCard, matching: find.text(scenario.total)),
           findsOneWidget,
           reason: 'Total must come from the cumulative/year-to-date column.',
         );

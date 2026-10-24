@@ -1337,7 +1337,9 @@ class _ContentBody extends StatelessWidget {
       StatisticsModule.pelanggaran =>
         columns.isEmpty ? 0 : _reportCardsTotal(columns.first.cards),
       StatisticsModule.lakaLalin =>
-        columns.isEmpty ? 0 : _reportCardCount(columns.first.cards, 'JUMLAH KASUS'),
+        columns.isEmpty
+            ? 0
+            : _reportCardCount(columns.first.cards, 'JUMLAH KASUS'),
       StatisticsModule.simTni => totalSim,
       StatisticsModule.k9 => null,
       StatisticsModule.provos => null,
