@@ -907,6 +907,73 @@ void main() {
   );
 
   testWidgets(
+    'every report keeps the analysis button fixed and opens its analysis sheet',
+    (tester) async {
+      await _setSurfaceSize(tester, const Size(390, 844));
+      const titles = <StatisticsModule, String>{
+        StatisticsModule.pelanggaran: 'PELANGGARAN',
+        StatisticsModule.lakaLalin: 'LAKA-LALIN',
+        StatisticsModule.simTni: 'SIM TNI',
+        StatisticsModule.k9: 'K9',
+        StatisticsModule.provos: 'PROVOS TNI-AD',
+      };
+
+      for (final module in StatisticsModule.values) {
+        final title = titles[module]!;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: StatisticsPage(
+              module: module,
+              dataLoader: (_) async => StatisticsViewData(
+                columns: [
+                  StatisticsColumnData(
+                    label: '2026',
+                    cards: List.generate(
+                      14,
+                      (index) => StatisticsCardData(
+                        label: 'INDIKATOR $index',
+                        value: '$index',
+                        color: const Color(0xFF38BDF8),
+                      ),
+                    ),
+                  ),
+                ],
+                ranking: const [],
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final fixedBar = find.byKey(const ValueKey('fixed-analysis-bar'));
+        expect(fixedBar, findsOneWidget, reason: '$title fixed action');
+        expect(find.text('STATISTIK'), findsOneWidget);
+        final initialRect = tester.getRect(fixedBar);
+
+        await tester.drag(
+          find.byKey(const ValueKey('statistics-content')),
+          const Offset(0, -420),
+        );
+        await tester.pumpAndSettle();
+
+        final scrolledRect = tester.getRect(fixedBar);
+        expect(scrolledRect.top, closeTo(initialRect.top, 0.1));
+        expect(scrolledRect.bottom, closeTo(initialRect.bottom, 0.1));
+        expect(scrolledRect.bottom, lessThanOrEqualTo(844));
+
+        await tester.tap(find.text('STATISTIK'));
+        await tester.pumpAndSettle();
+        expect(find.byType(DraggableScrollableSheet), findsOneWidget);
+        expect(find.text('ANALISIS $title'), findsOneWidget);
+        expect(tester.takeException(), isNull, reason: '$title analysis sheet');
+
+        await tester.tap(find.byTooltip('Tutup analisis'));
+        await tester.pumpAndSettle();
+      }
+    },
+  );
+
+  testWidgets(
     'SIM TNI animated analysis sheet is detailed and responsive on mobile',
     (tester) async {
       const sizes = <Size>[Size(390, 844), Size(320, 568)];
