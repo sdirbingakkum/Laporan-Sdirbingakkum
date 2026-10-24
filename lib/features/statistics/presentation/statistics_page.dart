@@ -691,6 +691,7 @@ class _SupabaseReportRepository {
         year: reportYear,
         startMonth: selectedOption.startMonth,
         endMonth: selectedOption.endMonth,
+        includeAllPomdams: true,
       ),
       periodOptions: options,
       selectedPeriodKey: selectedOption.key,
@@ -974,6 +975,7 @@ class _SupabaseReportRepository {
         year: latest.year,
         startMonth: selected.startMonth,
         endMonth: selected.endMonth,
+        includeAllPomdams: true,
       ),
       periodOptions: options,
       selectedPeriodKey: selected.key,
@@ -1267,6 +1269,7 @@ class _SupabaseReportRepository {
         year: latest.year,
         startMonth: 1,
         endMonth: latest.month,
+        includeAllPomdams: true,
       ),
     );
   }
@@ -1622,9 +1625,7 @@ Future<void> _showRankingSheet(
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                module == StatisticsModule.simTni
-                                    ? periodCaption
-                                    : 'PUSPOMAD · RINGKASAN LAPORAN',
+                                periodCaption,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -1671,49 +1672,17 @@ Future<void> _showRankingSheet(
                                       yearToDateLabel ?? 'KUMULATIF',
                                   accent: accent,
                                 )
-                              : Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    _AnalysisEntrance(
-                                      index: 0,
-                                      child: _AnalysisSectionTitle(
-                                        title: module == StatisticsModule.k9
-                                            ? 'RINGKASAN UNIT K9'
-                                            : 'POMDAM DENGAN NILAI TERTINGGI',
-                                        subtitle: module == StatisticsModule.k9
-                                            ? 'Pilih unit untuk melihat rincian.'
-                                            : 'Urutan berdasarkan nilai agregat laporan.',
-                                        accent: accent,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    if (ranking.isEmpty)
-                                      const _AnalysisEmptyState()
-                                    else
-                                      for (
-                                        var index = 0;
-                                        index < ranking.length;
-                                        index++
-                                      ) ...[
-                                        _AnalysisEntrance(
-                                          index: index + 1,
-                                          child: _AnalysisRankingRow(
-                                            rank: index + 1,
-                                            name: ranking[index].name,
-                                            value: ranking[index].value,
-                                            maxValue: ranking.first.value,
-                                            accent: accent,
-                                            onTap: onItemTap == null
-                                                ? null
-                                                : () => onItemTap(index),
-                                          ),
-                                        ),
-                                        if (index != ranking.length - 1)
-                                          const SizedBox(height: 9),
-                                      ],
-                                  ],
-                                ),
+                              : _ReportAnalysisSheetContent(
+                                  module: module,
+                                  cards: analysisCards,
+                                  yearToDateCards: yearToDateCards,
+                                  ranking: ranking,
+                                  periodLabel: periodTitle,
+                                  yearToDateLabel:
+                                      yearToDateLabel ?? periodTitle,
+                                  accent: accent,
+                                  onItemTap: onItemTap,
+                                )
                         ),
                       ),
                     ),
@@ -2497,7 +2466,7 @@ class _SimYearComparisonRow extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           const Text(
-            'Kontribusi periode pilihan terhadap akumulasi jenis SIM ini.',
+            'Kontribusi periode terpilih terhadap akumulasi pada kategori ini.',
             style: TextStyle(color: _muted, fontSize: 8, height: 1.35),
           ),
         ],
@@ -2789,6 +2758,954 @@ class _SimAnalysisSheetContent extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+
+class _ReportMetric {
+  const _ReportMetric({
+    required this.title,
+    required this.value,
+    required this.detail,
+    required this.icon,
+  });
+
+  final String title;
+  final String value;
+  final String detail;
+  final IconData icon;
+}
+
+class _ReportInsight {
+  const _ReportInsight({
+    required this.title,
+    required this.description,
+    required this.icon,
+  });
+
+  final String title;
+  final String description;
+  final IconData icon;
+}
+
+int _reportCardCount(List<_StatCardData> cards, String label) {
+  for (final card in cards) {
+    if (card.label.trim().toUpperCase() == label.toUpperCase()) {
+      return _analysisInt(card.value);
+    }
+  }
+  return 0;
+}
+
+int _reportCardsTotal(List<_StatCardData> cards) {
+  return cards.fold<int>(0, (sum, card) => sum + _analysisInt(card.value));
+}
+
+String _reportPercent(int value, int denominator) {
+  return _formatAnalysisPercent(
+    denominator > 0 ? value / denominator * 100 : 0,
+  );
+}
+
+class _ReportAnalysisSheetContent extends StatelessWidget {
+  const _ReportAnalysisSheetContent({
+    required this.module,
+    required this.cards,
+    required this.yearToDateCards,
+    required this.ranking,
+    required this.periodLabel,
+    required this.yearToDateLabel,
+    required this.accent,
+    this.onItemTap,
+  });
+
+  final StatisticsModule module;
+  final List<_StatCardData> cards;
+  final List<_StatCardData> yearToDateCards;
+  final List<_RankData> ranking;
+  final String periodLabel;
+  final String yearToDateLabel;
+  final Color accent;
+  final Future<void> Function(int index)? onItemTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasReportData = !periodLabel.toUpperCase().contains('BELUM ADA DATA');
+    final isPelanggaran = module == StatisticsModule.pelanggaran;
+    final isLaka = module == StatisticsModule.lakaLalin;
+    final isK9 = module == StatisticsModule.k9;
+    final isProvos = module == StatisticsModule.provos;
+    final hasPeriodComparison =
+        (isPelanggaran || isLaka) &&
+        yearToDateCards.isNotEmpty &&
+        periodLabel != yearToDateLabel &&
+        hasReportData;
+
+    final metricLabel = switch (module) {
+      StatisticsModule.pelanggaran => 'TOTAL PELANGGARAN',
+      StatisticsModule.lakaLalin => 'TOTAL KASUS LAKA-LALIN',
+      StatisticsModule.simTni => 'TOTAL PENERBITAN',
+      StatisticsModule.k9 => 'POPULASI K9 NYATA',
+      StatisticsModule.provos => 'JUMLAH PERSONEL',
+    };
+    final unitLabel = switch (module) {
+      StatisticsModule.pelanggaran => 'catatan pelanggaran',
+      StatisticsModule.lakaLalin => 'kasus',
+      StatisticsModule.simTni => 'SIM',
+      StatisticsModule.k9 => 'anjing K9',
+      StatisticsModule.provos => 'personel',
+    };
+    final total = switch (module) {
+      StatisticsModule.pelanggaran => _reportCardsTotal(cards),
+      StatisticsModule.lakaLalin => _reportCardCount(cards, 'JUMLAH KASUS'),
+      StatisticsModule.simTni => 0,
+      StatisticsModule.k9 => _reportCardCount(cards, 'NYATA'),
+      StatisticsModule.provos => _reportCardCount(cards, 'JUMLAH'),
+    };
+    final yearTotal = switch (module) {
+      StatisticsModule.pelanggaran => _reportCardsTotal(yearToDateCards),
+      StatisticsModule.lakaLalin =>
+        _reportCardCount(yearToDateCards, 'JUMLAH KASUS'),
+      StatisticsModule.simTni => 0,
+      StatisticsModule.k9 => _reportCardCount(yearToDateCards, 'NYATA'),
+      StatisticsModule.provos => _reportCardCount(yearToDateCards, 'JUMLAH'),
+    };
+    final yearShare = yearTotal > 0 ? total / yearTotal * 100 : 0.0;
+
+    final categoryCards = switch (module) {
+      StatisticsModule.pelanggaran => cards,
+      StatisticsModule.lakaLalin =>
+        cards.where((card) => card.label.toUpperCase() != 'JUMLAH KASUS').toList(),
+      StatisticsModule.simTni => const <_StatCardData>[],
+      StatisticsModule.k9 => const <_StatCardData>[],
+      StatisticsModule.provos => cards
+          .where(
+            (card) =>
+                card.label.toUpperCase() == 'SUDAH DIK/TAR' ||
+                card.label.toUpperCase() == 'BELUM DIK/TAR',
+          )
+          .toList(),
+    };
+    final compositionDenominator = isProvos
+        ? _reportCardCount(cards, 'JUMLAH')
+        : total;
+    final categoryTotal = _reportCardsTotal(categoryCards);
+    final pomdamTotal = ranking.fold<int>(
+      0,
+      (sum, item) => sum + item.value,
+    );
+    final activePomdams = ranking.where((item) => item.value > 0).length;
+    final zeroPomdams = ranking.length - activePomdams;
+    final sortedCategories = [...categoryCards]
+      ..sort(
+        (a, b) => _analysisInt(b.value).compareTo(_analysisInt(a.value)),
+      );
+    final topCategory = sortedCategories.isEmpty ? null : sortedCategories.first;
+    final topPomdam = ranking.isEmpty ? null : ranking.first;
+
+    final metrics = <_ReportMetric>[];
+    if (isPelanggaran) {
+      for (final card in cards) {
+        final value = _analysisInt(card.value);
+        metrics.add(
+          _ReportMetric(
+            title: card.label,
+            value: _formatAnalysisNumber(value),
+            detail: '${_reportPercent(value, total)} dari seluruh pelanggaran periode ini.',
+            icon: card.label.toUpperCase() == 'TATIB'
+                ? Icons.gavel_rounded
+                : Icons.directions_car_rounded,
+          ),
+        );
+      }
+      metrics.add(
+        _ReportMetric(
+          title: 'POMDAM AKTIF',
+          value: '${activePomdams}/${ranking.length}',
+          detail: '${zeroPomdams} Pomdam bernilai 0; tetap ditampilkan dalam daftar.',
+          icon: Icons.military_tech_rounded,
+        ),
+      );
+    } else if (isLaka) {
+      for (final label in const ['LAKA GANDA', 'TUNGGAL', 'TABRAK LARI']) {
+        final value = _reportCardCount(cards, label);
+        final icon = label == 'LAKA GANDA'
+            ? Icons.car_crash_rounded
+            : label == 'TUNGGAL'
+            ? Icons.directions_car_rounded
+            : Icons.report_gmailerrorred_rounded;
+        metrics.add(
+          _ReportMetric(
+            title: label,
+            value: _formatAnalysisNumber(value),
+            detail: '${_reportPercent(value, total)} dari total kasus pada periode pilihan.',
+            icon: icon,
+          ),
+        );
+      }
+      metrics.add(
+        _ReportMetric(
+          title: 'POMDAM AKTIF',
+          value: '${activePomdams}/${ranking.length}',
+          detail: '${zeroPomdams} Pomdam tanpa kasus tercatat pada periode ini.',
+          icon: Icons.military_tech_rounded,
+        ),
+      );
+    } else if (isK9) {
+      final orgRecordedUnits = _k9Units.where((unit) => unit.org != null).length;
+      final shortageRecordedUnits =
+          _k9Units.where((unit) => unit.shortage != null).length;
+      metrics.addAll([
+        _ReportMetric(
+          title: 'NYATA',
+          value: _formatAnalysisNumber(_reportCardCount(cards, 'NYATA')),
+          detail: 'Jumlah K9 nyata yang tercatat pada rekap.',
+          icon: Icons.pets_rounded,
+        ),
+        _ReportMetric(
+          title: 'SESUAI ORGAS',
+          value: _formatAnalysisNumber(_reportCardCount(cards, 'SESUAI ORGAS')),
+          detail: 'Nilai org tersedia untuk $orgRecordedUnits dari ${_k9Units.length} unit yang ditampilkan.',
+          icon: Icons.fact_check_rounded,
+        ),
+        _ReportMetric(
+          title: 'KEKURANGAN',
+          value: _formatAnalysisNumber(_reportCardCount(cards, 'KEKURANGAN')),
+          detail: 'Kekurangan tercatat pada $shortageRecordedUnits unit; nilai kosong bukan dianggap nol.',
+          icon: Icons.warning_amber_rounded,
+        ),
+        _ReportMetric(
+          title: 'UNIT K9',
+          value: _k9Units.length.toString(),
+          detail: 'Jumlah unit yang memiliki rincian K9 pada tampilan ini.',
+          icon: Icons.groups_rounded,
+        ),
+      ]);
+    } else if (isProvos) {
+      final personnel = _reportCardCount(cards, 'JUMLAH');
+      final completed = _reportCardCount(cards, 'SUDAH DIK/TAR');
+      final pending = _reportCardCount(cards, 'BELUM DIK/TAR');
+      metrics.addAll([
+        _ReportMetric(
+          title: 'JUMLAH PERSONEL',
+          value: _formatAnalysisNumber(personnel),
+          detail: 'Akumulasi personel pada tahun/periode laporan yang ditampilkan.',
+          icon: Icons.groups_rounded,
+        ),
+        _ReportMetric(
+          title: 'SUDAH DIK/TAR',
+          value: _formatAnalysisNumber(completed),
+          detail: '${_reportPercent(completed, personnel)} dibanding total personel.',
+          icon: Icons.verified_user_rounded,
+        ),
+        _ReportMetric(
+          title: 'BELUM DIK/TAR',
+          value: _formatAnalysisNumber(pending),
+          detail: '${_reportPercent(pending, personnel)} dibanding total personel.',
+          icon: Icons.pending_actions_rounded,
+        ),
+        _ReportMetric(
+          title: 'POMDAM AKTIF',
+          value: '${activePomdams}/${ranking.length}',
+          detail: 'Pomdam dengan nilai personel lebih dari nol pada periode ini.',
+          icon: Icons.military_tech_rounded,
+        ),
+      ]);
+    }
+
+    final insights = <_ReportInsight>[];
+    if (!hasReportData) {
+      insights.add(
+        const _ReportInsight(
+          title: 'Data belum tersedia',
+          description: 'Sumber laporan belum menyediakan periode yang dapat dianalisis. Angka 0 pada tampilan ini tidak otomatis berarti tidak ada kejadian; pastikan laporan sudah diinput.',
+          icon: Icons.info_outline_rounded,
+        ),
+      );
+    } else if (isPelanggaran) {
+      if (topCategory != null) {
+        insights.add(
+          _ReportInsight(
+            title: 'Kategori paling dominan',
+            description: '${topCategory.label} memiliki ${_formatAnalysisNumber(_analysisInt(topCategory.value))} catatan atau ${_reportPercent(_analysisInt(topCategory.value), total)} dari total periode. Ini menunjukkan komposisi catatan, bukan dengan sendirinya tren naik atau turun.',
+            icon: Icons.insights_rounded,
+          ),
+        );
+      }
+      insights.add(
+        _ReportInsight(
+          title: 'Cakupan pencatatan Pomdam',
+          description: '${activePomdams} dari ${ranking.length} Pomdam memiliki nilai lebih dari nol; ${zeroPomdams} Pomdam tetap tercantum dengan nilai 0.',
+          icon: Icons.location_city_rounded,
+        ),
+      );
+      insights.add(
+        _ReportInsight(
+          title: 'Rekonsiliasi total Pomdam',
+          description: 'Jumlah seluruh baris Pomdam adalah ${_formatAnalysisNumber(pomdamTotal)}, sedangkan total kategori pelanggaran adalah ${_formatAnalysisNumber(total)}. ${pomdamTotal == total ? 'Keduanya selaras.' : 'Ada selisih ${_formatAnalysisNumber((pomdamTotal - total).abs())}; periksa kategori sumber dan rekap per Pomdam.'}',
+          icon: Icons.fact_check_rounded,
+        ),
+      );
+    } else if (isLaka) {
+      final componentMatches = categoryTotal == total;
+      final leadingType = sortedCategories.isEmpty ? null : sortedCategories.first;
+      if (leadingType != null) {
+        insights.add(
+          _ReportInsight(
+            title: 'Jenis kasus paling dominan',
+            description: '${leadingType.label} tercatat ${_formatAnalysisNumber(_analysisInt(leadingType.value))} kasus atau ${_reportPercent(_analysisInt(leadingType.value), total)} dari total laporan. Gunakan distribusi ini untuk membaca jenis kasus yang paling sering tercatat.',
+            icon: Icons.trending_up_rounded,
+          ),
+        );
+      }
+      insights.add(
+        _ReportInsight(
+          title: 'Rekonsiliasi jenis laka',
+          description: 'Penjumlahan jenis laka adalah ${_formatAnalysisNumber(categoryTotal)}, dibandingkan jumlah kasus ${_formatAnalysisNumber(total)}. ${componentMatches ? 'Rincian jenis cocok dengan total kasus.' : 'Terdapat selisih ${_formatAnalysisNumber((categoryTotal - total).abs())}; periksa pencatatan jenis dan total kasus.'}',
+          icon: Icons.fact_check_rounded,
+        ),
+      );
+      insights.add(
+        _ReportInsight(
+          title: 'Sebaran antar-Pomdam',
+          description: '${activePomdams} dari ${ranking.length} Pomdam memiliki kasus tercatat. ${topPomdam == null ? 'Belum ada Pomdam yang bisa dibandingkan.' : '${topPomdam.name} berada di peringkat pertama dengan ${_formatAnalysisNumber(topPomdam.value)} kasus.'}',
+          icon: Icons.location_city_rounded,
+        ),
+      );
+    } else if (isK9) {
+      final orgRecordedUnits = _k9Units.where((unit) => unit.org != null).length;
+      final shortageRecordedUnits =
+          _k9Units.where((unit) => unit.shortage != null).length;
+      final actualTotal = _k9Units.fold<int>(0, (sum, unit) => sum + unit.actual);
+      final actualLeader = [..._k9Units]
+        ..sort((a, b) => b.actual.compareTo(a.actual));
+      insights.add(
+        _ReportInsight(
+          title: 'Unit dengan K9 nyata terbanyak',
+          description: actualLeader.isEmpty ? 'Belum ada rincian unit K9.' : '${actualLeader.first.name} mencatat ${_formatAnalysisNumber(actualLeader.first.actual)} K9 atau ${_reportPercent(actualLeader.first.actual, actualTotal)} dari seluruh K9 nyata yang dirinci.',
+          icon: Icons.emoji_events_rounded,
+        ),
+      );
+      insights.add(
+        _ReportInsight(
+          title: 'Kelengkapan data organisasi',
+          description: 'Nilai sesuai orgas tersedia pada $orgRecordedUnits dari ${_k9Units.length} unit; nilai kekurangan tercatat pada $shortageRecordedUnits unit. Bagian yang kosong ditandai belum dicatat, bukan dinormalisasi menjadi nol.',
+          icon: Icons.fact_check_rounded,
+        ),
+      );
+    } else if (isProvos) {
+      final personnel = _reportCardCount(cards, 'JUMLAH');
+      final completed = _reportCardCount(cards, 'SUDAH DIK/TAR');
+      final pending = _reportCardCount(cards, 'BELUM DIK/TAR');
+      final statusTotal = completed + pending;
+      final gap = (personnel - statusTotal).abs();
+      insights.add(
+        _ReportInsight(
+          title: 'Cakupan status DIK/TAR',
+          description: 'Status yang tercatat berjumlah ${_formatAnalysisNumber(statusTotal)} dibanding total personel ${_formatAnalysisNumber(personnel)}. ${statusTotal == personnel ? 'Jumlah status sesuai dengan total personel.' : 'Ada selisih ${_formatAnalysisNumber(gap)}; angka ini perlu diverifikasi sebelum dipakai sebagai persentase penyelesaian final.'}',
+          icon: Icons.fact_check_rounded,
+        ),
+      );
+      insights.add(
+        _ReportInsight(
+          title: 'Prioritas tindak lanjut',
+          description: '${_formatAnalysisNumber(pending)} personel masih tercatat BELUM DIK/TAR (${_reportPercent(pending, personnel)} terhadap JUMLAH). Gunakan daftar unit di bawah untuk melihat sebaran personel dan mengarahkan validasi lanjutan.',
+          icon: Icons.flag_rounded,
+        ),
+      );
+      insights.add(
+        _ReportInsight(
+          title: 'Sebaran personel',
+          description: '${activePomdams} dari ${ranking.length} Pomdam memiliki nilai personel lebih dari nol. Nilai ranking merepresentasikan rekap personel, bukan status DIK/TAR terperinci per Pomdam.',
+          icon: Icons.location_city_rounded,
+        ),
+      );
+    }
+
+    final distributionTitle = switch (module) {
+      StatisticsModule.pelanggaran => 'DISTRIBUSI JENIS PELANGGARAN',
+      StatisticsModule.lakaLalin => 'KOMPOSISI JENIS LAKA-LALIN',
+      StatisticsModule.simTni => 'KOMPOSISI SIM',
+      StatisticsModule.k9 => 'KOMPOSISI K9 PER UNIT',
+      StatisticsModule.provos => 'STATUS DIK/TAR',
+    };
+    final distributionSubtitle = switch (module) {
+      StatisticsModule.pelanggaran => 'Porsi setiap kategori terhadap seluruh catatan pada periode pilihan.',
+      StatisticsModule.lakaLalin => 'Persentase jenis kasus dihitung terhadap jumlah kasus, agar selisih rekap tetap terlihat.',
+      StatisticsModule.simTni => 'Komposisi data laporan.',
+      StatisticsModule.k9 => 'Jumlah K9 nyata dan kelengkapan data organisasi per unit.',
+      StatisticsModule.provos => 'Persentase status dibanding total personel. Jika jumlah status berbeda, perbedaan ditampilkan di bagian temuan.',
+    };
+    final pomdamTitle = isK9
+        ? 'RINCIAN SELURUH UNIT K9'
+        : 'DISTRIBUSI SELURUH POMDAM';
+    final pomdamSubtitle = isK9
+        ? 'Rincian nyata, sesuai orgas, dan kekurangan. Ketuk satu unit untuk membuka rincian.'
+        : 'Seluruh Pomdam dari data master disertakan, termasuk nilai 0, diurutkan dari nilai tertinggi.';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _AnalysisEntrance(
+          index: 0,
+          child: _ReportAnalysisHeroCard(
+            total: total,
+            metricLabel: metricLabel,
+            unitLabel: unitLabel,
+            periodCaption: periodLabel,
+            yearToDateLabel: yearToDateLabel,
+            yearTotal: yearTotal,
+            yearShare: yearShare,
+            showYearComparison: hasPeriodComparison,
+            accent: accent,
+          ),
+        ),
+        const SizedBox(height: 18),
+        _AnalysisEntrance(
+          index: 1,
+          child: _AnalysisSectionTitle(
+            title: 'RINGKASAN EKSEKUTIF',
+            subtitle: switch (module) {
+              StatisticsModule.pelanggaran => 'Ringkasan kategori dan cakupan laporan untuk membaca komposisi pelanggaran pada periode terpilih.',
+              StatisticsModule.lakaLalin => 'Ringkasan jumlah kasus, komposisi jenis laka, dan sebaran pencatatan antar-Pomdam.',
+              StatisticsModule.simTni => 'Ringkasan statistik laporan.',
+              StatisticsModule.k9 => 'Ringkasan K9 nyata, data organisasi, dan cakupan rincian unit yang tersedia.',
+              StatisticsModule.provos => 'Ringkasan jumlah personel serta status DIK/TAR; indikator tidak dijumlahkan menjadi satu total.',
+            },
+            accent: accent,
+          ),
+        ),
+        const SizedBox(height: 10),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final oneColumn = constraints.maxWidth < 360;
+            final gap = 10.0;
+            final width = oneColumn
+                ? constraints.maxWidth
+                : (constraints.maxWidth - gap) / 2;
+            return Wrap(
+              spacing: gap,
+              runSpacing: 10,
+              children: [
+                for (var index = 0; index < metrics.length; index++)
+                  SizedBox(
+                    width: !oneColumn &&
+                            metrics.length.isOdd &&
+                            index == metrics.length - 1
+                        ? constraints.maxWidth
+                        : width,
+                    child: _AnalysisEntrance(
+                      index: index + 2,
+                      child: _AnalysisMetricCard(
+                        title: metrics[index].title,
+                        value: metrics[index].value,
+                        detail: metrics[index].detail,
+                        icon: metrics[index].icon,
+                        accent: accent,
+                        largeValue: metrics[index].value.length > 9,
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
+        const SizedBox(height: 22),
+        _AnalysisEntrance(
+          index: 7,
+          child: _AnalysisSectionTitle(
+            title: distributionTitle,
+            subtitle: distributionSubtitle,
+            accent: accent,
+          ),
+        ),
+        const SizedBox(height: 10),
+        if (isK9)
+          for (var index = 0; index < _k9Units.length; index++) ...[
+            _AnalysisEntrance(
+              index: index + 8,
+              child: _K9AnalysisUnitRow(
+                rank: index + 1,
+                unit: _k9Units[index],
+                maxActual: _k9Units.fold<int>(
+                  0,
+                  (maxValue, unit) =>
+                      unit.actual > maxValue ? unit.actual : maxValue,
+                ),
+                totalActual: _k9Units.fold<int>(
+                  0,
+                  (sum, unit) => sum + unit.actual,
+                ),
+                accent: accent,
+                onTap: onItemTap == null ? null : () => onItemTap!(index),
+              ),
+            ),
+            if (index != _k9Units.length - 1) const SizedBox(height: 8),
+          ]
+        else if (categoryCards.isEmpty)
+          const _AnalysisEmptyState()
+        else
+          for (var index = 0; index < categoryCards.length; index++) ...[
+            _AnalysisEntrance(
+              index: index + 8,
+              child: _SimCategoryRow(
+                label: categoryCards[index].label,
+                count: _analysisInt(categoryCards[index].value),
+                share: compositionDenominator > 0
+                    ? _analysisInt(categoryCards[index].value) /
+                        compositionDenominator *
+                        100
+                    : 0,
+                color: categoryCards[index].color,
+              ),
+            ),
+            if (index != categoryCards.length - 1) const SizedBox(height: 8),
+          ],
+        if (hasPeriodComparison) ...[
+          const SizedBox(height: 22),
+          _AnalysisEntrance(
+            index: 13,
+            child: _AnalysisSectionTitle(
+              title: 'PERIODE PILIHAN VS KUMULATIF',
+              subtitle: 'Jumlah periode pilihan dibanding akumulasi Januari sampai periode terbaru yang tersedia.',
+              accent: accent,
+            ),
+          ),
+          const SizedBox(height: 10),
+          for (var index = 0; index < categoryCards.length; index++) ...[
+            Builder(
+              builder: (context) {
+                final card = categoryCards[index];
+                final annualCards = isLaka
+                    ? yearToDateCards
+                        .where((item) => item.label.toUpperCase() != 'JUMLAH KASUS')
+                        .toList()
+                    : yearToDateCards;
+                final annual = annualCards.where((item) => item.label == card.label).firstOrNull;
+                final periodValue = _analysisInt(card.value);
+                final yearValue = annual == null ? 0 : _analysisInt(annual.value);
+                return _AnalysisEntrance(
+                  index: index + 14,
+                  child: _SimYearComparisonRow(
+                    label: card.label,
+                    periodValue: periodValue,
+                    yearValue: yearValue,
+                    periodShare: yearValue > 0
+                        ? periodValue / yearValue * 100
+                        : 0,
+                    color: card.color,
+                  ),
+                );
+              },
+            ),
+            if (index != categoryCards.length - 1) const SizedBox(height: 8),
+          ],
+        ],
+        const SizedBox(height: 22),
+        _AnalysisEntrance(
+          index: 18,
+          child: _AnalysisSectionTitle(
+            title: pomdamTitle,
+            subtitle: pomdamSubtitle,
+            accent: accent,
+          ),
+        ),
+        const SizedBox(height: 10),
+        if (isK9)
+          const SizedBox.shrink()
+        else if (ranking.isEmpty)
+          const _AnalysisEmptyState()
+        else
+          for (var index = 0; index < ranking.length; index++) ...[
+            _AnalysisEntrance(
+              index: index + 19,
+              child: _AnalysisRankingRow(
+                rank: index + 1,
+                name: ranking[index].name,
+                value: ranking[index].value,
+                maxValue: ranking.first.value,
+                accent: accent,
+                shareLabel: _reportPercent(ranking[index].value, total),
+              ),
+            ),
+            if (index != ranking.length - 1) const SizedBox(height: 8),
+          ],
+        const SizedBox(height: 22),
+        _AnalysisEntrance(
+          index: 40,
+          child: _AnalysisSectionTitle(
+            title: 'TEMUAN UTAMA & VALIDASI',
+            subtitle: 'Insight dihitung dari angka agregat yang tampil, tanpa mengarang tren di luar data.',
+            accent: accent,
+          ),
+        ),
+        const SizedBox(height: 10),
+        for (var index = 0; index < insights.length; index++) ...[
+          _AnalysisEntrance(
+            index: index + 41,
+            child: _AnalysisInsightRow(
+              icon: insights[index].icon,
+              title: insights[index].title,
+              description: insights[index].description,
+              accent: accent,
+            ),
+          ),
+          if (index != insights.length - 1) const SizedBox(height: 8),
+        ],
+        const SizedBox(height: 12),
+        Text(
+          'Catatan: persentase dibulatkan satu angka desimal. Nilai organisasi atau kekurangan yang tidak tersedia diperlakukan sebagai belum dicatat, bukan otomatis nol.',
+          style: TextStyle(
+            color: _muted.withValues(alpha: 0.82),
+            fontSize: 9,
+            height: 1.45,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ReportAnalysisHeroCard extends StatelessWidget {
+  const _ReportAnalysisHeroCard({
+    required this.total,
+    required this.metricLabel,
+    required this.unitLabel,
+    required this.periodCaption,
+    required this.yearToDateLabel,
+    required this.yearTotal,
+    required this.yearShare,
+    required this.showYearComparison,
+    required this.accent,
+  });
+
+  final int total;
+  final String metricLabel;
+  final String unitLabel;
+  final String periodCaption;
+  final String yearToDateLabel;
+  final int yearTotal;
+  final double yearShare;
+  final bool showYearComparison;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(18, 17, 18, 16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            accent.withValues(alpha: 0.19),
+            const Color(0xFF12392A).withValues(alpha: 0.94),
+            _surface.withValues(alpha: 0.92),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: accent.withValues(alpha: 0.30)),
+        boxShadow: [
+          BoxShadow(
+            color: accent.withValues(alpha: 0.07),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+          const BoxShadow(
+            color: Colors.black26,
+            blurRadius: 16,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  metricLabel,
+                  style: TextStyle(
+                    color: _muted.withValues(alpha: 0.95),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: accent.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(99),
+                    border: Border.all(color: accent.withValues(alpha: 0.28)),
+                  ),
+                  child: Text(
+                    periodCaption,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: accent,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.25,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 9),
+          TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0, end: total.toDouble()),
+            duration: const Duration(milliseconds: 900),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, child) => Text(
+              _formatAnalysisNumber(value.round()),
+              style: TextStyle(
+                color: _text,
+                fontSize: 39,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -1.5,
+                height: 1.0,
+                shadows: [
+                  Shadow(color: accent.withValues(alpha: 0.34), blurRadius: 18),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            unitLabel,
+            style: TextStyle(
+              color: accent.withValues(alpha: 0.96),
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          if (showYearComparison) ...[
+            const SizedBox(height: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.calendar_month_rounded,
+                  color: accent.withValues(alpha: 0.95),
+                  size: 15,
+                ),
+                const SizedBox(width: 7),
+                Expanded(
+                  child: Text(
+                    'Akumulasi tahun berjalan: ${_formatAnalysisNumber(yearTotal)} $unitLabel ($yearToDateLabel).',
+                    style: const TextStyle(
+                      color: _muted,
+                      fontSize: 10,
+                      height: 1.45,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 11),
+            _AnalysisAnimatedBar(
+              value: yearShare / 100,
+              color: accent,
+              height: 6,
+            ),
+            const SizedBox(height: 7),
+            Text(
+              '${_formatAnalysisPercent(yearShare)} dari akumulasi tahun berjalan berada pada periode pilihan.',
+              style: TextStyle(
+                color: _text.withValues(alpha: 0.88),
+                fontSize: 10,
+                height: 1.35,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ] else ...[
+            const SizedBox(height: 4),
+            const Text(
+              'Ringkasan berdasarkan data yang tersedia pada periode laporan.',
+              style: TextStyle(color: _muted, fontSize: 10, height: 1.4),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _K9AnalysisUnitRow extends StatelessWidget {
+  const _K9AnalysisUnitRow({
+    required this.rank,
+    required this.unit,
+    required this.maxActual,
+    required this.totalActual,
+    required this.accent,
+    this.onTap,
+  });
+
+  final int rank;
+  final _K9UnitData unit;
+  final int maxActual;
+  final int totalActual;
+  final Color accent;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final rankColor = rank == 1
+        ? const Color(0xFFF1D37A)
+        : rank == 2
+        ? const Color(0xFFBBC7CE)
+        : rank == 3
+        ? const Color(0xFFD89B70)
+        : accent;
+    Widget miniValue(String label, String value, Color color) {
+      return Expanded(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.07),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: color.withValues(alpha: 0.16)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: _muted,
+                  fontSize: 8,
+                  height: 1.15,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(11),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.028),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.065)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 30,
+                    height: 30,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: rankColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: rankColor.withValues(alpha: 0.28)),
+                    ),
+                    child: Text(
+                      rank.toString().padLeft(2, '0'),
+                      style: TextStyle(
+                        color: rankColor,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 9),
+                  Expanded(
+                    child: Text(
+                      unit.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: _text,
+                        fontSize: 10,
+                        height: 1.25,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                  if (onTap != null)
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color: accent.withValues(alpha: 0.85),
+                      size: 18,
+                    ),
+                ],
+              ),
+              const SizedBox(height: 9),
+              Row(
+                children: [
+                  miniValue('NYATA', _formatAnalysisNumber(unit.actual), _emerald),
+                  const SizedBox(width: 6),
+                  miniValue(
+                    'SESUAI ORGAS',
+                    unit.org == null ? '—' : _formatAnalysisNumber(unit.org!),
+                    _gold,
+                  ),
+                  const SizedBox(width: 6),
+                  miniValue(
+                    'KEKURANGAN',
+                    unit.shortage == null
+                        ? '—'
+                        : _formatAnalysisNumber(unit.shortage!),
+                    const Color(0xFFF59E0B),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 9),
+              Row(
+                children: [
+                  Expanded(
+                    child: _AnalysisAnimatedBar(
+                      value: maxActual > 0 ? unit.actual / maxActual : 0,
+                      color: rankColor,
+                      height: 5,
+                    ),
+                  ),
+                  const SizedBox(width: 9),
+                  Text(
+                    _reportPercent(unit.actual, totalActual),
+                    style: TextStyle(
+                      color: rankColor,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
