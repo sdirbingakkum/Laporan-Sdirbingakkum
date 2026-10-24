@@ -1302,6 +1302,15 @@ class _ContentBody extends StatelessWidget {
                 module,
                 ranking,
                 accent,
+                analysisCards: columns.length > 1
+                    ? columns[1].cards
+                    : columns.first.cards,
+                yearToDateCards: columns.first.cards,
+                selectedPeriodLabel: columns.length > 1
+                    ? columns[1].label
+                    : columns.first.label,
+                yearToDateLabel: columns.first.label,
+                selectedTotal: totalSim,
                 onItemTap: module == StatisticsModule.k9
                     ? (index) => _showK9UnitSheet(context, _k9Units[index])
                     : null,
@@ -1390,240 +1399,1347 @@ Future<void> _showRankingSheet(
   StatisticsModule module,
   List<_RankData> ranking,
   Color accent, {
+  List<_StatCardData> analysisCards = const [],
+  List<_StatCardData> yearToDateCards = const [],
+  String? selectedPeriodLabel,
+  String? yearToDateLabel,
+  int? selectedTotal,
   Future<void> Function(int index)? onItemTap,
 }) async {
+  int sumCards(List<_StatCardData> cards) {
+    return cards.fold<int>(0, (sum, card) => sum + _analysisInt(card.value));
+  }
+
+  final periodTotal = selectedTotal ?? sumCards(analysisCards);
+  final yearTotal = sumCards(yearToDateCards);
+  final topFiveTotal = ranking.fold<int>(0, (sum, item) => sum + item.value);
+  final periodTitle = selectedPeriodLabel ?? 'PERIODE TERPILIH';
+  final yearLabel = (yearToDateLabel ?? '').split('·').first.trim();
+  final periodCaption = yearLabel.isEmpty
+      ? periodTitle.toUpperCase()
+      : periodTitle.toUpperCase() + ' · ' + yearLabel;
+
   await showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
-    builder: (context) {
-      final maxValue = ranking.fold<int>(
-        0,
-        (max, item) => item.value > max ? item.value : max,
-      );
-      final title = _moduleTitleForSheet(module);
-
-      return ClipRRect(
+    enableDrag: true,
+    builder: (context) => DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.90,
+      minChildSize: 0.56,
+      maxChildSize: 0.97,
+      builder: (context, scrollController) => ClipRRect(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         child: BackdropFilter(
           filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
           child: Container(
-            height: MediaQuery.sizeOf(context).height * 0.70,
-            padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withValues(alpha: 0.05),
-                  _surface.withValues(alpha: 0.92),
-                  accent.withValues(alpha: 0.08),
+                  const Color(0xFF13382A).withValues(alpha: 0.98),
+                  _surface.withValues(alpha: 0.985),
+                  _bg.withValues(alpha: 0.995),
                 ],
               ),
               border: Border(
                 top: BorderSide(
-                  color: accent.withValues(alpha: 0.28),
-                  width: 1,
+                  color: accent.withValues(alpha: 0.48),
+                  width: 1.2,
                 ),
               ),
               boxShadow: const [
                 BoxShadow(
                   color: Colors.black54,
-                  blurRadius: 30,
+                  blurRadius: 36,
                   offset: Offset(0, -10),
                 ),
               ],
             ),
-            child: Column(
-              children: [
-                Container(
-                  height: 1,
-                  margin: const EdgeInsets.only(bottom: 4),
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.transparent,
-                        Color(0x33FFFFFF),
-                        Colors.transparent,
-                      ],
+            child: SafeArea(
+              top: false,
+              child: Column(
+                children: [
+                  const SizedBox(height: 9),
+                  Container(
+                    width: 44,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.32),
+                      borderRadius: BorderRadius.circular(99),
                     ),
                   ),
-                ),
-                Container(
-                  width: 48,
-                  height: 5,
-                  margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        const Color(0xFFD7A93C).withValues(alpha: 0.30),
-                        const Color(0xFFF1D37A).withValues(alpha: 0.55),
-                        const Color(0xFFD7A93C).withValues(alpha: 0.30),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(99),
-                  ),
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'ANALISIS VISUAL',
-                            style: TextStyle(
-                              color: accent,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 0.6,
-                              height: 1.05,
-                              shadows: [
-                                Shadow(
-                                  color: accent.withValues(alpha: 0.40),
-                                  blurRadius: 14,
-                                  offset: const Offset(0, 1),
-                                ),
-                              ],
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 15, 14, 13),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 43,
+                          height: 43,
+                          decoration: BoxDecoration(
+                            color: accent.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: accent.withValues(alpha: 0.34),
                             ),
                           ),
-                          const SizedBox(height: 5),
-                          Text(
-                            module == StatisticsModule.k9
-                                ? 'DATA K-9'
-                                : 'TOP 5 POMDAM - $title',
-                            style: const TextStyle(
-                              color: _muted,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 2.0,
-                            ),
+                          child: Icon(
+                            module == StatisticsModule.simTni
+                                ? Icons.insights_rounded
+                                : Icons.bar_chart_rounded,
+                            color: accent,
+                            size: 23,
                           ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    IconButton(
-                      tooltip: 'TUTUP',
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: IconButton.styleFrom(
-                        backgroundColor: Colors.white.withValues(alpha: 0.05),
-                        foregroundColor: _text,
-                        side: BorderSide(
-                          color: Colors.white.withValues(alpha: 0.10),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6.4),
-                        ),
-                      ),
-                      icon: const Icon(Icons.close_rounded, size: 18),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 22),
-                Expanded(
-                  child: ListView.separated(
-                    itemCount: ranking.length,
-                    separatorBuilder: (_, index) => const SizedBox(height: 20),
-                    itemBuilder: (context, index) {
-                      final item = ranking[index];
-                      final fill = index == 0 ? accent : _emerald;
-                      final width = maxValue == 0 ? 0.0 : item.value / maxValue;
-
-                      return TweenAnimationBuilder<double>(
-                        tween: Tween(begin: 0, end: width),
-                        duration: Duration(milliseconds: 750 + index * 120),
-                        curve: Curves.easeOutCubic,
-                        builder: (context, progress, _) {
-                          final content = Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      item.name,
-                                      style: const TextStyle(
-                                        color: _text,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.3,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    item.value.toString(),
-                                    style: TextStyle(
-                                      color: accent,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                'ANALISIS ' + _moduleTitleForSheet(module),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: _text,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 0.35,
+                                ),
                               ),
-                              const SizedBox(height: 7),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(6.4),
-                                child: Container(
-                                  height: 12,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withValues(alpha: 0.22),
-                                    border: Border.all(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.05,
-                                      ),
-                                    ),
-                                  ),
-                                  child: FractionallySizedBox(
-                                    alignment: Alignment.centerLeft,
-                                    widthFactor: progress,
-                                    child: DecoratedBox(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            fill.withValues(alpha: 0.95),
-                                            fill,
-                                            fill.withValues(alpha: 0.80),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                              const SizedBox(height: 4),
+                              Text(
+                                module == StatisticsModule.simTni
+                                    ? periodCaption
+                                    : 'PUSPOMAD · RINGKASAN LAPORAN',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: accent.withValues(alpha: 0.98),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 1.0,
                                 ),
                               ),
                             ],
-                          );
-
-                          return onItemTap == null
-                              ? content
-                              : InkWell(
-                                  borderRadius: BorderRadius.circular(8),
-                                  onTap: () => onItemTap(index),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 3,
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: 'Tutup analisis',
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: _muted.withValues(alpha: 0.92),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    height: 1,
+                    color: Colors.white.withValues(alpha: 0.08),
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.fromLTRB(18, 18, 18, 30),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 680),
+                          child: module == StatisticsModule.simTni
+                              ? _SimAnalysisSheetContent(
+                                  categories: analysisCards,
+                                  yearToDateCategories: yearToDateCards,
+                                  ranking: ranking,
+                                  total: periodTotal,
+                                  periodLabel: periodTitle,
+                                  yearToDateLabel:
+                                      yearToDateLabel ?? 'KUMULATIF',
+                                  accent: accent,
+                                )
+                              : Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    _AnalysisEntrance(
+                                      index: 0,
+                                      child: _AnalysisSectionTitle(
+                                        title: module ==
+                                                StatisticsModule.k9
+                                            ? 'RINGKASAN UNIT K9'
+                                            : 'POMDAM DENGAN NILAI TERTINGGI',
+                                        subtitle: module ==
+                                                StatisticsModule.k9
+                                            ? 'Pilih unit untuk melihat rincian.'
+                                            : 'Urutan berdasarkan nilai agregat laporan.',
+                                        accent: accent,
+                                      ),
                                     ),
-                                    child: content,
-                                  ),
-                                );
-                        },
-                      );
-                    },
+                                    const SizedBox(height: 12),
+                                    if (ranking.isEmpty)
+                                      const _AnalysisEmptyState()
+                                    else
+                                      for (var index = 0;
+                                          index < ranking.length;
+                                          index++) ...[
+                                        _AnalysisEntrance(
+                                          index: index + 1,
+                                          child: _AnalysisRankingRow(
+                                            rank: index + 1,
+                                            name: ranking[index].name,
+                                            value: ranking[index].value,
+                                            maxValue: ranking.first.value,
+                                            accent: accent,
+                                            onTap: onItemTap == null
+                                                ? null
+                                                : () => onItemTap(index),
+                                          ),
+                                        ),
+                                        if (index != ranking.length - 1)
+                                          const SizedBox(height: 9),
+                                      ],
+                                  ],
+                                ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+int _analysisInt(String value) {
+  return int.tryParse(value.replaceAll('.', '').replaceAll(',', '').trim()) ??
+      0;
+}
+
+String _formatAnalysisNumber(int value) {
+  return value.toString().replaceAllMapped(
+        RegExp(r'\B(?=(\d{3})+(?!\d))'),
+        (_) => '.',
+      );
+}
+
+String _formatAnalysisPercent(double value) {
+  final safeValue = value.isFinite ? value.clamp(0.0, 100.0).toDouble() : 0.0;
+  return safeValue.toStringAsFixed(1).replaceAll('.', ',') + '%';
+}
+
+class _AnalysisEntrance extends StatelessWidget {
+  const _AnalysisEntrance({required this.index, required this.child});
+
+  final int index;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: Duration(milliseconds: 420 + index * 65),
+      curve: Curves.easeOutCubic,
+      child: child,
+      builder: (context, value, child) => Opacity(
+        opacity: value.clamp(0.0, 1.0),
+        child: Transform.translate(
+          offset: Offset(0, (1 - value) * 13),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+class _AnalysisAnimatedBar extends StatelessWidget {
+  const _AnalysisAnimatedBar({
+    required this.value,
+    required this.color,
+    this.height = 7,
+  });
+
+  final double value;
+  final Color color;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final safeValue = value.isFinite ? value.clamp(0.0, 1.0).toDouble() : 0.0;
+    return Container(
+      height: height,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.055),
+        borderRadius: BorderRadius.circular(99),
+      ),
+      clipBehavior: Clip.hardEdge,
+      child: TweenAnimationBuilder<double>(
+        tween: Tween<double>(begin: 0, end: safeValue),
+        duration: const Duration(milliseconds: 850),
+        curve: Curves.easeOutCubic,
+        builder: (context, progress, child) => Align(
+          alignment: Alignment.centerLeft,
+          child: FractionallySizedBox(
+            widthFactor: progress,
+            heightFactor: 1,
+            child: child,
+          ),
+        ),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                color.withValues(alpha: 0.65),
+                color,
+                color.withValues(alpha: 0.88),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(99),
+          ),
+          child: const SizedBox.expand(),
+        ),
+      ),
+    );
+  }
+}
+
+class _AnalysisSectionTitle extends StatelessWidget {
+  const _AnalysisSectionTitle({
+    required this.title,
+    required this.accent,
+    this.subtitle,
+  });
+
+  final String title;
+  final String? subtitle;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 3,
+            height: 31,
+            margin: const EdgeInsets.only(right: 11, top: 1),
+            decoration: BoxDecoration(
+              color: accent,
+              borderRadius: BorderRadius.circular(99),
+              boxShadow: [
+                BoxShadow(
+                  color: accent.withValues(alpha: 0.34),
+                  blurRadius: 9,
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: _text,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle!,
+                    style: const TextStyle(
+                      color: _muted,
+                      fontSize: 10,
+                      height: 1.35,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AnalysisHeroCard extends StatelessWidget {
+  const _AnalysisHeroCard({
+    required this.total,
+    required this.periodCaption,
+    required this.yearToDateLabel,
+    required this.yearTotal,
+    required this.yearShare,
+    required this.accent,
+  });
+
+  final int total;
+  final String periodCaption;
+  final String yearToDateLabel;
+  final int yearTotal;
+  final double yearShare;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(18, 17, 18, 16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            accent.withValues(alpha: 0.19),
+            const Color(0xFF12392A).withValues(alpha: 0.94),
+            _surface.withValues(alpha: 0.92),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: accent.withValues(alpha: 0.30)),
+        boxShadow: [
+          BoxShadow(
+            color: accent.withValues(alpha: 0.07),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+          const BoxShadow(
+            color: Colors.black26,
+            blurRadius: 16,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'TOTAL PENERBITAN',
+                  style: TextStyle(
+                    color: _muted.withValues(alpha: 0.95),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.8,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 9,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(99),
+                  border: Border.all(color: accent.withValues(alpha: 0.28)),
+                ),
+                child: Text(
+                  periodCaption,
+                  style: TextStyle(
+                    color: accent,
+                    fontSize: 9,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.4,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 9),
+          TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0, end: total.toDouble()),
+            duration: const Duration(milliseconds: 950),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, child) => Text(
+              _formatAnalysisNumber(value.round()),
+              style: TextStyle(
+                color: _text,
+                fontSize: 39,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -1.5,
+                height: 1.0,
+                shadows: [
+                  Shadow(
+                    color: accent.withValues(alpha: 0.34),
+                    blurRadius: 18,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.calendar_month_rounded,
+                color: accent.withValues(alpha: 0.95),
+                size: 15,
+              ),
+              const SizedBox(width: 7),
+              Expanded(
+                child: Text(
+                  'Akumulasi tahun berjalan: ' +
+                      _formatAnalysisNumber(yearTotal) +
+                      ' SIM (' +
+                      yearToDateLabel +
+                      ').',
+                  style: const TextStyle(
+                    color: _muted,
+                    fontSize: 10,
+                    height: 1.45,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 11),
+          _AnalysisAnimatedBar(value: yearShare / 100, color: accent, height: 6),
+          const SizedBox(height: 7),
+          Text(
+            _formatAnalysisPercent(yearShare) +
+                ' dari akumulasi tahun berjalan berada pada periode pilihan.',
+            style: TextStyle(
+              color: _text.withValues(alpha: 0.88),
+              fontSize: 10,
+              height: 1.35,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AnalysisMetricCard extends StatelessWidget {
+  const _AnalysisMetricCard({
+    required this.title,
+    required this.value,
+    required this.detail,
+    required this.icon,
+    required this.accent,
+    this.largeValue = false,
+  });
+
+  final String title;
+  final String value;
+  final String detail;
+  final IconData icon;
+  final Color accent;
+  final bool largeValue;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 116),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.035),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: accent, size: 15),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: _muted,
+                    fontSize: 9,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 11),
+          Text(
+            value,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: _text,
+              fontSize: largeValue ? 24 : 14,
+              height: 1.15,
+              fontWeight: FontWeight.w900,
+              letterSpacing: largeValue ? -0.5 : 0,
+            ),
+          ),
+          const SizedBox(height: 7),
+          Text(
+            detail,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: _muted,
+              fontSize: 9,
+              height: 1.35,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AnalysisInsightRow extends StatelessWidget {
+  const _AnalysisInsightRow({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.accent,
+  });
+
+  final IconData icon;
+  final String title;
+  final String description;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.028),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.065)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 31,
+            height: 31,
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(9),
+            ),
+            child: Icon(icon, color: accent, size: 17),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: _text,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.25,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    color: _muted,
+                    fontSize: 10,
+                    height: 1.45,
                   ),
                 ),
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AnalysisRankingRow extends StatelessWidget {
+  const _AnalysisRankingRow({
+    required this.rank,
+    required this.name,
+    required this.value,
+    required this.maxValue,
+    required this.accent,
+    this.shareLabel,
+    this.onTap,
+  });
+
+  final int rank;
+  final String name;
+  final int value;
+  final int maxValue;
+  final Color accent;
+  final String? shareLabel;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ratio = maxValue <= 0 ? 0.0 : value / maxValue;
+    final rankColor = rank == 1
+        ? const Color(0xFFF1D37A)
+        : rank == 2
+        ? const Color(0xFFBBC7CE)
+        : rank == 3
+        ? const Color(0xFFD89B70)
+        : accent;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.028),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.065)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: rankColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(9),
+                  border: Border.all(color: rankColor.withValues(alpha: 0.30)),
+                ),
+                child: Text(
+                  rank.toString().padLeft(2, '0'),
+                  style: TextStyle(
+                    color: rankColor,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: _text,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    _AnalysisAnimatedBar(
+                      value: ratio,
+                      color: rankColor,
+                      height: 6,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    _formatAnalysisNumber(value),
+                    style: TextStyle(
+                      color: rankColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.3,
+                    ),
+                  ),
+                  if (shareLabel != null) ...[
+                    const SizedBox(height: 3),
+                    Text(
+                      shareLabel!,
+                      style: const TextStyle(
+                        color: _muted,
+                        fontSize: 8,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class _AnalysisEmptyState extends StatelessWidget {
+  const _AnalysisEmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.03),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
+      ),
+      child: const Column(
+        children: [
+          Icon(Icons.query_stats_rounded, color: _muted, size: 26),
+          SizedBox(height: 9),
+          Text(
+            'BELUM ADA DATA ANALISIS',
+            style: TextStyle(
+              color: _text,
+              fontSize: 11,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.8,
+            ),
+          ),
+          SizedBox(height: 5),
+          Text(
+            'Belum ada nilai yang dapat diurutkan untuk laporan ini.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: _muted, fontSize: 10, height: 1.4),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SimCategoryRow extends StatelessWidget {
+  const _SimCategoryRow({
+    required this.label,
+    required this.count,
+    required this.share,
+    required this.color,
+  });
+
+  final String label;
+  final int count;
+  final double share;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 11, 12, 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.027),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.055)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 4,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(99),
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withValues(alpha: 0.25),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: _text,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    _formatAnalysisNumber(count),
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  Text(
+                    _formatAnalysisPercent(share),
+                    style: const TextStyle(
+                      color: _muted,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          _AnalysisAnimatedBar(value: share / 100, color: color, height: 7),
+        ],
+      ),
+    );
+  }
+}
+
+class _SimYearComparisonRow extends StatelessWidget {
+  const _SimYearComparisonRow({
+    required this.label,
+    required this.periodValue,
+    required this.yearValue,
+    required this.periodShare,
+    required this.color,
+  });
+
+  final String label;
+  final int periodValue;
+  final int yearValue;
+  final double periodShare;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.025),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.055)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: _text,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              Text(
+                _formatAnalysisNumber(periodValue) +
+                    ' / ' +
+                    _formatAnalysisNumber(yearValue),
+                style: const TextStyle(
+                  color: _text,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 7),
+          Row(
+            children: [
+              Expanded(
+                child: _AnalysisAnimatedBar(
+                  value: periodShare / 100,
+                  color: color,
+                  height: 5,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                _formatAnalysisPercent(periodShare),
+                style: TextStyle(
+                  color: color,
+                  fontSize: 9,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Kontribusi periode pilihan terhadap akumulasi jenis SIM ini.',
+            style: TextStyle(color: _muted, fontSize: 8, height: 1.35),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SimAnalysisSheetContent extends StatelessWidget {
+  const _SimAnalysisSheetContent({
+    required this.categories,
+    required this.yearToDateCategories,
+    required this.ranking,
+    required this.total,
+    required this.periodLabel,
+    required this.yearToDateLabel,
+    required this.accent,
+  });
+
+  final List<_StatCardData> categories;
+  final List<_StatCardData> yearToDateCategories;
+  final List<_RankData> ranking;
+  final int total;
+  final String periodLabel;
+  final String yearToDateLabel;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final categoryTotal = categories.fold<int>(
+      0,
+      (sum, card) => sum + _analysisInt(card.value),
+    );
+    final periodTotal = total > 0 ? total : categoryTotal;
+    final yearTotal = yearToDateCategories.fold<int>(
+      0,
+      (sum, card) => sum + _analysisInt(card.value),
+    );
+    final topFiveTotal = ranking.fold<int>(0, (sum, item) => sum + item.value);
+    final categoryDenominator = categoryTotal > 0
+        ? categoryTotal
+        : periodTotal;
+    final ytdShare = yearTotal > 0 ? periodTotal / yearTotal * 100 : 0.0;
+    final topFiveShare = periodTotal > 0
+        ? topFiveTotal / periodTotal * 100
+        : 0.0;
+    final yearByCategory = <String, _StatCardData>{
+      for (final card in yearToDateCategories) card.label: card,
+    };
+    final orderedCategories = categories.toList()
+      ..sort(
+        (a, b) => _analysisInt(b.value).compareTo(_analysisInt(a.value)),
       );
-    },
-  );
+    final dominant = orderedCategories.isEmpty
+        ? null
+        : orderedCategories.first;
+    final dominantValue = dominant == null
+        ? 0
+        : _analysisInt(dominant.value);
+    final dominantShare = categoryDenominator > 0
+        ? dominantValue / categoryDenominator * 100
+        : 0.0;
+    final leader = ranking.isEmpty ? null : ranking.first;
+    final leaderShare = periodTotal > 0 && leader != null
+        ? leader.value / periodTotal * 100
+        : 0.0;
+    final yearName = yearToDateLabel.split('·').first.trim();
+    final periodCaption = yearName.isEmpty
+        ? periodLabel.toUpperCase()
+        : periodLabel.toUpperCase() + ' · ' + yearName;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _AnalysisEntrance(
+          index: 0,
+          child: _AnalysisHeroCard(
+            total: periodTotal,
+            periodCaption: periodCaption,
+            yearToDateLabel: yearToDateLabel,
+            yearTotal: yearTotal,
+            yearShare: ytdShare,
+            accent: accent,
+          ),
+        ),
+        const SizedBox(height: 18),
+        _AnalysisEntrance(
+          index: 1,
+          child: _AnalysisSectionTitle(
+            title: 'RINGKASAN EKSEKUTIF',
+            subtitle:
+                'Tiga sinyal utama untuk membaca distribusi SIM pada periode ini.',
+            accent: accent,
+          ),
+        ),
+        const SizedBox(height: 10),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final width = (constraints.maxWidth - 10) / 2;
+            return Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: [
+                SizedBox(
+                  width: width,
+                  child: _AnalysisEntrance(
+                    index: 2,
+                    child: _AnalysisMetricCard(
+                      title: 'JENIS TERBANYAK',
+                      value: dominant?.label ?? '—',
+                      detail: dominant == null
+                          ? 'Belum ada nilai kategori.'
+                          : _formatAnalysisNumber(dominantValue) +
+                                ' SIM · ' +
+                                _formatAnalysisPercent(dominantShare) +
+                                ' dari periode',
+                      icon: Icons.donut_large_rounded,
+                      accent: dominant?.color ?? accent,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: width,
+                  child: _AnalysisEntrance(
+                    index: 3,
+                    child: _AnalysisMetricCard(
+                      title: 'POMDAM TERATAS',
+                      value: leader?.name ?? '—',
+                      detail: leader == null
+                          ? 'Belum ada peringkat Pomdam.'
+                          : _formatAnalysisNumber(leader.value) +
+                                ' SIM · ' +
+                                _formatAnalysisPercent(leaderShare) +
+                                ' dari periode',
+                      icon: Icons.military_tech_rounded,
+                      accent: accent,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: constraints.maxWidth,
+                  child: _AnalysisEntrance(
+                    index: 4,
+                    child: _AnalysisMetricCard(
+                      title: 'KONTRIBUSI TOP 5 POMDAM',
+                      value: _formatAnalysisPercent(topFiveShare),
+                      detail: _formatAnalysisNumber(topFiveTotal) +
+                          ' SIM dari ' +
+                          _formatAnalysisNumber(periodTotal) +
+                          ' SIM tercatat pada periode terpilih.',
+                      icon: Icons.leaderboard_rounded,
+                      accent: accent,
+                      largeValue: true,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+        const SizedBox(height: 22),
+        _AnalysisEntrance(
+          index: 5,
+          child: _AnalysisSectionTitle(
+            title: 'KOMPOSISI JENIS SIM',
+            subtitle:
+                'Jumlah dan porsi setiap kategori terhadap total periode terpilih.',
+            accent: accent,
+          ),
+        ),
+        const SizedBox(height: 10),
+        for (var index = 0; index < categories.length; index++) ...[
+          _AnalysisEntrance(
+            index: index + 6,
+            child: _SimCategoryRow(
+              label: categories[index].label,
+              count: _analysisInt(categories[index].value),
+              share: categoryDenominator > 0
+                  ? _analysisInt(categories[index].value) /
+                        categoryDenominator *
+                        100
+                  : 0,
+              color: categories[index].color,
+            ),
+          ),
+          if (index != categories.length - 1) const SizedBox(height: 8),
+        ],
+        const SizedBox(height: 22),
+        _AnalysisEntrance(
+          index: 11,
+          child: _AnalysisSectionTitle(
+            title: 'RINCIAN VS KUMULATIF',
+            subtitle:
+                'Angka kiri adalah periode pilihan; angka kanan adalah akumulasi tahun berjalan.',
+            accent: accent,
+          ),
+        ),
+        const SizedBox(height: 10),
+        for (var index = 0; index < categories.length; index++) ...[
+          Builder(
+            builder: (context) {
+              final card = categories[index];
+              final annual = yearByCategory[card.label];
+              final periodValue = _analysisInt(card.value);
+              final yearValue = annual == null
+                  ? 0
+                  : _analysisInt(annual.value);
+              final share = yearValue > 0
+                  ? periodValue / yearValue * 100
+                  : 0.0;
+              return _AnalysisEntrance(
+                index: index + 12,
+                child: _SimYearComparisonRow(
+                  label: card.label,
+                  periodValue: periodValue,
+                  yearValue: yearValue,
+                  periodShare: share,
+                  color: card.color,
+                ),
+              );
+            },
+          ),
+          if (index != categories.length - 1) const SizedBox(height: 8),
+        ],
+        const SizedBox(height: 22),
+        _AnalysisEntrance(
+          index: 18,
+          child: _AnalysisSectionTitle(
+            title: 'POMDAM DENGAN PENERBITAN TERTINGGI',
+            subtitle:
+                'Peringkat berdasarkan total seluruh kategori SIM pada periode pilihan.',
+            accent: accent,
+          ),
+        ),
+        const SizedBox(height: 10),
+        if (ranking.isEmpty)
+          const _AnalysisEmptyState()
+        else
+          for (var index = 0; index < ranking.length; index++) ...[
+            _AnalysisEntrance(
+              index: index + 19,
+              child: _AnalysisRankingRow(
+                rank: index + 1,
+                name: ranking[index].name,
+                value: ranking[index].value,
+                maxValue: ranking.first.value,
+                accent: accent,
+                shareLabel: _formatAnalysisPercent(
+                  periodTotal > 0
+                      ? ranking[index].value / periodTotal * 100
+                      : 0,
+                ),
+              ),
+            ),
+            if (index != ranking.length - 1) const SizedBox(height: 8),
+          ],
+        const SizedBox(height: 22),
+        _AnalysisEntrance(
+          index: 25,
+          child: _AnalysisSectionTitle(
+            title: 'TEMUAN UTAMA',
+            subtitle:
+                'Ringkasan otomatis yang dihitung dari angka tampil di atas.',
+            accent: accent,
+          ),
+        ),
+        const SizedBox(height: 10),
+        if (dominant != null) ...[
+          _AnalysisEntrance(
+            index: 26,
+            child: _AnalysisInsightRow(
+              icon: Icons.pie_chart_rounded,
+              title: 'Kategori dominan: ' + dominant.label,
+              description: 'Kategori ini mencatat ' +
+                  _formatAnalysisNumber(dominantValue) +
+                  ' SIM, setara ' +
+                  _formatAnalysisPercent(dominantShare) +
+                  ' dari total penerbitan pada periode terpilih.',
+              accent: dominant.color,
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+        if (leader != null) ...[
+          _AnalysisEntrance(
+            index: 27,
+            child: _AnalysisInsightRow(
+              icon: Icons.emoji_events_rounded,
+              title: 'Pomdam dengan nilai tertinggi',
+              description: leader.name +
+                  ' berada di peringkat pertama dengan ' +
+                  _formatAnalysisNumber(leader.value) +
+                  ' SIM atau ' +
+                  _formatAnalysisPercent(leaderShare) +
+                  ' dari total periode.',
+              accent: accent,
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+        _AnalysisEntrance(
+          index: 28,
+          child: _AnalysisInsightRow(
+            icon: Icons.groups_rounded,
+            title: 'Konsentrasi lima Pomdam teratas',
+            description: 'Lima peringkat teratas secara gabungan mencatat ' +
+                _formatAnalysisNumber(topFiveTotal) +
+                ' SIM (' +
+                _formatAnalysisPercent(topFiveShare) +
+                ' dari total periode). Angka ini menunjukkan porsi penerbitan yang terkonsentrasi pada kelompok teratas.',
+            accent: accent,
+          ),
+        ),
+        const SizedBox(height: 8),
+        _AnalysisEntrance(
+          index: 29,
+          child: _AnalysisInsightRow(
+            icon: Icons.calendar_month_rounded,
+            title: 'Konteks tahun berjalan',
+            description: 'Periode terpilih mencatat ' +
+                _formatAnalysisNumber(periodTotal) +
+                ' dari ' +
+                _formatAnalysisNumber(yearTotal) +
+                ' SIM pada akumulasi (' +
+                _formatAnalysisPercent(ytdShare) +
+                '). Perbandingan ini menggunakan kumulatif yang tampil pada laporan.',
+            accent: accent,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          'Catatan: analisis dihitung dari data SIM berstatus VALID yang tersedia di database. Nilai persentase dibulatkan satu angka desimal.',
+          style: TextStyle(
+            color: _muted.withValues(alpha: 0.82),
+            fontSize: 9,
+            height: 1.45,
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 String _moduleTitleForSheet(StatisticsModule module) {
