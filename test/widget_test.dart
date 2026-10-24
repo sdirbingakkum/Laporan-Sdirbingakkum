@@ -982,6 +982,145 @@ void main() {
   );
 
   testWidgets(
+    'Pelanggaran and Laka-Lalin show a total hero at the top like SIM TNI',
+    (tester) async {
+      await _setSurfaceSize(tester, const Size(390, 844));
+      const cases = <StatisticsModule, ({String title, String total})>{
+        StatisticsModule.pelanggaran: (
+          title: 'TOTAL PELANGGARAN',
+          total: '10',
+        ),
+        StatisticsModule.lakaLalin: (
+          title: 'TOTAL KASUS LAKA-LALIN',
+          total: '7',
+        ),
+      };
+
+      for (final entry in cases.entries) {
+        final module = entry.key;
+        final expected = entry.value;
+        final data = module == StatisticsModule.pelanggaran
+            ? const StatisticsViewData(
+                columns: [
+                  StatisticsColumnData(
+                    label: '2026',
+                    cards: [
+                      StatisticsCardData(
+                        label: 'TATIB',
+                        value: '40',
+                        color: Color(0xFFF59E0B),
+                      ),
+                      StatisticsCardData(
+                        label: 'LALIN',
+                        value: '60',
+                        color: Color(0xFF38BDF8),
+                      ),
+                    ],
+                  ),
+                  StatisticsColumnData(
+                    label: 'SEPT',
+                    cards: [
+                      StatisticsCardData(
+                        label: 'TATIB',
+                        value: '4',
+                        color: Color(0xFFF59E0B),
+                      ),
+                      StatisticsCardData(
+                        label: 'LALIN',
+                        value: '6',
+                        color: Color(0xFF38BDF8),
+                      ),
+                    ],
+                  ),
+                ],
+                ranking: [],
+              )
+            : const StatisticsViewData(
+                columns: [
+                  StatisticsColumnData(
+                    label: '2026',
+                    cards: [
+                      StatisticsCardData(
+                        label: 'JUMLAH KASUS',
+                        value: '20',
+                        color: Color(0xFF38BDF8),
+                      ),
+                      StatisticsCardData(
+                        label: 'LAKA GANDA',
+                        value: '8',
+                        color: Color(0xFFF97316),
+                      ),
+                      StatisticsCardData(
+                        label: 'TUNGGAL',
+                        value: '7',
+                        color: Color(0xFFF59E0B),
+                      ),
+                      StatisticsCardData(
+                        label: 'TABRAK LARI',
+                        value: '5',
+                        color: Color(0xFFEF4444),
+                      ),
+                    ],
+                  ),
+                  StatisticsColumnData(
+                    label: 'SEPT',
+                    cards: [
+                      StatisticsCardData(
+                        label: 'JUMLAH KASUS',
+                        value: '7',
+                        color: Color(0xFF38BDF8),
+                      ),
+                      StatisticsCardData(
+                        label: 'LAKA GANDA',
+                        value: '3',
+                        color: Color(0xFFF97316),
+                      ),
+                      StatisticsCardData(
+                        label: 'TUNGGAL',
+                        value: '2',
+                        color: Color(0xFFF59E0B),
+                      ),
+                      StatisticsCardData(
+                        label: 'TABRAK LARI',
+                        value: '2',
+                        color: Color(0xFFEF4444),
+                      ),
+                    ],
+                  ),
+                ],
+                ranking: [],
+              );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: StatisticsPage(
+              module: module,
+              dataLoader: (_) async => data,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('STATISTIK'));
+        await tester.pumpAndSettle();
+
+        final heroTitle = find.text(expected.title);
+        final executiveTitle = find.text('RINGKASAN EKSEKUTIF');
+        expect(heroTitle, findsOneWidget, reason: expected.title);
+        expect(find.text(expected.total), findsOneWidget);
+        expect(
+          tester.getTopLeft(heroTitle).dy,
+          lessThan(tester.getTopLeft(executiveTitle).dy),
+          reason: 'The total card must appear before the executive summary.',
+        );
+        expect(tester.takeException(), isNull);
+
+        await tester.tap(find.byTooltip('Tutup analisis'));
+        await tester.pumpAndSettle();
+      }
+    },
+  );
+
+  testWidgets(
     'all non-SIM analysis sheets are detailed, animated, and mobile responsive',
     (tester) async {
       const modules = <StatisticsModule>[
