@@ -986,10 +986,7 @@ void main() {
     (tester) async {
       await _setSurfaceSize(tester, const Size(390, 844));
       const cases = <StatisticsModule, ({String title, String total})>{
-        StatisticsModule.pelanggaran: (
-          title: 'TOTAL PELANGGARAN',
-          total: '10',
-        ),
+        StatisticsModule.pelanggaran: (title: 'TOTAL PELANGGARAN', total: '10'),
         StatisticsModule.lakaLalin: (
           title: 'TOTAL KASUS LAKA-LALIN',
           total: '7',
@@ -1093,10 +1090,7 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
-            home: StatisticsPage(
-              module: module,
-              dataLoader: (_) async => data,
-            ),
+            home: StatisticsPage(module: module, dataLoader: (_) async => data),
           ),
         );
         await tester.pumpAndSettle();
