@@ -597,7 +597,7 @@ class _SupabaseReportRepository {
           ],
         ),
       ],
-      ranking: _topFiveForRange(
+      ranking: _rankPomdamsForRange(
         rows,
         periods,
         pomdams,
@@ -610,15 +610,25 @@ class _SupabaseReportRepository {
     );
   }
 
-  static List<StatisticsRankData> _topFiveForRange(
+  static List<StatisticsRankData> _rankPomdamsForRange(
     List<Map<String, dynamic>> rows,
     _ReportPeriodIndex periods,
     Map<String, String> pomdams, {
     required int year,
     required int startMonth,
     required int endMonth,
+    bool includeAllPomdams = false,
   }) {
     final totals = <String, int>{};
+    if (includeAllPomdams) {
+      for (final code in pomdams.values) {
+        final normalizedCode = code.trim();
+        if (normalizedCode.isNotEmpty) {
+          totals.putIfAbsent(normalizedCode, () => 0);
+        }
+      }
+    }
+
     for (final row in rows) {
       if (row['data_status'] != 'VALID') continue;
       final period = periods.byId[row['period_id']?.toString()];
@@ -635,10 +645,10 @@ class _SupabaseReportRepository {
         final result = b.value.compareTo(a.value);
         return result != 0 ? result : a.key.compareTo(b.key);
       });
+    final entries = includeAllPomdams ? ranked : ranked.take(5).toList();
 
     return [
-      for (final entry in ranked.take(5))
-        StatisticsRankData(entry.key, entry.value),
+      for (final entry in entries) StatisticsRankData(entry.key, entry.value),
     ];
   }
 
@@ -870,7 +880,7 @@ class _SupabaseReportRepository {
           cards: cardsForRange(selected.startMonth, selected.endMonth),
         ),
       ],
-      ranking: _topFiveForRange(
+      ranking: _rankPomdamsForRange(
         rows,
         periods,
         pomdams,
@@ -997,13 +1007,14 @@ class _SupabaseReportRepository {
         ),
         StatisticsColumnData(label: selected.label, cards: comparisonCards),
       ],
-      ranking: _topFiveForRange(
+      ranking: _rankPomdamsForRange(
         rows,
         periods,
         pomdams,
         year: latest.year,
         startMonth: selected.startMonth,
         endMonth: selected.endMonth,
+        includeAllPomdams: true,
       ),
       totalSim: selectedTotal,
       periodOptions: options,
@@ -1162,7 +1173,7 @@ class _SupabaseReportRepository {
           ],
         ),
       ],
-      ranking: _topFiveForRange(
+      ranking: _rankPomdamsForRange(
         personnelRows,
         periods,
         pomdams,
@@ -2477,27 +2488,18 @@ class _SimAnalysisSheetContent extends StatelessWidget {
       0,
       (sum, card) => sum + _analysisInt(card.value),
     );
-    final topFiveTotal = ranking.fold<int>(0, (sum, item) => sum + item.value);
     final categoryDenominator = categoryTotal > 0 ? categoryTotal : periodTotal;
     final ytdShare = yearTotal > 0 ? periodTotal / yearTotal * 100 : 0.0;
-    final topFiveShare = periodTotal > 0
-        ? topFiveTotal / periodTotal * 100
-        : 0.0;
+    final pomdamTotal = ranking.fold<int>(0, (sum, item) => sum + item.value);
+    final contributingPomdamCount = ranking.where((item) => item.value > 0).length;
+    final zeroValuePomdamCount = ranking.length - contributingPomdamCount;
+    final categoryTotalMatches = categoryTotal == periodTotal;
+    final pomdamTotalMatches = pomdamTotal == periodTotal;
     final yearByCategory = <String, _StatCardData>{
       for (final card in yearToDateCategories) card.label: card,
     };
-    final orderedCategories = categories.toList()
-      ..sort((a, b) => _analysisInt(b.value).compareTo(_analysisInt(a.value)));
-    final dominant = orderedCategories.isEmpty ? null : orderedCategories.first;
-    final dominantValue = dominant == null ? 0 : _analysisInt(dominant.value);
-    final dominantShare = categoryDenominator > 0
-        ? dominantValue / categoryDenominator * 100
-        : 0.0;
-    final leader = ranking.isEmpty ? null : ranking.first;
-    final leaderShare = periodTotal > 0 && leader != null
-        ? leader.value / periodTotal * 100
-        : 0.0;
     final yearName = yearToDateLabel.split('·').first.trim();
+    final findingsStartIndex = 20 + ranking.length;
     final periodCaption = yearName.isEmpty
         ? periodLabel.toUpperCase()
         : '$periodLabel · $yearName';
@@ -2539,13 +2541,12 @@ class _SimAnalysisSheetContent extends StatelessWidget {
                   child: _AnalysisEntrance(
                     index: 2,
                     child: _AnalysisMetricCard(
-                      title: 'JENIS TERBANYAK',
-                      value: dominant?.label ?? '—',
-                      detail: dominant == null
-                          ? 'Belum ada nilai kategori.'
-                          : '${_formatAnalysisNumber(dominantValue)} SIM · ${_formatAnalysisPercent(dominantShare)} dari periode',
-                      icon: Icons.donut_large_rounded,
-                      accent: dominant?.color ?? accent,
+                      title: 'JENIS SIM DITAMPILKAN',
+                      value: categories.length.toString(),
+                      detail:
+                          'Semua kategori disertai jumlah, persentase, dan perbandingan kumulatif.',
+                      icon: Icons.category_rounded,
+                      accent: accent,
                     ),
                   ),
                 ),
@@ -2554,11 +2555,10 @@ class _SimAnalysisSheetContent extends StatelessWidget {
                   child: _AnalysisEntrance(
                     index: 3,
                     child: _AnalysisMetricCard(
-                      title: 'POMDAM TERATAS',
-                      value: leader?.name ?? '—',
-                      detail: leader == null
-                          ? 'Belum ada peringkat Pomdam.'
-                          : '${_formatAnalysisNumber(leader.value)} SIM · ${_formatAnalysisPercent(leaderShare)} dari periode',
+                      title: 'SELURUH POMDAM',
+                      value: ranking.length.toString(),
+                      detail:
+                          'Daftar lengkap Pomdam, termasuk yang bernilai 0 pada periode terpilih.',
                       icon: Icons.military_tech_rounded,
                       accent: accent,
                     ),
@@ -2569,11 +2569,11 @@ class _SimAnalysisSheetContent extends StatelessWidget {
                   child: _AnalysisEntrance(
                     index: 4,
                     child: _AnalysisMetricCard(
-                      title: 'KONTRIBUSI TOP 5 POMDAM',
-                      value: _formatAnalysisPercent(topFiveShare),
+                      title: 'POMDAM DENGAN PENERBITAN',
+                      value: '$contributingPomdamCount / ${ranking.length}',
                       detail:
-                          '${_formatAnalysisNumber(topFiveTotal)} SIM dari ${_formatAnalysisNumber(periodTotal)} SIM tercatat pada periode terpilih.',
-                      icon: Icons.leaderboard_rounded,
+                          '$zeroValuePomdamCount Pomdam bernilai 0 pada periode ini; seluruhnya tetap masuk dalam daftar di bawah.',
+                      icon: Icons.account_tree_rounded,
                       accent: accent,
                       largeValue: true,
                     ),
@@ -2647,9 +2647,9 @@ class _SimAnalysisSheetContent extends StatelessWidget {
         _AnalysisEntrance(
           index: 18,
           child: _AnalysisSectionTitle(
-            title: 'POMDAM DENGAN PENERBITAN TERTINGGI',
+            title: 'DISTRIBUSI PENERBITAN SELURUH POMDAM',
             subtitle:
-                'Peringkat berdasarkan total seluruh kategori SIM pada periode pilihan.',
+                'Semua Pomdam dari data master ditampilkan, diurutkan berdasarkan jumlah; nilai 0 tetap terlihat.',
             accent: accent,
           ),
         ),
@@ -2677,54 +2677,50 @@ class _SimAnalysisSheetContent extends StatelessWidget {
           ],
         const SizedBox(height: 22),
         _AnalysisEntrance(
-          index: 25,
+          index: findingsStartIndex,
           child: _AnalysisSectionTitle(
             title: 'TEMUAN UTAMA',
             subtitle:
-                'Ringkasan otomatis yang dihitung dari angka tampil di atas.',
+                'Pemeriksaan cakupan data untuk seluruh kategori SIM dan seluruh Pomdam.',
             accent: accent,
           ),
         ),
         const SizedBox(height: 10),
-        if (dominant != null) ...[
-          _AnalysisEntrance(
-            index: 26,
-            child: _AnalysisInsightRow(
-              icon: Icons.pie_chart_rounded,
-              title: 'Kategori dominan: ${dominant.label}',
-              description:
-                  'Kategori ini mencatat ${_formatAnalysisNumber(dominantValue)} SIM, setara ${_formatAnalysisPercent(dominantShare)} dari total penerbitan pada periode terpilih.',
-              accent: dominant.color,
-            ),
-          ),
-          const SizedBox(height: 8),
-        ],
-        if (leader != null) ...[
-          _AnalysisEntrance(
-            index: 27,
-            child: _AnalysisInsightRow(
-              icon: Icons.emoji_events_rounded,
-              title: 'Pomdam dengan nilai tertinggi',
-              description:
-                  '${leader.name} berada di peringkat pertama dengan ${_formatAnalysisNumber(leader.value)} SIM atau ${_formatAnalysisPercent(leaderShare)} dari total periode.',
-              accent: accent,
-            ),
-          ),
-          const SizedBox(height: 8),
-        ],
         _AnalysisEntrance(
-          index: 28,
+          index: findingsStartIndex + 1,
           child: _AnalysisInsightRow(
-            icon: Icons.groups_rounded,
-            title: 'Konsentrasi lima Pomdam teratas',
+            icon: Icons.category_rounded,
+            title: 'Rekap seluruh jenis SIM',
             description:
-                'Lima peringkat teratas secara gabungan mencatat ${_formatAnalysisNumber(topFiveTotal)} SIM (${_formatAnalysisPercent(topFiveShare)} dari total periode). Angka ini menunjukkan porsi penerbitan yang terkonsentrasi pada kelompok teratas.',
+                'Rincian seluruh ${categories.length} kategori berjumlah ${_formatAnalysisNumber(categoryTotal)} SIM, sementara total periode pada ringkasan adalah ${_formatAnalysisNumber(periodTotal)} SIM. ${categoryTotalMatches ? 'Total kategori sesuai dengan total periode.' : 'Ada selisih ${_formatAnalysisNumber((categoryTotal - periodTotal).abs())} SIM antara rincian kategori dan total periode.'}',
             accent: accent,
           ),
         ),
         const SizedBox(height: 8),
         _AnalysisEntrance(
-          index: 29,
+          index: findingsStartIndex + 2,
+          child: _AnalysisInsightRow(
+            icon: Icons.groups_rounded,
+            title: 'Cakupan seluruh Pomdam',
+            description:
+                '${contributingPomdamCount} dari ${ranking.length} Pomdam memiliki penerbitan pada periode ini; ${zeroValuePomdamCount} Pomdam bernilai 0. Semua tetap ditampilkan agar distribusi tidak hanya memperlihatkan peringkat teratas.',
+            accent: accent,
+          ),
+        ),
+        const SizedBox(height: 8),
+        _AnalysisEntrance(
+          index: findingsStartIndex + 3,
+          child: _AnalysisInsightRow(
+            icon: Icons.fact_check_rounded,
+            title: 'Rekonsiliasi total Pomdam',
+            description:
+                'Jumlah dari seluruh Pomdam adalah ${_formatAnalysisNumber(pomdamTotal)} SIM, dibandingkan total periode ${_formatAnalysisNumber(periodTotal)} SIM. ${pomdamTotalMatches ? 'Angka distribusi Pomdam selaras dengan total periode.' : 'Terdapat selisih ${_formatAnalysisNumber((pomdamTotal - periodTotal).abs())} SIM; periksa pencatatan per Pomdam.'}',
+            accent: accent,
+          ),
+        ),
+        const SizedBox(height: 8),
+        _AnalysisEntrance(
+          index: findingsStartIndex + 4,
           child: _AnalysisInsightRow(
             icon: Icons.calendar_month_rounded,
             title: 'Konteks tahun berjalan',

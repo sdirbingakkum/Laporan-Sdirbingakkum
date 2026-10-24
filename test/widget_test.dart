@@ -421,7 +421,11 @@ Future<StatisticsViewData> _testSelectablePeriodData(
         ),
         StatisticsColumnData(label: option.label, cards: comparisonCards),
       ],
-      ranking: const [StatisticsRankData('POMDAM TEST', 2607)],
+      ranking: const [
+        StatisticsRankData('POMDAM TEST', 2607),
+        StatisticsRankData('POMDAM BARAT', 0),
+        StatisticsRankData('POMDAM NIHIL', 0),
+      ],
       totalSim: comparisonTotal,
       periodOptions: _testPelanggaranPeriodOptions,
       selectedPeriodKey: option.key,
@@ -904,9 +908,20 @@ void main() {
         expect(find.text('RINGKASAN EKSEKUTIF'), findsOneWidget);
         expect(find.text('KOMPOSISI JENIS SIM'), findsOneWidget);
         expect(find.text('RINCIAN VS KUMULATIF'), findsOneWidget);
-        expect(find.text('POMDAM DENGAN PENERBITAN TERTINGGI'), findsOneWidget);
-        expect(find.text('TEMUAN UTAMA'), findsOneWidget);
-        expect(find.text('KONTRIBUSI TOP 5 POMDAM'), findsOneWidget);
+        expect(find.text('JENIS SIM DITAMPILKAN'), findsOneWidget);
+        expect(find.text('SELURUH POMDAM'), findsOneWidget);
+        expect(find.text('POMDAM DENGAN PENERBITAN'), findsOneWidget);
+        expect(find.text('DISTRIBUSI PENERBITAN SELURUH POMDAM'), findsOneWidget);
+        expect(find.text('POMDAM TEST'), findsOneWidget);
+        expect(find.text('POMDAM BARAT'), findsOneWidget);
+        expect(find.text('POMDAM NIHIL'), findsOneWidget);
+        expect(find.text('Rekap seluruh jenis SIM'), findsOneWidget);
+        expect(find.text('Cakupan seluruh Pomdam'), findsOneWidget);
+        expect(find.text('Rekonsiliasi total Pomdam'), findsOneWidget);
+        expect(find.text('JENIS TERBANYAK'), findsNothing);
+        expect(find.text('POMDAM TERATAS'), findsNothing);
+        expect(find.text('KONTRIBUSI TOP 5 POMDAM'), findsNothing);
+        expect(find.text('POMDAM DENGAN PENERBITAN TERTINGGI'), findsNothing);
         expect(
           tester.takeException(),
           isNull,
