@@ -2517,7 +2517,8 @@ class _SimAnalysisSheetContent extends StatelessWidget {
                     child: _AnalysisMetricCard(
                       title: 'KONTRIBUSI TOP 5 POMDAM',
                       value: _formatAnalysisPercent(topFiveShare),
-                      detail: '${_formatAnalysisNumber(topFiveTotal)} SIM dari ${_formatAnalysisNumber(periodTotal)} SIM tercatat pada periode terpilih.',
+                      detail:
+                          '${_formatAnalysisNumber(topFiveTotal)} SIM dari ${_formatAnalysisNumber(periodTotal)} SIM tercatat pada periode terpilih.',
                       icon: Icons.leaderboard_rounded,
                       accent: accent,
                       largeValue: true,
@@ -2637,7 +2638,8 @@ class _SimAnalysisSheetContent extends StatelessWidget {
             child: _AnalysisInsightRow(
               icon: Icons.pie_chart_rounded,
               title: 'Kategori dominan: ${dominant.label}',
-              description: 'Kategori ini mencatat ${_formatAnalysisNumber(dominantValue)} SIM, setara ${_formatAnalysisPercent(dominantShare)} dari total penerbitan pada periode terpilih.',
+              description:
+                  'Kategori ini mencatat ${_formatAnalysisNumber(dominantValue)} SIM, setara ${_formatAnalysisPercent(dominantShare)} dari total penerbitan pada periode terpilih.',
               accent: dominant.color,
             ),
           ),
@@ -2649,7 +2651,8 @@ class _SimAnalysisSheetContent extends StatelessWidget {
             child: _AnalysisInsightRow(
               icon: Icons.emoji_events_rounded,
               title: 'Pomdam dengan nilai tertinggi',
-              description: '${leader.name} berada di peringkat pertama dengan ${_formatAnalysisNumber(leader.value)} SIM atau ${_formatAnalysisPercent(leaderShare)} dari total periode.',
+              description:
+                  '${leader.name} berada di peringkat pertama dengan ${_formatAnalysisNumber(leader.value)} SIM atau ${_formatAnalysisPercent(leaderShare)} dari total periode.',
               accent: accent,
             ),
           ),
@@ -2660,7 +2663,8 @@ class _SimAnalysisSheetContent extends StatelessWidget {
           child: _AnalysisInsightRow(
             icon: Icons.groups_rounded,
             title: 'Konsentrasi lima Pomdam teratas',
-            description: 'Lima peringkat teratas secara gabungan mencatat ${_formatAnalysisNumber(topFiveTotal)} SIM (${_formatAnalysisPercent(topFiveShare)} dari total periode). Angka ini menunjukkan porsi penerbitan yang terkonsentrasi pada kelompok teratas.',
+            description:
+                'Lima peringkat teratas secara gabungan mencatat ${_formatAnalysisNumber(topFiveTotal)} SIM (${_formatAnalysisPercent(topFiveShare)} dari total periode). Angka ini menunjukkan porsi penerbitan yang terkonsentrasi pada kelompok teratas.',
             accent: accent,
           ),
         ),
@@ -2670,7 +2674,8 @@ class _SimAnalysisSheetContent extends StatelessWidget {
           child: _AnalysisInsightRow(
             icon: Icons.calendar_month_rounded,
             title: 'Konteks tahun berjalan',
-            description: 'Periode terpilih mencatat ${_formatAnalysisNumber(periodTotal)} dari ${_formatAnalysisNumber(yearTotal)} SIM pada akumulasi (${_formatAnalysisPercent(ytdShare)}). Perbandingan ini menggunakan kumulatif yang tampil pada laporan.',
+            description:
+                'Periode terpilih mencatat ${_formatAnalysisNumber(periodTotal)} dari ${_formatAnalysisNumber(yearTotal)} SIM pada akumulasi (${_formatAnalysisPercent(ytdShare)}). Perbandingan ini menggunakan kumulatif yang tampil pada laporan.',
             accent: accent,
           ),
         ),
