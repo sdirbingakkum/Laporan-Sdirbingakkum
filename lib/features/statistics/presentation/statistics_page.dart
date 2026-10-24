@@ -1326,10 +1326,27 @@ class _ContentBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final totalLabel = switch (module) {
+      StatisticsModule.pelanggaran => 'TOTAL PELANGGARAN',
+      StatisticsModule.lakaLalin => 'TOTAL KASUS LAKA-LALIN',
+      StatisticsModule.simTni => 'TOTAL SIM',
+      StatisticsModule.k9 => null,
+      StatisticsModule.provos => null,
+    };
+    final headlineTotal = switch (module) {
+      StatisticsModule.pelanggaran =>
+        columns.isEmpty ? 0 : _reportCardsTotal(columns.first.cards),
+      StatisticsModule.lakaLalin =>
+        columns.isEmpty ? 0 : _reportCardCount(columns.first.cards, 'JUMLAH KASUS'),
+      StatisticsModule.simTni => totalSim,
+      StatisticsModule.k9 => null,
+      StatisticsModule.provos => null,
+    };
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (totalSim != null) ...[
+        if (totalLabel != null && headlineTotal != null) ...[
           TweenAnimationBuilder<double>(
             tween: Tween(begin: 0.0, end: 1.0),
             duration: const Duration(milliseconds: 550),
@@ -1343,7 +1360,11 @@ class _ContentBody extends StatelessWidget {
                 ),
               );
             },
-            child: _TotalSimCard(total: totalSim!, accent: accent),
+            child: _TotalSimCard(
+              total: headlineTotal,
+              label: totalLabel,
+              accent: accent,
+            ),
           ),
           const SizedBox(height: 14),
         ],
@@ -1418,15 +1439,22 @@ class _ContentBody extends StatelessWidget {
 }
 
 class _TotalSimCard extends StatelessWidget {
-  const _TotalSimCard({required this.total, required this.accent});
+  const _TotalSimCard({
+    required this.total,
+    required this.label,
+    required this.accent,
+  });
 
   final int total;
+  final String label;
   final Color accent;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      key: const ValueKey('sim-total-card'),
+      key: ValueKey(
+        label == 'TOTAL SIM' ? 'sim-total-card' : 'main-report-total-card',
+      ),
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       decoration: BoxDecoration(
@@ -1458,8 +1486,8 @@ class _TotalSimCard extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final compact = constraints.maxWidth < 270;
-          final label = Text(
-            'TOTAL SIM',
+          final labelWidget = Text(
+            label,
             style: TextStyle(
               color: _muted,
               fontSize: compact ? 10 : 12,
@@ -1489,7 +1517,7 @@ class _TotalSimCard extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                label,
+                labelWidget,
                 const SizedBox(height: 5),
                 Align(alignment: Alignment.centerRight, child: value),
               ],
@@ -1499,7 +1527,7 @@ class _TotalSimCard extends StatelessWidget {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Flexible(child: label),
+              Flexible(child: labelWidget),
               const SizedBox(width: 12),
               Flexible(child: value),
             ],
