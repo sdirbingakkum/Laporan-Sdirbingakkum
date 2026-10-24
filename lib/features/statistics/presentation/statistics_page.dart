@@ -177,8 +177,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
           final data = snapshot.data;
           if (snapshot.connectionState == ConnectionState.waiting ||
               snapshot.hasError ||
-              data == null ||
-              data.ranking.isEmpty) {
+              data == null) {
             return const SizedBox.shrink();
           }
 
