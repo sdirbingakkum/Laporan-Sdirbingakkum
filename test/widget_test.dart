@@ -866,6 +866,41 @@ void main() {
   });
 
   testWidgets(
+    'SIM TNI analysis button stays fixed at the bottom while scrolling',
+    (tester) async {
+      await _setSurfaceSize(tester, const Size(390, 844));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatisticsPage(
+            module: StatisticsModule.simTni,
+            dataLoader: (module) =>
+                _testSelectablePeriodData(module, 'month:9'),
+            periodDataLoader: _testSelectablePeriodData,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final fixedBar = find.byKey(const ValueKey('fixed-analysis-bar'));
+      expect(fixedBar, findsOneWidget);
+      expect(find.text('STATISTIK'), findsOneWidget);
+      final initialRect = tester.getRect(fixedBar);
+
+      await tester.drag(
+        find.byKey(const ValueKey('statistics-content')),
+        const Offset(0, -420),
+      );
+      await tester.pumpAndSettle();
+
+      final scrolledRect = tester.getRect(fixedBar);
+      expect(scrolledRect.top, closeTo(initialRect.top, 0.1));
+      expect(scrolledRect.bottom, closeTo(initialRect.bottom, 0.1));
+      expect(scrolledRect.bottom, lessThanOrEqualTo(844));
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'SIM TNI animated analysis sheet is detailed and responsive on mobile',
     (tester) async {
       const sizes = <Size>[Size(390, 844), Size(320, 568)];

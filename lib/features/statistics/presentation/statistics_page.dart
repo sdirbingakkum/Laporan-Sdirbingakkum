@@ -171,6 +171,98 @@ class _StatisticsPageState extends State<StatisticsPage> {
         onSignOut: () => _signOut(context),
         onBack: () => context.pop(),
       ),
+      bottomNavigationBar: FutureBuilder<StatisticsViewData>(
+        future: _dataFuture,
+        builder: (context, snapshot) {
+          final data = snapshot.data;
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              snapshot.hasError ||
+              data == null ||
+              data.ranking.isEmpty) {
+            return const SizedBox.shrink();
+          }
+
+          final columns = data.columns
+              .map(
+                (column) => _StatColumn(
+                  label: column.label,
+                  cards: column.cards
+                      .map(
+                        (card) => _StatCardData(
+                          card.label,
+                          card.value,
+                          card.color,
+                        ),
+                      )
+                      .toList(),
+                ),
+              )
+              .toList();
+          final ranking = data.ranking
+              .map((item) => _RankData(item.name, item.value))
+              .toList();
+          final accent = _moduleAccent(widget.module);
+
+          return Container(
+            key: const ValueKey('fixed-analysis-bar'),
+            decoration: BoxDecoration(
+              color: _bg.withValues(alpha: 0.98),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  _surface.withValues(alpha: 0.96),
+                  _bg.withValues(alpha: 0.995),
+                ],
+              ),
+              border: Border(
+                top: BorderSide(color: accent.withValues(alpha: 0.24)),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.30),
+                  blurRadius: 22,
+                  offset: const Offset(0, -7),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 11, 20, 11),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 760),
+                    child: _AnalysisButton(
+                      accent: accent,
+                      label: 'STATISTIK',
+                      onPressed: () => _showRankingSheet(
+                        context,
+                        widget.module,
+                        ranking,
+                        accent,
+                        analysisCards: columns.length > 1
+                            ? columns[1].cards
+                            : columns.first.cards,
+                        yearToDateCards: columns.first.cards,
+                        selectedPeriodLabel: columns.length > 1
+                            ? columns[1].label
+                            : columns.first.label,
+                        yearToDateLabel: columns.first.label,
+                        selectedTotal: data.totalSim,
+                        onItemTap: widget.module == StatisticsModule.k9
+                            ? (index) =>
+                                _showK9UnitSheet(context, _k9Units[index])
+                            : null,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
       body: AppBackground(
         child: SafeArea(
           top: false,
@@ -216,9 +308,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
                             )
                             .toList(),
                         module: widget.module,
-                        ranking: data.ranking
-                            .map((item) => _RankData(item.name, item.value))
-                            .toList(),
                         accent: _moduleAccent(widget.module),
                         totalSim: data.totalSim,
                         periodOptions: data.periodOptions,
@@ -1219,7 +1308,6 @@ class _ContentBody extends StatelessWidget {
   const _ContentBody({
     required this.columns,
     required this.module,
-    required this.ranking,
     required this.accent,
     this.totalSim,
     this.periodOptions = const [],
@@ -1229,7 +1317,6 @@ class _ContentBody extends StatelessWidget {
 
   final List<_StatColumn> columns;
   final StatisticsModule module;
-  final List<_RankData> ranking;
   final Color accent;
   final int? totalSim;
   final List<StatisticsPeriodOption> periodOptions;
@@ -1324,43 +1411,6 @@ class _ContentBody extends StatelessWidget {
             },
           ),
         const SizedBox(height: 16),
-        if (ranking.isNotEmpty)
-          TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0.0, end: 1.0),
-            duration: const Duration(milliseconds: 650),
-            curve: Curves.easeOutCubic,
-            builder: (context, value, child) {
-              return Opacity(
-                opacity: value.clamp(0.0, 1.0),
-                child: Transform.translate(
-                  offset: Offset(0, (1 - value) * 12),
-                  child: child,
-                ),
-              );
-            },
-            child: _AnalysisButton(
-              accent: accent,
-              label: 'STATISTIK',
-              onPressed: () => _showRankingSheet(
-                context,
-                module,
-                ranking,
-                accent,
-                analysisCards: columns.length > 1
-                    ? columns[1].cards
-                    : columns.first.cards,
-                yearToDateCards: columns.first.cards,
-                selectedPeriodLabel: columns.length > 1
-                    ? columns[1].label
-                    : columns.first.label,
-                yearToDateLabel: columns.first.label,
-                selectedTotal: totalSim,
-                onItemTap: module == StatisticsModule.k9
-                    ? (index) => _showK9UnitSheet(context, _k9Units[index])
-                    : null,
-              ),
-            ),
-          ),
       ],
     );
   }
