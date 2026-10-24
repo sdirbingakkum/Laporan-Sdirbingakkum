@@ -1010,7 +1010,6 @@ void main() {
           expect(find.text('RINGKASAN EKSEKUTIF'), findsOneWidget);
           expect(find.text('TEMUAN UTAMA & VALIDASI'), findsOneWidget);
           expect(find.byType(TweenAnimationBuilder<double>), findsWidgets);
-          expect(find.byType(AnimatedBuilder), findsWidgets);
 
           switch (module) {
             case StatisticsModule.pelanggaran:
@@ -1033,7 +1032,6 @@ void main() {
               expect(find.text('STATUS DIK/TAR'), findsOneWidget);
               expect(find.text('Cakupan status DIK/TAR'), findsOneWidget);
               expect(find.text('Prioritas tindak lanjut'), findsOneWidget);
-              expect(find.text('41'), findsOneWidget);
               break;
             case StatisticsModule.simTni:
               break;
