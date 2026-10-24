@@ -1529,7 +1529,8 @@ Future<void> _showRankingSheet(
   final periodTotal = selectedTotal ?? sumCards(analysisCards);
   final periodTitle = selectedPeriodLabel ?? 'PERIODE TERPILIH';
   final yearLabel = (yearToDateLabel ?? '').split('·').first.trim();
-  final periodCaption = yearLabel.isEmpty
+  final periodCaption = yearLabel.isEmpty ||
+          periodTitle.toUpperCase().contains(yearLabel.toUpperCase())
       ? periodTitle.toUpperCase()
       : '$periodTitle · $yearLabel';
 
@@ -3282,7 +3283,13 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
                         .where((item) => item.label.toUpperCase() != 'JUMLAH KASUS')
                         .toList()
                     : yearToDateCards;
-                final annual = annualCards.where((item) => item.label == card.label).firstOrNull;
+                _StatCardData? annual;
+                for (final item in annualCards) {
+                  if (item.label == card.label) {
+                    annual = item;
+                    break;
+                  }
+                }
                 final periodValue = _analysisInt(card.value);
                 final yearValue = annual == null ? 0 : _analysisInt(annual.value);
                 return _AnalysisEntrance(
