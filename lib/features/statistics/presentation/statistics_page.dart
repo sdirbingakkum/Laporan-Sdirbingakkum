@@ -1724,9 +1724,10 @@ class _AnalysisEntrance extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final animationDuration = 420 + (index > 12 ? 12 : index) * 45;
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: 0, end: 1),
-      duration: Duration(milliseconds: 420 + index * 65),
+      duration: Duration(milliseconds: animationDuration),
       curve: Curves.easeOutCubic,
       child: child,
       builder: (context, value, child) => Opacity(
