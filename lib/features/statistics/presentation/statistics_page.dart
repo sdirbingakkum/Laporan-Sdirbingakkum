@@ -2155,7 +2155,6 @@ class _AnalysisRankingRow extends StatelessWidget {
     required this.maxValue,
     required this.accent,
     this.shareLabel,
-    this.onTap,
   });
 
   final int rank;
@@ -2164,7 +2163,6 @@ class _AnalysisRankingRow extends StatelessWidget {
   final int maxValue;
   final Color accent;
   final String? shareLabel;
-  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -2180,7 +2178,6 @@ class _AnalysisRankingRow extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -2933,9 +2930,9 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
       metrics.add(
         _ReportMetric(
           title: 'POMDAM AKTIF',
-          value: '${activePomdams}/${ranking.length}',
+          value: '$activePomdams/${ranking.length}',
           detail:
-              '${zeroPomdams} Pomdam bernilai 0; tetap ditampilkan dalam daftar.',
+              '$zeroPomdams Pomdam bernilai 0; tetap ditampilkan dalam daftar.',
           icon: Icons.military_tech_rounded,
         ),
       );
@@ -2960,9 +2957,9 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
       metrics.add(
         _ReportMetric(
           title: 'POMDAM AKTIF',
-          value: '${activePomdams}/${ranking.length}',
+          value: '$activePomdams/${ranking.length}',
           detail:
-              '${zeroPomdams} Pomdam tanpa kasus tercatat pada periode ini.',
+              '$zeroPomdams Pomdam tanpa kasus tercatat pada periode ini.',
           icon: Icons.military_tech_rounded,
         ),
       );
@@ -3029,7 +3026,7 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
         ),
         _ReportMetric(
           title: 'POMDAM AKTIF',
-          value: '${activePomdams}/${ranking.length}',
+          value: '$activePomdams/${ranking.length}',
           detail:
               'Pomdam dengan nilai personel lebih dari nol pada periode ini.',
           icon: Icons.military_tech_rounded,
@@ -3062,7 +3059,7 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
         _ReportInsight(
           title: 'Cakupan pencatatan Pomdam',
           description:
-              '${activePomdams} dari ${ranking.length} Pomdam memiliki nilai lebih dari nol; ${zeroPomdams} Pomdam tetap tercantum dengan nilai 0.',
+              '$activePomdams dari ${ranking.length} Pomdam memiliki nilai lebih dari nol; $zeroPomdams Pomdam tetap tercantum dengan nilai 0.',
           icon: Icons.location_city_rounded,
         ),
       );
@@ -3101,7 +3098,7 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
         _ReportInsight(
           title: 'Sebaran antar-Pomdam',
           description:
-              '${activePomdams} dari ${ranking.length} Pomdam memiliki kasus tercatat. ${topPomdam == null ? 'Belum ada Pomdam yang bisa dibandingkan.' : '${topPomdam.name} berada di peringkat pertama dengan ${_formatAnalysisNumber(topPomdam.value)} kasus.'}',
+              '$activePomdams dari ${ranking.length} Pomdam memiliki kasus tercatat. ${topPomdam == null ? 'Belum ada Pomdam yang bisa dibandingkan.' : '${topPomdam.name} berada di peringkat pertama dengan ${_formatAnalysisNumber(topPomdam.value)} kasus.'}',
           icon: Icons.location_city_rounded,
         ),
       );
@@ -3161,7 +3158,7 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
         _ReportInsight(
           title: 'Sebaran personel',
           description:
-              '${activePomdams} dari ${ranking.length} Pomdam memiliki nilai personel lebih dari nol. Nilai ranking merepresentasikan rekap personel, bukan status DIK/TAR terperinci per Pomdam.',
+              '$activePomdams dari ${ranking.length} Pomdam memiliki nilai personel lebih dari nol. Nilai ranking merepresentasikan rekap personel, bukan status DIK/TAR terperinci per Pomdam.',
           icon: Icons.location_city_rounded,
         ),
       );
