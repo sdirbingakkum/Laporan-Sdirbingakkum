@@ -2833,6 +2833,11 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasReportData = !periodLabel.toUpperCase().contains('BELUM ADA DATA');
+    final yearName = yearToDateLabel.split('·').first.trim();
+    final heroPeriodCaption = yearName.isEmpty ||
+            periodLabel.toUpperCase().contains(yearName.toUpperCase())
+        ? periodLabel
+        : '$periodLabel · $yearName';
     final isPelanggaran = module == StatisticsModule.pelanggaran;
     final isLaka = module == StatisticsModule.lakaLalin;
     final isK9 = module == StatisticsModule.k9;
@@ -3154,7 +3159,7 @@ class _ReportAnalysisSheetContent extends StatelessWidget {
             total: total,
             metricLabel: metricLabel,
             unitLabel: unitLabel,
-            periodCaption: periodLabel,
+            periodCaption: heroPeriodCaption,
             yearToDateLabel: yearToDateLabel,
             yearTotal: yearTotal,
             yearShare: yearShare,
