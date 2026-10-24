@@ -1415,7 +1415,7 @@ Future<void> _showRankingSheet(
   final yearLabel = (yearToDateLabel ?? '').split('·').first.trim();
   final periodCaption = yearLabel.isEmpty
       ? periodTitle.toUpperCase()
-      : periodTitle.toUpperCase() + ' · ' + yearLabel;
+      : '$periodTitle · $yearLabel';
 
   await showModalBottomSheet<void>(
     context: context,
@@ -1497,7 +1497,7 @@ Future<void> _showRankingSheet(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'ANALISIS ' + _moduleTitleForSheet(module),
+                                'ANALISIS ${_moduleTitleForSheet(module)}',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
@@ -1629,7 +1629,7 @@ String _formatAnalysisNumber(int value) {
 
 String _formatAnalysisPercent(double value) {
   final safeValue = value.isFinite ? value.clamp(0.0, 100.0).toDouble() : 0.0;
-  return safeValue.toStringAsFixed(1).replaceAll('.', ',') + '%';
+  return '${safeValue.toStringAsFixed(1).replaceAll('.', ',')}%';
 }
 
 class _AnalysisEntrance extends StatelessWidget {
@@ -1884,11 +1884,7 @@ class _AnalysisHeroCard extends StatelessWidget {
               const SizedBox(width: 7),
               Expanded(
                 child: Text(
-                  'Akumulasi tahun berjalan: ' +
-                      _formatAnalysisNumber(yearTotal) +
-                      ' SIM (' +
-                      yearToDateLabel +
-                      ').',
+                  'Akumulasi tahun berjalan: ${_formatAnalysisNumber(yearTotal)} SIM ($yearToDateLabel).',
                   style: const TextStyle(
                     color: _muted,
                     fontSize: 10,
@@ -1906,8 +1902,7 @@ class _AnalysisHeroCard extends StatelessWidget {
           ),
           const SizedBox(height: 7),
           Text(
-            _formatAnalysisPercent(yearShare) +
-                ' dari akumulasi tahun berjalan berada pada periode pilihan.',
+            '${_formatAnalysisPercent(yearShare)} dari akumulasi tahun berjalan berada pada periode pilihan.',
             style: TextStyle(
               color: _text.withValues(alpha: 0.88),
               fontSize: 10,
@@ -2357,9 +2352,7 @@ class _SimYearComparisonRow extends StatelessWidget {
                 ),
               ),
               Text(
-                _formatAnalysisNumber(periodValue) +
-                    ' / ' +
-                    _formatAnalysisNumber(yearValue),
+                '${_formatAnalysisNumber(periodValue)} / ${_formatAnalysisNumber(yearValue)}',
                 style: const TextStyle(
                   color: _text,
                   fontSize: 10,
@@ -2453,7 +2446,7 @@ class _SimAnalysisSheetContent extends StatelessWidget {
     final yearName = yearToDateLabel.split('·').first.trim();
     final periodCaption = yearName.isEmpty
         ? periodLabel.toUpperCase()
-        : periodLabel.toUpperCase() + ' · ' + yearName;
+        : '$periodLabel · $yearName';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -2496,10 +2489,7 @@ class _SimAnalysisSheetContent extends StatelessWidget {
                       value: dominant?.label ?? '—',
                       detail: dominant == null
                           ? 'Belum ada nilai kategori.'
-                          : _formatAnalysisNumber(dominantValue) +
-                                ' SIM · ' +
-                                _formatAnalysisPercent(dominantShare) +
-                                ' dari periode',
+                          : '${_formatAnalysisNumber(dominantValue)} SIM · ${_formatAnalysisPercent(dominantShare)} dari periode',
                       icon: Icons.donut_large_rounded,
                       accent: dominant?.color ?? accent,
                     ),
@@ -2514,10 +2504,7 @@ class _SimAnalysisSheetContent extends StatelessWidget {
                       value: leader?.name ?? '—',
                       detail: leader == null
                           ? 'Belum ada peringkat Pomdam.'
-                          : _formatAnalysisNumber(leader.value) +
-                                ' SIM · ' +
-                                _formatAnalysisPercent(leaderShare) +
-                                ' dari periode',
+                          : '${_formatAnalysisNumber(leader.value)} SIM · ${_formatAnalysisPercent(leaderShare)} dari periode',
                       icon: Icons.military_tech_rounded,
                       accent: accent,
                     ),
@@ -2530,11 +2517,7 @@ class _SimAnalysisSheetContent extends StatelessWidget {
                     child: _AnalysisMetricCard(
                       title: 'KONTRIBUSI TOP 5 POMDAM',
                       value: _formatAnalysisPercent(topFiveShare),
-                      detail:
-                          _formatAnalysisNumber(topFiveTotal) +
-                          ' SIM dari ' +
-                          _formatAnalysisNumber(periodTotal) +
-                          ' SIM tercatat pada periode terpilih.',
+                      detail: '${_formatAnalysisNumber(topFiveTotal)} SIM dari ${_formatAnalysisNumber(periodTotal)} SIM tercatat pada periode terpilih.',
                       icon: Icons.leaderboard_rounded,
                       accent: accent,
                       largeValue: true,
@@ -2653,13 +2636,8 @@ class _SimAnalysisSheetContent extends StatelessWidget {
             index: 26,
             child: _AnalysisInsightRow(
               icon: Icons.pie_chart_rounded,
-              title: 'Kategori dominan: ' + dominant.label,
-              description:
-                  'Kategori ini mencatat ' +
-                  _formatAnalysisNumber(dominantValue) +
-                  ' SIM, setara ' +
-                  _formatAnalysisPercent(dominantShare) +
-                  ' dari total penerbitan pada periode terpilih.',
+              title: 'Kategori dominan: ${dominant.label}',
+              description: 'Kategori ini mencatat ${_formatAnalysisNumber(dominantValue)} SIM, setara ${_formatAnalysisPercent(dominantShare)} dari total penerbitan pada periode terpilih.',
               accent: dominant.color,
             ),
           ),
@@ -2671,13 +2649,7 @@ class _SimAnalysisSheetContent extends StatelessWidget {
             child: _AnalysisInsightRow(
               icon: Icons.emoji_events_rounded,
               title: 'Pomdam dengan nilai tertinggi',
-              description:
-                  leader.name +
-                  ' berada di peringkat pertama dengan ' +
-                  _formatAnalysisNumber(leader.value) +
-                  ' SIM atau ' +
-                  _formatAnalysisPercent(leaderShare) +
-                  ' dari total periode.',
+              description: '${leader.name} berada di peringkat pertama dengan ${_formatAnalysisNumber(leader.value)} SIM atau ${_formatAnalysisPercent(leaderShare)} dari total periode.',
               accent: accent,
             ),
           ),
@@ -2688,12 +2660,7 @@ class _SimAnalysisSheetContent extends StatelessWidget {
           child: _AnalysisInsightRow(
             icon: Icons.groups_rounded,
             title: 'Konsentrasi lima Pomdam teratas',
-            description:
-                'Lima peringkat teratas secara gabungan mencatat ' +
-                _formatAnalysisNumber(topFiveTotal) +
-                ' SIM (' +
-                _formatAnalysisPercent(topFiveShare) +
-                ' dari total periode). Angka ini menunjukkan porsi penerbitan yang terkonsentrasi pada kelompok teratas.',
+            description: 'Lima peringkat teratas secara gabungan mencatat ${_formatAnalysisNumber(topFiveTotal)} SIM (${_formatAnalysisPercent(topFiveShare)} dari total periode). Angka ini menunjukkan porsi penerbitan yang terkonsentrasi pada kelompok teratas.',
             accent: accent,
           ),
         ),
@@ -2703,14 +2670,7 @@ class _SimAnalysisSheetContent extends StatelessWidget {
           child: _AnalysisInsightRow(
             icon: Icons.calendar_month_rounded,
             title: 'Konteks tahun berjalan',
-            description:
-                'Periode terpilih mencatat ' +
-                _formatAnalysisNumber(periodTotal) +
-                ' dari ' +
-                _formatAnalysisNumber(yearTotal) +
-                ' SIM pada akumulasi (' +
-                _formatAnalysisPercent(ytdShare) +
-                '). Perbandingan ini menggunakan kumulatif yang tampil pada laporan.',
+            description: 'Periode terpilih mencatat ${_formatAnalysisNumber(periodTotal)} dari ${_formatAnalysisNumber(yearTotal)} SIM pada akumulasi (${_formatAnalysisPercent(ytdShare)}). Perbandingan ini menggunakan kumulatif yang tampil pada laporan.',
             accent: accent,
           ),
         ),
