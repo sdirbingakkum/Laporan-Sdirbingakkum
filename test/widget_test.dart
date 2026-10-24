@@ -974,6 +974,84 @@ void main() {
   );
 
   testWidgets(
+    'all non-SIM analysis sheets are detailed, animated, and mobile responsive',
+    (tester) async {
+      const modules = <StatisticsModule>[
+        StatisticsModule.pelanggaran,
+        StatisticsModule.lakaLalin,
+        StatisticsModule.k9,
+        StatisticsModule.provos,
+      ];
+      const titles = <StatisticsModule, String>{
+        StatisticsModule.pelanggaran: 'PELANGGARAN',
+        StatisticsModule.lakaLalin: 'LAKA-LALIN',
+        StatisticsModule.k9: 'K9',
+        StatisticsModule.provos: 'PROVOS TNI-AD',
+      };
+      const sizes = <Size>[Size(390, 844), Size(320, 568)];
+
+      for (final size in sizes) {
+        await _setSurfaceSize(tester, size);
+        for (final module in modules) {
+          await tester.pumpWidget(
+            MaterialApp(
+              home: StatisticsPage(
+                module: module,
+                dataLoader: _testStatisticsData,
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.text('STATISTIK'));
+          await tester.pumpAndSettle();
+
+          expect(find.text('ANALISIS ${titles[module]}'), findsOneWidget);
+          expect(find.text('RINGKASAN EKSEKUTIF'), findsOneWidget);
+          expect(find.text('TEMUAN UTAMA & VALIDASI'), findsOneWidget);
+          expect(find.byType(TweenAnimationBuilder<double>), findsWidgets);
+          expect(find.byType(AnimatedBuilder), findsWidgets);
+
+          switch (module) {
+            case StatisticsModule.pelanggaran:
+              expect(find.text('DISTRIBUSI JENIS PELANGGARAN'), findsOneWidget);
+              expect(find.text('PERIODE PILIHAN VS KUMULATIF'), findsOneWidget);
+              expect(find.text('Rekonsiliasi total Pomdam'), findsOneWidget);
+              break;
+            case StatisticsModule.lakaLalin:
+              expect(find.text('KOMPOSISI JENIS LAKA-LALIN'), findsOneWidget);
+              expect(find.text('PERIODE PILIHAN VS KUMULATIF'), findsOneWidget);
+              expect(find.text('Rekonsiliasi jenis laka'), findsOneWidget);
+              break;
+            case StatisticsModule.k9:
+              expect(find.text('KOMPOSISI K9 PER UNIT'), findsOneWidget);
+              expect(find.text('RINCIAN SELURUH UNIT K9'), findsOneWidget);
+              expect(find.text('Kelengkapan data organisasi'), findsOneWidget);
+              expect(find.text('SESUAI ORGAS'), findsWidgets);
+              break;
+            case StatisticsModule.provos:
+              expect(find.text('STATUS DIK/TAR'), findsOneWidget);
+              expect(find.text('Cakupan status DIK/TAR'), findsOneWidget);
+              expect(find.text('Prioritas tindak lanjut'), findsOneWidget);
+              expect(find.text('41'), findsOneWidget);
+              break;
+            case StatisticsModule.simTni:
+              break;
+          }
+
+          expect(
+            tester.takeException(),
+            isNull,
+            reason: 'Analysis overflow or exception for ${titles[module]} at $size',
+          );
+          await tester.tap(find.byTooltip('Tutup analisis'));
+          await tester.pumpAndSettle();
+        }
+      }
+    },
+  );
+
+  testWidgets(
     'SIM TNI animated analysis sheet is detailed and responsive on mobile',
     (tester) async {
       const sizes = <Size>[Size(390, 844), Size(320, 568)];
