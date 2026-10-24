@@ -227,7 +227,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
               top: false,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 11, 20, 11),
-                child: Center(
+                child: Align(
+                  alignment: Alignment.center,
+                  heightFactor: 1,
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 760),
                     child: _AnalysisButton(

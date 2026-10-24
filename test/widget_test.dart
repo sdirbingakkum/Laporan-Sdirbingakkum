@@ -795,6 +795,9 @@ void main() {
     expect(find.text('42'), findsNothing);
     expect(find.text('9'), findsOneWidget);
 
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('laka-lalin-period-dropdown')),
+    );
     await tester.tap(find.byKey(const ValueKey('laka-lalin-period-dropdown')));
     await tester.pumpAndSettle();
     await tester.tap(find.text('TRIWULAN III'));
@@ -831,6 +834,9 @@ void main() {
     expect(find.text('2734'), findsOneWidget);
     expect(find.text('SEP'), findsOneWidget);
 
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('sim-tni-period-dropdown')),
+    );
     await tester.tap(find.byKey(const ValueKey('sim-tni-period-dropdown')));
     await tester.pumpAndSettle();
     await tester.tap(find.text('TRIWULAN III'));
