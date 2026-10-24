@@ -2705,7 +2705,7 @@ class _SimAnalysisSheetContent extends StatelessWidget {
             icon: Icons.groups_rounded,
             title: 'Cakupan seluruh Pomdam',
             description:
-                '${contributingPomdamCount} dari ${ranking.length} Pomdam memiliki penerbitan pada periode ini; ${zeroValuePomdamCount} Pomdam bernilai 0. Semua tetap ditampilkan agar distribusi tidak hanya memperlihatkan peringkat teratas.',
+                '$contributingPomdamCount dari ${ranking.length} Pomdam memiliki penerbitan pada periode ini; $zeroValuePomdamCount Pomdam bernilai 0. Semua tetap ditampilkan agar distribusi tidak hanya memperlihatkan peringkat teratas.',
             accent: accent,
           ),
         ),
