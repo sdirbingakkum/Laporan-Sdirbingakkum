@@ -421,7 +421,11 @@ Future<StatisticsViewData> _testSelectablePeriodData(
         ),
         StatisticsColumnData(label: option.label, cards: comparisonCards),
       ],
-      ranking: const [StatisticsRankData('POMDAM TEST', 2607)],
+      ranking: const [
+        StatisticsRankData('POMDAM TEST', 2607),
+        StatisticsRankData('POMDAM BARAT', 0),
+        StatisticsRankData('POMDAM NIHIL', 0),
+      ],
       totalSim: comparisonTotal,
       periodOptions: _testPelanggaranPeriodOptions,
       selectedPeriodKey: option.key,
@@ -791,6 +795,9 @@ void main() {
     expect(find.text('42'), findsNothing);
     expect(find.text('9'), findsOneWidget);
 
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('laka-lalin-period-dropdown')),
+    );
     await tester.tap(find.byKey(const ValueKey('laka-lalin-period-dropdown')));
     await tester.pumpAndSettle();
     await tester.tap(find.text('TRIWULAN III'));
@@ -827,6 +834,9 @@ void main() {
     expect(find.text('2734'), findsOneWidget);
     expect(find.text('SEP'), findsOneWidget);
 
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('sim-tni-period-dropdown')),
+    );
     await tester.tap(find.byKey(const ValueKey('sim-tni-period-dropdown')));
     await tester.pumpAndSettle();
     await tester.tap(find.text('TRIWULAN III'));
@@ -860,6 +870,113 @@ void main() {
     expect(find.text('ANALISIS STATISTIK'), findsNothing);
     expect(find.byKey(const ValueKey('report-period-columns')), findsOneWidget);
   });
+
+  testWidgets(
+    'SIM TNI analysis button stays fixed at the bottom while scrolling',
+    (tester) async {
+      await _setSurfaceSize(tester, const Size(390, 844));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatisticsPage(
+            module: StatisticsModule.simTni,
+            dataLoader: (module) =>
+                _testSelectablePeriodData(module, 'month:9'),
+            periodDataLoader: _testSelectablePeriodData,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final fixedBar = find.byKey(const ValueKey('fixed-analysis-bar'));
+      expect(fixedBar, findsOneWidget);
+      expect(find.text('STATISTIK'), findsOneWidget);
+      final initialRect = tester.getRect(fixedBar);
+
+      await tester.drag(
+        find.byKey(const ValueKey('statistics-content')),
+        const Offset(0, -420),
+      );
+      await tester.pumpAndSettle();
+
+      final scrolledRect = tester.getRect(fixedBar);
+      expect(scrolledRect.top, closeTo(initialRect.top, 0.1));
+      expect(scrolledRect.bottom, closeTo(initialRect.bottom, 0.1));
+      expect(scrolledRect.bottom, lessThanOrEqualTo(844));
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'SIM TNI animated analysis sheet is detailed and responsive on mobile',
+    (tester) async {
+      const sizes = <Size>[Size(390, 844), Size(320, 568)];
+
+      for (final size in sizes) {
+        await _setSurfaceSize(tester, size);
+        await tester.pumpWidget(
+          MaterialApp(
+            home: StatisticsPage(
+              module: StatisticsModule.simTni,
+              dataLoader: (module) =>
+                  _testSelectablePeriodData(module, 'month:9'),
+              periodDataLoader: _testSelectablePeriodData,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        final reportException = tester.takeException();
+        if (reportException != null) {
+          debugDumpRenderTree();
+          fail(
+            'Report page overflow before opening analysis at $size: '
+            '$reportException',
+          );
+        }
+
+        await tester.ensureVisible(find.text('STATISTIK'));
+        await tester.pumpAndSettle();
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: 'Report page overflow after scrolling at $size',
+        );
+        await tester.tap(find.text('STATISTIK'));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(DraggableScrollableSheet), findsOneWidget);
+        expect(find.text('ANALISIS SIM TNI'), findsOneWidget);
+        expect(find.text('TOTAL PENERBITAN'), findsOneWidget);
+        expect(find.text('RINGKASAN EKSEKUTIF'), findsOneWidget);
+        expect(find.text('KOMPOSISI JENIS SIM'), findsOneWidget);
+        expect(find.text('RINCIAN VS KUMULATIF'), findsOneWidget);
+        expect(find.text('JENIS SIM DITAMPILKAN'), findsOneWidget);
+        expect(find.text('SELURUH POMDAM'), findsOneWidget);
+        expect(find.text('POMDAM DENGAN PENERBITAN'), findsOneWidget);
+        expect(
+          find.text('DISTRIBUSI PENERBITAN SELURUH POMDAM'),
+          findsOneWidget,
+        );
+        expect(find.text('POMDAM TEST'), findsOneWidget);
+        expect(find.text('POMDAM BARAT'), findsOneWidget);
+        expect(find.text('POMDAM NIHIL'), findsOneWidget);
+        expect(find.text('Rekap seluruh jenis SIM'), findsOneWidget);
+        expect(find.text('Cakupan seluruh Pomdam'), findsOneWidget);
+        expect(find.text('Rekonsiliasi total Pomdam'), findsOneWidget);
+        expect(find.text('JENIS TERBANYAK'), findsNothing);
+        expect(find.text('POMDAM TERATAS'), findsNothing);
+        expect(find.text('KONTRIBUSI TOP 5 POMDAM'), findsNothing);
+        expect(find.text('POMDAM DENGAN PENERBITAN TERTINGGI'), findsNothing);
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: 'Analysis sheet overflow at $size',
+        );
+
+        await tester.tap(find.byTooltip('Tutup analisis'));
+        await tester.pumpAndSettle();
+      }
+    },
+  );
 
   testWidgets('PROVOS shows only the three cumulative indicators', (
     tester,
