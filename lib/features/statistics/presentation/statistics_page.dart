@@ -1393,23 +1393,24 @@ class _TotalSimCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 270;
+          final label = Text(
             'TOTAL SIM',
             style: TextStyle(
               color: _muted,
-              fontSize: 12,
+              fontSize: compact ? 10 : 12,
               fontWeight: FontWeight.w900,
-              letterSpacing: 2.0,
+              letterSpacing: compact ? 1.6 : 2.0,
             ),
-          ),
-          Text(
+          );
+          final value = Text(
             total.toString(),
+            textAlign: TextAlign.end,
             style: TextStyle(
               color: accent,
-              fontSize: 34,
+              fontSize: compact ? 31 : 34,
               fontWeight: FontWeight.w900,
               letterSpacing: -1.0,
               shadows: [
@@ -1420,8 +1421,28 @@ class _TotalSimCard extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        ],
+          );
+
+          if (compact) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                label,
+                const SizedBox(height: 5),
+                Align(alignment: Alignment.centerRight, child: value),
+              ],
+            );
+          }
+
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(child: label),
+              const SizedBox(width: 12),
+              Flexible(child: value),
+            ],
+          );
+        },
       ),
     );
   }
