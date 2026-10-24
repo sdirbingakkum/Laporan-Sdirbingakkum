@@ -879,11 +879,14 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(
-          tester.takeException(),
-          isNull,
-          reason: 'Report page overflow before opening analysis at $size',
-        );
+        final reportException = tester.takeException();
+        if (reportException != null) {
+          debugDumpRenderTree();
+          fail(
+            'Report page overflow before opening analysis at $size: '
+            '$reportException',
+          );
+        }
 
         await tester.ensureVisible(find.text('STATISTIK'));
         await tester.pumpAndSettle();
