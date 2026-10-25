@@ -1385,8 +1385,7 @@ class _ContentBody extends StatelessWidget {
                     accent: accent,
                     module: module,
                     alignPeriodHeader: _supportsPeriodSelector(module),
-                    periodOptions:
-                        _supportsPeriodSelector(module) && index == 1
+                    periodOptions: _supportsPeriodSelector(module) && index == 1
                         ? periodOptions
                         : const [],
                     selectedPeriodKey:
