@@ -1643,7 +1643,7 @@ Future<void> _showRankingSheet(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'ANALISIS ${_moduleTitleForSheet(module)}',
+                                'STATISTIK ${_moduleTitleForSheet(module)}',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
@@ -2311,7 +2311,7 @@ class _AnalysisEmptyState extends StatelessWidget {
           Icon(Icons.query_stats_rounded, color: _muted, size: 26),
           SizedBox(height: 9),
           Text(
-            'BELUM ADA DATA ANALISIS',
+            'BELUM ADA DATA STATISTIK',
             style: TextStyle(
               color: _text,
               fontSize: 11,
