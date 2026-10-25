@@ -1373,66 +1373,34 @@ class _ContentBody extends StatelessWidget {
         if (columns.length == 1)
           _StatsColumnView(column: columns.first, accent: accent)
         else
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final compact = constraints.maxWidth < 520;
-              return Flex(
-                key: const ValueKey('report-period-columns'),
-                direction: compact ? Axis.vertical : Axis.horizontal,
-                crossAxisAlignment: compact
-                    ? CrossAxisAlignment.stretch
-                    : CrossAxisAlignment.start,
-                children: [
-                  for (var index = 0; index < columns.length; index++) ...[
-                    if (index > 0)
-                      SizedBox(
-                        width: compact ? 0 : 16,
-                        height: compact ? 18 : 0,
-                      ),
-                    if (compact)
-                      _StatsColumnView(
-                        column: columns[index],
-                        accent: accent,
-                        module: module,
-                        alignPeriodHeader: _supportsPeriodSelector(module),
-                        periodOptions:
-                            _supportsPeriodSelector(module) && index == 1
-                            ? periodOptions
-                            : const [],
-                        selectedPeriodKey:
-                            _supportsPeriodSelector(module) && index == 1
-                            ? selectedPeriodKey
-                            : null,
-                        onPeriodChanged:
-                            _supportsPeriodSelector(module) && index == 1
-                            ? onPeriodChanged
-                            : null,
-                      )
-                    else
-                      Expanded(
-                        child: _StatsColumnView(
-                          column: columns[index],
-                          accent: accent,
-                          module: module,
-                          alignPeriodHeader: _supportsPeriodSelector(module),
-                          periodOptions:
-                              _supportsPeriodSelector(module) && index == 1
-                              ? periodOptions
-                              : const [],
-                          selectedPeriodKey:
-                              _supportsPeriodSelector(module) && index == 1
-                              ? selectedPeriodKey
-                              : null,
-                          onPeriodChanged:
-                              _supportsPeriodSelector(module) && index == 1
-                              ? onPeriodChanged
-                              : null,
-                        ),
-                      ),
-                  ],
-                ],
-              );
-            },
+          Row(
+            key: const ValueKey('report-period-columns'),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (var index = 0; index < columns.length; index++) ...[
+                if (index > 0) const SizedBox(width: 12),
+                Expanded(
+                  child: _StatsColumnView(
+                    column: columns[index],
+                    accent: accent,
+                    module: module,
+                    alignPeriodHeader: _supportsPeriodSelector(module),
+                    periodOptions:
+                        _supportsPeriodSelector(module) && index == 1
+                        ? periodOptions
+                        : const [],
+                    selectedPeriodKey:
+                        _supportsPeriodSelector(module) && index == 1
+                        ? selectedPeriodKey
+                        : null,
+                    onPeriodChanged:
+                        _supportsPeriodSelector(module) && index == 1
+                        ? onPeriodChanged
+                        : null,
+                  ),
+                ),
+              ],
+            ],
           ),
         const SizedBox(height: 16),
       ],
