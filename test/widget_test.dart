@@ -791,7 +791,7 @@ void main() {
       find.byKey(const ValueKey('laka-lalin-period-dropdown')),
       findsOneWidget,
     );
-    expect(find.text('106'), findsOneWidget);
+    expect(find.text('106'), findsNWidgets(2));
     expect(find.text('42'), findsNothing);
     expect(find.text('9'), findsOneWidget);
 
@@ -803,7 +803,7 @@ void main() {
     await tester.tap(find.text('TRIWULAN III'));
     await tester.pumpAndSettle();
 
-    expect(find.text('106'), findsOneWidget);
+    expect(find.text('106'), findsNWidgets(2));
     expect(find.text('42'), findsOneWidget);
     expect(find.text('9'), findsNothing);
     expect(find.text('24'), findsOneWidget);
@@ -903,6 +903,333 @@ void main() {
       expect(scrolledRect.bottom, closeTo(initialRect.bottom, 0.1));
       expect(scrolledRect.bottom, lessThanOrEqualTo(844));
       expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'every report keeps the analysis button fixed and opens its analysis sheet',
+    (tester) async {
+      await _setSurfaceSize(tester, const Size(390, 844));
+      const titles = <StatisticsModule, String>{
+        StatisticsModule.pelanggaran: 'PELANGGARAN',
+        StatisticsModule.lakaLalin: 'LAKA-LALIN',
+        StatisticsModule.simTni: 'SIM TNI',
+        StatisticsModule.k9: 'K9',
+        StatisticsModule.provos: 'PROVOS TNI-AD',
+      };
+
+      for (final module in StatisticsModule.values) {
+        final title = titles[module]!;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: StatisticsPage(
+              module: module,
+              dataLoader: (_) async => StatisticsViewData(
+                columns: [
+                  StatisticsColumnData(
+                    label: '2026',
+                    cards: List.generate(
+                      14,
+                      (index) => StatisticsCardData(
+                        label: 'INDIKATOR $index',
+                        value: '$index',
+                        color: const Color(0xFF38BDF8),
+                      ),
+                    ),
+                  ),
+                ],
+                ranking: const [],
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final fixedBar = find.byKey(const ValueKey('fixed-analysis-bar'));
+        expect(fixedBar, findsOneWidget, reason: '$title fixed action');
+        expect(find.text('STATISTIK'), findsOneWidget);
+        final initialRect = tester.getRect(fixedBar);
+
+        await tester.drag(
+          find.byKey(const ValueKey('statistics-content')),
+          const Offset(0, -420),
+        );
+        await tester.pumpAndSettle();
+
+        final scrolledRect = tester.getRect(fixedBar);
+        expect(scrolledRect.top, closeTo(initialRect.top, 0.1));
+        expect(scrolledRect.bottom, closeTo(initialRect.bottom, 0.1));
+        expect(scrolledRect.bottom, lessThanOrEqualTo(844));
+
+        await tester.tap(find.text('STATISTIK'));
+        await tester.pumpAndSettle();
+        expect(find.byType(DraggableScrollableSheet), findsOneWidget);
+        expect(find.text('ANALISIS $title'), findsOneWidget);
+        final headerIcon = tester.widget<Icon>(
+          find.byKey(const ValueKey('analysis-sheet-header-icon')),
+        );
+        expect(
+          headerIcon.icon,
+          Icons.bar_chart_rounded,
+          reason: '$title should use the shared analysis header icon',
+        );
+        expect(tester.takeException(), isNull, reason: '$title analysis sheet');
+
+        await tester.tap(find.byTooltip('Tutup analisis'));
+        await tester.pumpAndSettle();
+      }
+    },
+  );
+
+  testWidgets(
+    'Pelanggaran and Laka-Lalin show cumulative total cards on the main report page',
+    (tester) async {
+      await _setSurfaceSize(tester, const Size(390, 844));
+      const cases =
+          <
+            ({
+              StatisticsModule module,
+              String label,
+              String total,
+              StatisticsViewData data,
+            })
+          >[
+            (
+              module: StatisticsModule.pelanggaran,
+              label: 'TOTAL PELANGGARAN',
+              total: '100',
+              data: StatisticsViewData(
+                columns: [
+                  StatisticsColumnData(
+                    label: '2026 · JAN–SEP',
+                    cards: [
+                      StatisticsCardData(
+                        label: 'TATIB',
+                        value: '40',
+                        color: Color(0xFFF59E0B),
+                      ),
+                      StatisticsCardData(
+                        label: 'LALIN',
+                        value: '60',
+                        color: Color(0xFF38BDF8),
+                      ),
+                    ],
+                  ),
+                  StatisticsColumnData(
+                    label: 'SEP',
+                    cards: [
+                      StatisticsCardData(
+                        label: 'TATIB',
+                        value: '4',
+                        color: Color(0xFFF59E0B),
+                      ),
+                      StatisticsCardData(
+                        label: 'LALIN',
+                        value: '6',
+                        color: Color(0xFF38BDF8),
+                      ),
+                    ],
+                  ),
+                ],
+                ranking: [],
+              ),
+            ),
+            (
+              module: StatisticsModule.lakaLalin,
+              label: 'TOTAL KASUS LAKA-LALIN',
+              total: '20',
+              data: StatisticsViewData(
+                columns: [
+                  StatisticsColumnData(
+                    label: '2026 · JAN–SEP',
+                    cards: [
+                      StatisticsCardData(
+                        label: 'JUMLAH KASUS',
+                        value: '20',
+                        color: Color(0xFF38BDF8),
+                      ),
+                      StatisticsCardData(
+                        label: 'LAKA GANDA',
+                        value: '8',
+                        color: Color(0xFFF97316),
+                      ),
+                      StatisticsCardData(
+                        label: 'TUNGGAL',
+                        value: '7',
+                        color: Color(0xFFF59E0B),
+                      ),
+                      StatisticsCardData(
+                        label: 'TABRAK LARI',
+                        value: '5',
+                        color: Color(0xFFEF4444),
+                      ),
+                    ],
+                  ),
+                  StatisticsColumnData(
+                    label: 'SEP',
+                    cards: [
+                      StatisticsCardData(
+                        label: 'JUMLAH KASUS',
+                        value: '7',
+                        color: Color(0xFF38BDF8),
+                      ),
+                      StatisticsCardData(
+                        label: 'LAKA GANDA',
+                        value: '3',
+                        color: Color(0xFFF97316),
+                      ),
+                      StatisticsCardData(
+                        label: 'TUNGGAL',
+                        value: '2',
+                        color: Color(0xFFF59E0B),
+                      ),
+                      StatisticsCardData(
+                        label: 'TABRAK LARI',
+                        value: '2',
+                        color: Color(0xFFEF4444),
+                      ),
+                    ],
+                  ),
+                ],
+                ranking: [],
+              ),
+            ),
+          ];
+
+      for (final scenario in cases) {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: StatisticsPage(
+              module: scenario.module,
+              dataLoader: (_) async => scenario.data,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final totalCard = find.byKey(const ValueKey('main-report-total-card'));
+        final periodColumns = find.byKey(
+          const ValueKey('report-period-columns'),
+        );
+        expect(totalCard, findsOneWidget, reason: scenario.label);
+        expect(
+          find.descendant(of: totalCard, matching: find.text(scenario.label)),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(of: totalCard, matching: find.text(scenario.total)),
+          findsOneWidget,
+          reason: 'Total must come from the cumulative/year-to-date column.',
+        );
+        expect(periodColumns, findsOneWidget);
+        expect(
+          tester.getBottomLeft(totalCard).dy,
+          lessThan(tester.getTopLeft(periodColumns).dy),
+          reason: 'The total card must be above the main report period data.',
+        );
+        expect(tester.takeException(), isNull);
+
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+      }
+
+      for (final module in const [
+        StatisticsModule.k9,
+        StatisticsModule.provos,
+      ]) {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: StatisticsPage(
+              module: module,
+              dataLoader: _testStatisticsData,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('main-report-total-card')),
+          findsNothing,
+          reason: '${module.name} should keep its existing main page layout.',
+        );
+        expect(tester.takeException(), isNull);
+      }
+    },
+  );
+
+  testWidgets(
+    'all non-SIM analysis sheets are detailed, animated, and mobile responsive',
+    (tester) async {
+      const modules = <StatisticsModule>[
+        StatisticsModule.pelanggaran,
+        StatisticsModule.lakaLalin,
+        StatisticsModule.k9,
+        StatisticsModule.provos,
+      ];
+      const titles = <StatisticsModule, String>{
+        StatisticsModule.pelanggaran: 'PELANGGARAN',
+        StatisticsModule.lakaLalin: 'LAKA-LALIN',
+        StatisticsModule.k9: 'K9',
+        StatisticsModule.provos: 'PROVOS TNI-AD',
+      };
+      const sizes = <Size>[Size(390, 844), Size(320, 568)];
+
+      for (final size in sizes) {
+        await _setSurfaceSize(tester, size);
+        for (final module in modules) {
+          await tester.pumpWidget(
+            MaterialApp(
+              home: StatisticsPage(
+                module: module,
+                dataLoader: _testStatisticsData,
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.text('STATISTIK'));
+          await tester.pumpAndSettle();
+
+          expect(find.text('ANALISIS ${titles[module]}'), findsOneWidget);
+          expect(find.text('RINGKASAN EKSEKUTIF'), findsOneWidget);
+          expect(find.text('TEMUAN UTAMA & VALIDASI'), findsOneWidget);
+          expect(find.byType(TweenAnimationBuilder<double>), findsWidgets);
+
+          switch (module) {
+            case StatisticsModule.pelanggaran:
+              expect(find.text('DISTRIBUSI JENIS PELANGGARAN'), findsOneWidget);
+              expect(find.text('PERIODE PILIHAN VS KUMULATIF'), findsOneWidget);
+              expect(find.text('Rekonsiliasi total Pomdam'), findsOneWidget);
+              break;
+            case StatisticsModule.lakaLalin:
+              expect(find.text('KOMPOSISI JENIS LAKA-LALIN'), findsOneWidget);
+              expect(find.text('PERIODE PILIHAN VS KUMULATIF'), findsOneWidget);
+              expect(find.text('Rekonsiliasi jenis laka'), findsOneWidget);
+              break;
+            case StatisticsModule.k9:
+              expect(find.text('KOMPOSISI K9 PER UNIT'), findsOneWidget);
+              expect(find.text('RINCIAN SELURUH UNIT K9'), findsOneWidget);
+              expect(find.text('Kelengkapan data organisasi'), findsOneWidget);
+              expect(find.text('SESUAI ORGAS'), findsWidgets);
+              break;
+            case StatisticsModule.provos:
+              expect(find.text('STATUS DIK/TAR'), findsOneWidget);
+              expect(find.text('Cakupan status DIK/TAR'), findsOneWidget);
+              expect(find.text('Prioritas tindak lanjut'), findsOneWidget);
+              break;
+            case StatisticsModule.simTni:
+              break;
+          }
+
+          expect(
+            tester.takeException(),
+            isNull,
+            reason:
+                'Analysis overflow or exception for ${titles[module]} at $size',
+          );
+          await tester.tap(find.byTooltip('Tutup analisis'));
+          await tester.pumpAndSettle();
+        }
+      }
     },
   );
 
