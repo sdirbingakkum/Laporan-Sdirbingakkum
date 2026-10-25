@@ -964,7 +964,7 @@ void main() {
         await tester.tap(find.text('STATISTIK'));
         await tester.pumpAndSettle();
         expect(find.byType(DraggableScrollableSheet), findsOneWidget);
-        expect(find.text('ANALISIS $title'), findsOneWidget);
+        expect(find.text('STATISTIK $title'), findsOneWidget);
         final headerIcon = tester.widget<Icon>(
           find.byKey(const ValueKey('analysis-sheet-header-icon')),
         );
@@ -1189,7 +1189,7 @@ void main() {
           await tester.tap(find.text('STATISTIK'));
           await tester.pumpAndSettle();
 
-          expect(find.text('ANALISIS ${titles[module]}'), findsOneWidget);
+          expect(find.text('STATISTIK ${titles[module]}'), findsOneWidget);
           expect(find.text('RINGKASAN EKSEKUTIF'), findsOneWidget);
           expect(find.text('TEMUAN UTAMA & VALIDASI'), findsOneWidget);
           expect(find.byType(TweenAnimationBuilder<double>), findsWidgets);
@@ -1271,7 +1271,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.byType(DraggableScrollableSheet), findsOneWidget);
-        expect(find.text('ANALISIS SIM TNI'), findsOneWidget);
+        expect(find.text('STATISTIK SIM TNI'), findsOneWidget);
         expect(find.text('TOTAL PENERBITAN'), findsOneWidget);
         expect(find.text('RINGKASAN EKSEKUTIF'), findsOneWidget);
         expect(find.text('KOMPOSISI JENIS SIM'), findsOneWidget);
