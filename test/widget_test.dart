@@ -849,6 +849,57 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('year and month columns stay side by side on mobile', (
+    tester,
+  ) async {
+    const sizes = <Size>[Size(390, 844), Size(375, 667), Size(320, 568)];
+
+    for (final size in sizes) {
+      await _setSurfaceSize(tester, size);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatisticsPage(
+            module: StatisticsModule.pelanggaran,
+            dataLoader: (module) =>
+                _testPelanggaranPeriodData(module, 'month:9'),
+            periodDataLoader: _testPelanggaranPeriodData,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final columns = find.byKey(const ValueKey('report-period-columns'));
+      final yearHeader = find.text('2026 · JAN–SEP');
+      final monthSelector = find.byKey(
+        const ValueKey('pelanggaran-period-dropdown'),
+      );
+      expect(columns, findsOneWidget, reason: 'Period columns at $size');
+      expect(yearHeader, findsOneWidget);
+      expect(monthSelector, findsOneWidget);
+
+      final yearRect = tester.getRect(yearHeader);
+      final monthRect = tester.getRect(monthSelector);
+      expect(
+        yearRect.center.dx,
+        lessThan(monthRect.center.dx),
+        reason: 'Year must be left of month at $size.',
+      );
+      expect(
+        yearRect.center.dy,
+        closeTo(monthRect.center.dy, 15),
+        reason: 'Year and month headings should align horizontally at $size.',
+      );
+      expect(
+        tester.takeException(),
+        isNull,
+        reason: 'Period layout should not overflow at $size.',
+      );
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    }
+  });
+
   testWidgets('SIM TNI shows total SIM above aligned period columns', (
     tester,
   ) async {
@@ -964,7 +1015,7 @@ void main() {
         await tester.tap(find.text('STATISTIK'));
         await tester.pumpAndSettle();
         expect(find.byType(DraggableScrollableSheet), findsOneWidget);
-        expect(find.text('ANALISIS $title'), findsOneWidget);
+        expect(find.text('STATISTIK $title'), findsOneWidget);
         final headerIcon = tester.widget<Icon>(
           find.byKey(const ValueKey('analysis-sheet-header-icon')),
         );
@@ -1189,7 +1240,7 @@ void main() {
           await tester.tap(find.text('STATISTIK'));
           await tester.pumpAndSettle();
 
-          expect(find.text('ANALISIS ${titles[module]}'), findsOneWidget);
+          expect(find.text('STATISTIK ${titles[module]}'), findsOneWidget);
           expect(find.text('RINGKASAN EKSEKUTIF'), findsOneWidget);
           expect(find.text('TEMUAN UTAMA & VALIDASI'), findsOneWidget);
           expect(find.byType(TweenAnimationBuilder<double>), findsWidgets);
@@ -1271,7 +1322,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.byType(DraggableScrollableSheet), findsOneWidget);
-        expect(find.text('ANALISIS SIM TNI'), findsOneWidget);
+        expect(find.text('STATISTIK SIM TNI'), findsOneWidget);
         expect(find.text('TOTAL PENERBITAN'), findsOneWidget);
         expect(find.text('RINGKASAN EKSEKUTIF'), findsOneWidget);
         expect(find.text('KOMPOSISI JENIS SIM'), findsOneWidget);

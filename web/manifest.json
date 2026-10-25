@@ -1,35 +1,31 @@
 {
-    "name": "SDIRBINGAKKUM — PUSPOMAD",
-    "short_name": "SDIRBINGAKKUM",
-    "start_url": ".",
-    "display": "standalone",
-    "background_color": "#03150F",
-    "theme_color": "#D7A93C",
-    "description": "Sistem Laporan Bidang Gakkum PUSPOMAD.",
-    "orientation": "portrait-primary",
-    "prefer_related_applications": false,
-    "icons": [
-        {
-            "src": "icons/Icon-192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/Icon-512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/Icon-maskable-192.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "maskable"
-        },
-        {
-            "src": "icons/Icon-maskable-512.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "maskable"
-        }
-    ]
+  "name": "SDIRBINGAKKUM — PUSPOMAD",
+  "short_name": "SDIRBINGAKKUM",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#03150F",
+  "theme_color": "#D7A93C",
+  "description": "Sistem Laporan Bidang Gakkum PUSPOMAD.",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "icons/pomad-prima.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/pomad-prima-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/assets/images/pomad_prima.webp",
+      "sizes": "160x160",
+      "type": "image/webp",
+      "purpose": "any"
+    }
+  ]
 }

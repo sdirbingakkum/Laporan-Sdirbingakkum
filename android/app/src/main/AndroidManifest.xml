@@ -3,7 +3,8 @@
     <application
         android:label="SDIRBINGAKKUM"
         android:name="${applicationName}"
-        android:icon="@drawable/pomad_prima">
+        android:icon="@drawable/pomad_prima"
+        android:roundIcon="@drawable/pomad_prima">
         <activity
             android:name=".MainActivity"
             android:exported="true"
